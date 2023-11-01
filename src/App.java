@@ -96,7 +96,7 @@ class AppFrame extends BorderPane{
         this.setBottom(footer);
 
         generateButton = footer.getGenerateButton();
-        /*
+
         // Call Event Listeners for the Buttons
         try {
             addListeners();
@@ -104,7 +104,16 @@ class AppFrame extends BorderPane{
         catch (IOException E) {
             return;
         }
-        */
+    }
+
+    public void addListeners() throws IOException {
+        // Add button functionality
+        generateButton.setOnAction(e -> {
+            // Create a new contact
+            Recipe recipe = new Recipe("yogurt");
+            // Add contact to contactlist
+            rlist.getChildren().add(0, recipe);
+        });
     }
 }
 

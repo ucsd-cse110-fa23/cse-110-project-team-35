@@ -17,17 +17,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 class Recipe extends HBox{
-    private Label title;
+    private Button detailsButton;
 
     Recipe(String name){
         this.setPrefSize(500, 20); // sets size of task
         this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0; -fx-font-weight: bold;"); // sets background color of task
-        title = new Label();
-        title.setText(name); // create index label
-        title.setPrefSize(40, 20); // set size of Index label
-        title.setTextAlignment(TextAlignment.CENTER); // Set alignment of index label
-        title.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the task
-        this.getChildren().add(title); // add index label to task
+
+        detailsButton = new Button(name);
+        detailsButton.setPrefSize(600, 180);
+        detailsButton.setPrefHeight(Double.MAX_VALUE);
+        this.getChildren().add(detailsButton);
     }
 }
 

@@ -17,11 +17,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 class Recipe extends HBox{
-    private Label index;
+    private Label title;
 
-    Recipe(){
+    Recipe(String name){
         this.setPrefSize(500, 20); // sets size of task
         this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0; -fx-font-weight: bold;"); // sets background color of task
+        title = new Label();
+        title.setText(name); // create index label
+        title.setPrefSize(40, 20); // set size of Index label
+        title.setTextAlignment(TextAlignment.CENTER); // Set alignment of index label
+        title.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the task
+        this.getChildren().add(title); // add index label to task
     }
 }
 
@@ -60,7 +66,11 @@ class AppFrame extends BorderPane{
     private RecipeList rlist;
 
     AppFrame(){
+        Recipe r1 = new Recipe("Pizza");
+        Recipe r2 = new Recipe("Pasta");
         rlist = new RecipeList();
+        rlist.getChildren().add(r1);
+        rlist.getChildren().add(r2);
 
         this.setCenter(rlist);
     }

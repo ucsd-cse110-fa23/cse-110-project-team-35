@@ -16,6 +16,23 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
+class Recipe extends HBox{
+    private Label index;
+
+    Recipe(){
+        this.setPrefSize(500, 20); // sets size of task
+        this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0; -fx-font-weight: bold;"); // sets background color of task
+    }
+}
+
+class RecipeList extends VBox{
+    RecipeList() {
+        this.setSpacing(5); // sets spacing between tasks
+        this.setPrefSize(500, 560);
+        this.setStyle("-fx-background-color: #F0F8FF;");
+    }
+}
+
 class Footer extends HBox {
 
     Footer() {
@@ -40,7 +57,13 @@ class Header extends HBox {
 }
 
 class AppFrame extends BorderPane{
+    private RecipeList rlist;
 
+    AppFrame(){
+        rlist = new RecipeList();
+
+        this.setCenter(rlist);
+    }
 }
 
 public class App extends Application {

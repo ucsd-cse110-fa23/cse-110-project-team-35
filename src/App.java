@@ -16,17 +16,11 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
-class Recipe extends HBox{
-    private Button detailsButton;
-
+class Recipe extends Button{
     Recipe(String name){
         this.setPrefSize(500, 20); // sets size of task
-        this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0; -fx-font-weight: bold;"); // sets background color of task
-
-        detailsButton = new Button(name);
-        detailsButton.setPrefSize(600, 180);
-        detailsButton.setPrefHeight(Double.MAX_VALUE);
-        this.getChildren().add(detailsButton);
+        this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0; -fx-font-weight: bold; -fx-cursor: hand;");
+        this.setText(name);
     }
 }
 

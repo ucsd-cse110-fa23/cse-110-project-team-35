@@ -50,7 +50,6 @@ class Footer extends HBox {
 }
 
 class Header extends HBox {
-
     Header() {
         this.setPrefSize(500, 60); // Size of the header
         this.setStyle("-fx-background-color: #F0F8FF;");
@@ -64,15 +63,28 @@ class Header extends HBox {
 
 class AppFrame extends BorderPane{
     private RecipeList rlist;
+    private Header header;
+    private Footer footer;
+    private ScrollPane scrollPane;
 
     AppFrame(){
+        header = new Header();
+        footer = new Footer();
+
         Recipe r1 = new Recipe("Pizza");
         Recipe r2 = new Recipe("Pasta");
         rlist = new RecipeList();
         rlist.getChildren().add(r1);
         rlist.getChildren().add(r2);
 
+        scrollPane = new ScrollPane(rlist);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+
         this.setCenter(rlist);
+        this.setTop(header);
+        this.setCenter(scrollPane);
+        this.setBottom(footer);
     }
 }
 

@@ -40,11 +40,20 @@ class RecipeList extends VBox{
 }
 
 class Footer extends HBox {
+    private Button generateButton;
 
     Footer() {
         this.setPrefSize(500, 60);
         this.setStyle("-fx-background-color: #F0F8FF;");
         this.setSpacing(15);
+        generateButton = new Button("Generate Recipe");
+
+        this.getChildren().addAll(generateButton);
+        this.setAlignment(Pos.CENTER);
+    }
+
+    public Button getGenerateButton() {
+        return generateButton;
     }
 
 }
@@ -66,6 +75,7 @@ class AppFrame extends BorderPane{
     private Header header;
     private Footer footer;
     private ScrollPane scrollPane;
+    private Button generateButton;
 
     AppFrame(){
         header = new Header();
@@ -85,6 +95,17 @@ class AppFrame extends BorderPane{
         this.setTop(header);
         this.setCenter(scrollPane);
         this.setBottom(footer);
+
+        generateButton = footer.getGenerateButton();
+        /*
+        // Call Event Listeners for the Buttons
+        try {
+            addListeners();
+        }
+        catch (IOException E) {
+            return;
+        }
+        */
     }
 }
 

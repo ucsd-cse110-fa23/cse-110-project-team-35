@@ -37,12 +37,12 @@ public class ListView extends BorderPane {
         return recipeList;
     }
 
-    public void createRecipeButtons(List<String> rlist) {
+    /*public void createRecipeButtons(List<String> rlist) {
         for (String title : rlist){
             Button recipe = new Button(title);
             recipeList.getChildren().add(recipe);
         }
-    }
+    } */
 
     public void setRecipeButtons(EventHandler<ActionEvent> eventHandler) {
         for (int i = 0; i < recipeList.getChildren().size(); i++) {

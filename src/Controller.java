@@ -34,7 +34,13 @@ public class Controller {
         createListScene();
         setListScene();
 
-        this.listView.createRecipeButtons(recipeTitles);
+        Recipe r1 = new Recipe("Pizza");
+        Recipe r2 = new Recipe("Pasta");
+        RecipeList recipeList = listView.getRecipeList();
+        recipeList.getChildren().add(0, r1);
+        recipeList.getChildren().add(0, r2);
+
+        // this.listView.createRecipeButtons(recipeTitles);
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
     }
@@ -49,30 +55,6 @@ public class Controller {
 
     private void setListScene() {
         this.stage.setScene(listScene);
-        recipeTitles = new ArrayList<>();
-        recipeTitles.add("Borsofozelek");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
-        recipeTitles.add("Tejbegriz");
     }
 
     private void setDetailScene() {

@@ -10,7 +10,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.*;
 
 public class ListView extends BorderPane {
-    private VBox recipeList;
+    private RecipeList recipeList;
     private Header header;
     private Footer footer;
     private ScrollPane scrollPane;
@@ -19,7 +19,7 @@ public class ListView extends BorderPane {
     public ListView() {        
         header = new Header();
         footer = new Footer();
-        recipeList = new VBox();
+        recipeList = new RecipeList();
         
         scrollPane = new ScrollPane(recipeList);
         scrollPane.setFitToHeight(true);
@@ -31,10 +31,9 @@ public class ListView extends BorderPane {
         this.setBottom(footer);
         
         generateButton = footer.getGenerateButton();
-
     }
 
-    public VBox getRecipeList() {
+    public RecipeList getRecipeList() {
         return recipeList;
     }
 
@@ -55,6 +54,22 @@ public class ListView extends BorderPane {
 
     public void setGenerateButton(EventHandler<ActionEvent> eventHandler) {
         generateButton.setOnAction(eventHandler);
+    }
+}
+
+class Recipe extends Button{
+    Recipe(String name){
+        this.setPrefSize(500, 20); // sets size of task
+        this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0; -fx-font-weight: bold; -fx-cursor: hand;");
+        this.setText(name);
+    }
+}
+
+class RecipeList extends VBox{
+    RecipeList() {
+        this.setSpacing(5); // sets spacing between tasks
+        this.setPrefSize(500, 560);
+        this.setStyle("-fx-background-color: #F0F8FF;");
     }
 }
 

@@ -90,6 +90,9 @@ public class Controller {
     }
 
     private void handleGenerateButton(ActionEvent event) {
-        recipeTitles.add("Yogurt");
+        Recipe recipe = new Recipe("yogurt");
+        // Add contact to contactlist
+        RecipeList recipeList = listView.getRecipeList();
+        recipeList.getChildren().add(0, recipe);
     }
 }

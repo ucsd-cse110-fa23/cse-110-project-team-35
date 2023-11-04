@@ -16,7 +16,7 @@ public class DetailView {
 
     public DetailView() {
         details = new VBox();
-        details.setStyle("-fx-background-color: yellow");
+        details.setStyle("-fx-background-color: blue");
         t = new Text("Recipe title: ");
         back = new Button("Back");
         details.getChildren().addAll(t, back);

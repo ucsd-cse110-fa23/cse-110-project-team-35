@@ -9,11 +9,29 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 
-public class ListView {
+public class ListView extends BorderPane {
     private VBox recipeList;
+    private Header header;
+    private Footer footer;
+    private ScrollPane scrollPane;
+    private Button generateButton;
 
-    public ListView() {
+    public ListView() {        
+        header = new Header();
+        footer = new Footer();
         recipeList = new VBox();
+        
+        scrollPane = new ScrollPane(recipeList);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+        
+        this.setCenter(recipeList);
+        this.setTop(header);
+        this.setCenter(scrollPane);
+        this.setBottom(footer);
+        
+        generateButton = footer.getGenerateButton();
+
     }
 
     public VBox getRecipeList() {
@@ -33,5 +51,40 @@ public class ListView {
             	((Button)recipeList.getChildren().get(i)).setOnAction(eventHandler);
             }
     	}
+    }
+
+    public void setGenerateButton(EventHandler<ActionEvent> eventHandler) {
+        generateButton.setOnAction(eventHandler);
+    }
+}
+
+class Footer extends HBox {
+    private Button generateButton;
+
+    Footer() {
+        this.setPrefSize(500, 60);
+        this.setStyle("-fx-background-color: #F0F8FF;");
+        this.setSpacing(15);
+        generateButton = new Button("Generate Recipe");
+
+        this.getChildren().addAll(generateButton);
+        this.setAlignment(Pos.CENTER);
+    }
+
+    public Button getGenerateButton() {
+        return generateButton;
+    }
+
+}
+
+class Header extends HBox {
+    Header() {
+        this.setPrefSize(500, 60); // Size of the header
+        this.setStyle("-fx-background-color: #F0F8FF;");
+
+        Text titleText = new Text("PantryPal"); // Text of the Header
+        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
+        this.getChildren().add(titleText);
+        this.setAlignment(Pos.CENTER); // Align the text to the Center
     }
 }

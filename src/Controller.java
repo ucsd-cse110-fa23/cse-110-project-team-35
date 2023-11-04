@@ -1,5 +1,3 @@
-//package lea_src;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class Controller {
         this.stage = stage;
 
         createDetailScene();
-        this.listView.setBackButton(this::handleBackButton);
+        this.detView.setBackButton(this::handleBackButton);
 
         createListScene();
         setListScene();
@@ -45,7 +43,7 @@ public class Controller {
     }
 
     private void createDetailScene() {
-        detailScene = new Scene(this.listView.getDetails(), 500, 600);
+        detailScene = new Scene(this.detView.getDetails(), 500, 600);
     }
 
     private void setListScene() {
@@ -62,7 +60,7 @@ public class Controller {
     private void handleRecipeButtons(ActionEvent event) {
         setDetailScene();
         String recipeTitle = ((Button) event.getSource()).getText();
-        this.listView.addDetails(recipeTitle);
+        this.detView.addDetails(recipeTitle);
     }
 
     private void handleBackButton(ActionEvent event) {

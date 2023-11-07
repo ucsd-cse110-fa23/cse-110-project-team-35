@@ -1,9 +1,0 @@
-plugins {
-  id 'application'
-  id 'org.openjfx.javafxplugin' version '0.1.0'
-}
-
-javafx {
-    version = "20.0.2"
-    modules = [ 'javafx.controls' ]
-}

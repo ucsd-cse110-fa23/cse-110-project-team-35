@@ -13,7 +13,8 @@ class AppTest {
     @Test
     void viewRecipeListEmpty() {
         Model classUnderTest = new Model();
-        assertEquals(classUnderTest.getRecipeList(), null);
+        List<String> recipeList = new ArrayList<>();
+        assertEquals(classUnderTest.getRecipeList(), recipeList);
     }
 
     @Test
@@ -23,8 +24,8 @@ class AppTest {
         classUnderTest.addData("Pancakes", "Get cake. Get pan. Put cake in pan. Done.");
         
         List<String> recipeList = new ArrayList<>();
-        recipeList.add(0, "Mashed potat");
-        recipeList.add(0, "Pancakes");
+        recipeList.add("Mashed potat");
+        recipeList.add("Pancakes");
         assertEquals(classUnderTest.getRecipeList(), recipeList);
     }
 

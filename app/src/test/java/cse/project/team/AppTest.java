@@ -6,8 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.text.View;
-
 class AppTest {
     /* User Story 1 */
     @Test
@@ -22,7 +20,7 @@ class AppTest {
         Model classUnderTest = new Model();
         classUnderTest.addData("Mashed potat", "Get potatoes. Mash. Done.");
         classUnderTest.addData("Pancakes", "Get cake. Get pan. Put cake in pan. Done.");
-        
+
         List<String> recipeList = new ArrayList<>();
         recipeList.add("Mashed potat");
         recipeList.add("Pancakes");
@@ -66,4 +64,26 @@ class AppTest {
         assertEquals(classUnderTest.getDetails(title), newDetails);
     }
 
+    /*
+     * US5: Delete recipe
+     * Case 1: Remove item + corresponding details from “database”
+     * Case 2: Attempt to remove invalid item from “database”
+     */
+
+     /* User Story 5 */
+/*      @Test
+     void deleteRecipeInvalid() {
+        Model classUnderTest = new Model();
+        assertEquals(classUnderTest.deleteData("Pizza"), Exception e);
+     }
+
+     @Test
+     void deleteRecipe() {
+        Model classUnderTest = new Model();
+        String details = "Create a crust. Oven it. Done.";
+        String title = "Pizza";
+        classUnderTest.addData(title, details);
+        assertEquals(classUnderTest.deleteData("Blues"), newDetails);
+     }
+     */
 }

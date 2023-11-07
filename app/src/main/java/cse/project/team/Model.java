@@ -26,6 +26,10 @@ public class Model {
         recipeList.add(title);
     }
 
+    public void putData(String title, String text) {
+        data.put(title, text);
+    }
+
     public void deleteData(String title) {
         data.remove(title);
         recipeList.remove(title);

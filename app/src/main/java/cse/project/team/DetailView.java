@@ -49,6 +49,7 @@ public class DetailView extends BorderPane{
         detailText = new TextArea();
         detailText.setPrefRowCount(28);
         details.getChildren().addAll(titleText, detailText);
+        detailText.setEditable(false);
 
         scrollPane.setContent(details);
 

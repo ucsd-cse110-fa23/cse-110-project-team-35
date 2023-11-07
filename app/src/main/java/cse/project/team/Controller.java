@@ -96,7 +96,7 @@ public class Controller {
     }
 
     private void handleSaveButton(ActionEvent event) {
-        model.addData(detView.getCurrTitle(), detView.getDetailText());
+        model.putData(detView.getCurrTitle(), detView.getDetailText());
         setListScene();
     }
 

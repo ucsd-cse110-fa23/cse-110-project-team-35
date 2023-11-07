@@ -1,7 +1,9 @@
-package cse.project.team;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.swing.Action;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -31,7 +33,8 @@ public class Controller {
 
         createDetailScene();
         this.detView.setBackButton(this::handleBackButton);
-
+        this.detView.setSaveButton(this::handleSaveButton);
+        this.detView.setDeleteButton(this::handleDeleteButton);
         createListScene();
         setListScene();
 
@@ -44,28 +47,29 @@ public class Controller {
         // this.listView.createRecipeButtons(recipeTitles);
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
+        setListScene();
     }
 
     private void createListScene() {
-        listScene = new Scene(this.listView, 500, 600);
+        listScene = new Scene(listView, 500, 600);
     }
 
     private void createDetailScene() {
-        detailScene = new Scene(this.detView.getDetails(), 500, 600);
+        detailScene = new Scene(this.detView, 500, 600);
     }
 
     private void setListScene() {
-        this.stage.setScene(listScene);
+        stage.setScene(listScene);
     }
 
     private void setDetailScene() {
-        this.stage.setScene(detailScene);
+        stage.setScene(detailScene);
     }
 
     private void handleRecipeButtons(ActionEvent event) {
         setDetailScene();
         String recipeTitle = ((Button) event.getSource()).getText();
-        this.detView.addDetails(recipeTitle);
+        detView.addDetails(recipeTitle, model.getDetails(recipeTitle));
     }
 
     private void handleBackButton(ActionEvent event) {
@@ -77,5 +81,16 @@ public class Controller {
         RecipeList recipeList = listView.getRecipeList();
         recipeList.getChildren().add(0, recipe);
         listView.setRecipeButtons(this::handleRecipeButtons);
+    }
+
+    private void handleSaveButton(ActionEvent event) {
+        model.addData(detView.getCurrTitle(), detView.getDetailText());
+        setListScene();
+    }
+
+    private void handleDeleteButton(ActionEvent event) {
+        listView.removeRecipe(detView.getCurrTitle());
+        model.deleteData(detView.getCurrTitle());
+        setListScene();
     }
 }

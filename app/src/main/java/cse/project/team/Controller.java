@@ -33,6 +33,9 @@ public class Controller {
         this.model = model;
         this.stage = stage;
 
+        model.addToList("Pizza");
+        model.addToList("Pasta");
+
         createDetailScene();
         createListScene();
         setListScene();
@@ -41,17 +44,23 @@ public class Controller {
         this.detView.setSaveButton(this::handleSaveButton);
         this.detView.setDeleteButton(this::handleDeleteButton);
 
-        Recipe r1 = new Recipe("Pizza");
-        Recipe r2 = new Recipe("Pasta");
-        RecipeList recipeList = listView.getRecipeList();
-        recipeList.getChildren().add(0, r1);
-        recipeList.getChildren().add(0, r2);
 
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
     }
 
+    private void loadrecipeList(){
+        listView.getRecipeList().getChildren().clear();
+        List<String> rlist = model.getRecipeList();
+        for(String i: rlist){
+            Recipe recipe = new Recipe(i);
+            listView.getRecipeList().getChildren().add(0, recipe);
+        }
+        listView.setRecipeButtons(this::handleRecipeButtons);
+    }
+
     private void createListScene() {
+        loadrecipeList();
         listScene = new Scene(listView, 500, 600);
     }
 
@@ -60,6 +69,8 @@ public class Controller {
     }
 
     private void setListScene() {
+        listView.getRecipeList().getChildren().clear();
+        loadrecipeList();
         stage.setScene(listScene);
     }
 
@@ -81,6 +92,7 @@ public class Controller {
         Recipe recipe = new Recipe("Yogurt");
         RecipeList recipeList = listView.getRecipeList();
         recipeList.getChildren().add(0, recipe);
+        model.addToList("Yogurt");
         listView.setRecipeButtons(this::handleRecipeButtons);
     }
 
@@ -90,8 +102,10 @@ public class Controller {
     }
 
     private void handleDeleteButton(ActionEvent event) {
-        listView.removeRecipe(detView.getCurrTitle());
         model.deleteData(detView.getCurrTitle());
+        model.deleteFromList(detView.getCurrTitle());
         setListScene();
     }
+
+
 }

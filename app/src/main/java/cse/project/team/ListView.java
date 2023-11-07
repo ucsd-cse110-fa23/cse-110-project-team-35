@@ -46,16 +46,6 @@ public class ListView extends BorderPane {
         }
     }
 
-    public void removeRecipe(String title) {
-        for (int i = 0; i < recipeList.getChildren().size(); i++) {
-            if (recipeList.getChildren().get(i) instanceof Recipe) {
-                if (((Recipe)recipeList.getChildren().get(i)).getText() == title){
-            	    recipeList.getChildren().remove(i);
-                }
-            }
-    	} 
-    }
-
     public void setGenerateButton(EventHandler<ActionEvent> eventHandler) {
         generateButton.setOnAction(eventHandler);
     }

@@ -18,7 +18,7 @@ public class Model {
     }
 
     public void addToList(String title){
-
+        recipeList.add(title);
     }
 
     public HashMap<String, String> getData() {
@@ -35,5 +35,9 @@ public class Model {
 
     public String getDetails(String title) {
         return data.get(title);
+    }
+
+    public void deleteFromList(String currTitle) {
+        recipeList.remove(currTitle);
     }
 }

@@ -62,6 +62,7 @@ public class DetailView extends BorderPane{
         editButton.setOnAction(event -> {
             toggleEditMode();
         });
+
     }
 
     public String getCurrTitle() {
@@ -100,6 +101,14 @@ public class DetailView extends BorderPane{
             String updatedTitle = detailText.getText();
             // You can process and save the updatedTitle as needed
         }
+    }
+
+    public Button getEditButton(){
+        return editButton;
+    }
+
+    public TextArea getDetailTextArea() {
+        return detailText;
     }
     
 }

@@ -75,6 +75,8 @@ public class Controller {
     }
 
     private void setDetailScene() {
+        detView.getEditButton().setText("Enter Edit Mode");
+        detView.getDetailTextArea().setEditable(false);
         stage.setScene(detailScene);
     }
 

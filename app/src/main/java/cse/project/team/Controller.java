@@ -93,6 +93,7 @@ public class Controller {
         RecipeList recipeList = listView.getRecipeList();
         recipeList.getChildren().add(0, recipe);
         listView.setRecipeButtons(this::handleRecipeButtons);
+        model.addData("Yogurt", "Gurt");
     }
 
     private void handleSaveButton(ActionEvent event) {

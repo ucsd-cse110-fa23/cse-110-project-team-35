@@ -33,8 +33,8 @@ public class Controller {
         this.model = model;
         this.stage = stage;
 
-        model.addToList("Pizza");
-        model.addToList("Pasta");
+        model.addData("Pizza", "it's Pizza!");
+        model.addData("Pasta", "Mama Mia!");
 
         createDetailScene();
         createListScene();
@@ -92,7 +92,6 @@ public class Controller {
         Recipe recipe = new Recipe("Yogurt");
         RecipeList recipeList = listView.getRecipeList();
         recipeList.getChildren().add(0, recipe);
-        model.addToList("Yogurt");
         listView.setRecipeButtons(this::handleRecipeButtons);
     }
 
@@ -103,7 +102,6 @@ public class Controller {
 
     private void handleDeleteButton(ActionEvent event) {
         model.deleteData(detView.getCurrTitle());
-        model.deleteFromList(detView.getCurrTitle());
         setListScene();
     }
 

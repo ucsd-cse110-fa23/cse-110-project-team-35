@@ -29,20 +29,14 @@ class AppTest {
     }
 
     @Test
-    void editRecipe() {
+    void saveRecipe() {
         Model classUnderTest = new Model();
         String details = "Create a crust. Oven it. Done.";
+        String newDetails = "Just oven it.";
         String title = "Pizza";
         classUnderTest.addData(title, details);
-        assertEquals(classUnderTest.getDetails(title), details);
+        classUnderTest.addData(title, newDetails);
+        assertEquals(classUnderTest.getDetails(title), newDetails);
     }
 
-    /*
-     * BDD Scenarios:
-     * Scenario 1: Edit the recipe when viewing details of recipe,
-     * Given the details of the recipe are presented,
-     * When edit button is clicked,
-     * Then the text contents of the details are subject to change.
-     * 
-     */
 }

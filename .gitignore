@@ -6,3 +6,6 @@ build
 
 # Ignore user-specific .vscode stuff
 .vscode
+
+# Ignore JavaFX files
+lib

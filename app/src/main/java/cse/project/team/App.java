@@ -12,7 +12,6 @@ package cse.project.team;
         System.out.println(new App().getGreeting());
     }
 }*/
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

@@ -1,6 +1,4 @@
-*
 CSE 110 Project: Team 35
-*
 
 Sources used:
   The getSource() Method

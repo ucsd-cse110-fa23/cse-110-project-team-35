@@ -3,12 +3,38 @@
  */
 package cse.project.team;
 
-public class App {
+/*public class App {
     public String getGreeting() {
         return "Hello World!";
     }
 
     public static void main(String[] args) {
         System.out.println(new App().getGreeting());
+    }
+}*/
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+public class App extends Application {
+    
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+        ListView listView = new ListView();
+        DetailView detView = new DetailView();
+        GenerateView genView = new GenerateView();
+        Model model = new Model();
+        Controller controller = new Controller(listView, detView, genView, model, primaryStage);
+
+        //Scene scene = new Scene(view.recipeList(), 500, 600);
+        //primaryStage.setScene(scene);
+        primaryStage.setTitle("PantryPal");
+        primaryStage.show();
     }
 }

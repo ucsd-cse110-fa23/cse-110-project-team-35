@@ -3,7 +3,32 @@ package cse.project.team;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.text.View;
+
 class AppTest {
+    /* User Story 1 */
+    @Test
+    void viewRecipeListEmpty() {
+        Model classUnderTest = new Model();
+        assertEquals(classUnderTest.getRecipeList(), null);
+    }
+
+    @Test
+    void viewRecipeListSorted() {
+        Model classUnderTest = new Model();
+        classUnderTest.addData("Mashed potat", "Get potatoes. Mash. Done.");
+        classUnderTest.addData("Pancakes", "Get cake. Get pan. Put cake in pan. Done.");
+        
+        List<String> recipeList = new ArrayList<>();
+        recipeList.add(0, "Mashed potat");
+        recipeList.add(0, "Pancakes");
+        assertEquals(classUnderTest.getRecipeList(), recipeList);
+    }
+
+    /* User Story 2 */
     @Test
     void viewDetailsNotEmpty() {
         Model classUnderTest = new Model();
@@ -28,6 +53,7 @@ class AppTest {
         assertEquals(classUnderTest.getDetails(title), "");
     }
 
+    /* User Story 4 */
     @Test
     void saveRecipe() {
         Model classUnderTest = new Model();

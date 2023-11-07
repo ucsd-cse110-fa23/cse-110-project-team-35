@@ -1,3 +1,5 @@
+package cse.project.team;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -12,7 +14,6 @@ public class App extends Application {
         ListView listView = new ListView();
         DetailView detView = new DetailView();
         GenerateView genView = new GenerateView();
-
         Model model = new Model();
         Controller controller = new Controller(listView, detView, genView, model, primaryStage);
 

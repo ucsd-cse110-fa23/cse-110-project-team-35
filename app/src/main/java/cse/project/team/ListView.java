@@ -1,3 +1,5 @@
+package cse.project.team;
+
 import java.io.IOException;
 import java.util.List;
 import javafx.event.ActionEvent;
@@ -44,6 +46,16 @@ public class ListView extends BorderPane {
         }
     }
 
+    public void removeRecipe(String title) {
+        for (int i = 0; i < recipeList.getChildren().size(); i++) {
+            if (recipeList.getChildren().get(i) instanceof Recipe) {
+                if (((Recipe)recipeList.getChildren().get(i)).getText() == title){
+            	    recipeList.getChildren().remove(i);
+                }
+            }
+    	} 
+    }
+
     public void setGenerateButton(EventHandler<ActionEvent> eventHandler) {
         generateButton.setOnAction(eventHandler);
     }
@@ -59,7 +71,7 @@ class Recipe extends Button {
 
 class RecipeList extends VBox {
     RecipeList() {
-        this.setSpacing(5); // sets spacing between tasks
+        this.setSpacing(5); 
         this.setPrefSize(500, 560);
         this.setStyle("-fx-background-color: #F0F8FF;");
     }
@@ -86,12 +98,12 @@ class Footer extends HBox {
 
 class Header extends HBox {
     Header() {
-        this.setPrefSize(500, 60); // Size of the header
+        this.setPrefSize(500, 60);
         this.setStyle("-fx-background-color: #F0F8FF;");
 
-        Text titleText = new Text("PantryPal"); // Text of the Header
+        Text titleText = new Text("PantryPal");
         titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
         this.getChildren().add(titleText);
-        this.setAlignment(Pos.CENTER); // Align the text to the Center
+        this.setAlignment(Pos.CENTER);
     }
 }

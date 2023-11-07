@@ -1,3 +1,5 @@
+package cse.project.team;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,11 +34,12 @@ public class Controller {
         this.stage = stage;
 
         createDetailScene();
+        createListScene();
+        setListScene();
+
         this.detView.setBackButton(this::handleBackButton);
         this.detView.setSaveButton(this::handleSaveButton);
         this.detView.setDeleteButton(this::handleDeleteButton);
-        createListScene();
-        setListScene();
 
         Recipe r1 = new Recipe("Pizza");
         Recipe r2 = new Recipe("Pasta");
@@ -44,10 +47,8 @@ public class Controller {
         recipeList.getChildren().add(0, r1);
         recipeList.getChildren().add(0, r2);
 
-        // this.listView.createRecipeButtons(recipeTitles);
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
-        setListScene();
     }
 
     private void createListScene() {
@@ -77,7 +78,7 @@ public class Controller {
     }
 
     private void handleGenerateButton(ActionEvent event) {
-        Recipe recipe = new Recipe("yogurt");
+        Recipe recipe = new Recipe("Yogurt");
         RecipeList recipeList = listView.getRecipeList();
         recipeList.getChildren().add(0, recipe);
         listView.setRecipeButtons(this::handleRecipeButtons);

@@ -1,4 +1,6 @@
+package cse.project.team;
+
 public class GenerateView {
-    public GenerateView(Model model) {
+    public GenerateView() {
     }
 }

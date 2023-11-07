@@ -23,8 +23,28 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
 
-      - name: Setup Gradle
+      #- name: Setup Gradle
+      #  uses: gradle/gradle-build-action@v2
+
+            - name: Test
         uses: gradle/gradle-build-action@v2
+        with:
+          arguments: test
+
+      - name: Build
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
+
+      - name: Build (jlink)
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: jlink
+
+      - name: Build (jpackage)
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: jpackage
 
       - name: Change wrapper persmissions
         run: chmod +x ./gradlew

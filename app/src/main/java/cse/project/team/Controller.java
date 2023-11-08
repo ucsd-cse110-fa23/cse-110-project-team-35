@@ -18,7 +18,7 @@ public class Controller {
     private GenerateView genView;
     private Model model;
     private Stage stage;
-    private Scene listScene, detailScene;
+    private Scene listScene, detailScene,generateScene;
     private List<String> recipeTitles;
 
     public Controller(ListView listView,
@@ -38,12 +38,15 @@ public class Controller {
 
         createDetailScene();
         createListScene();
+        createGenerateScene();
+
         setListScene();
 
         this.detView.setBackButton(this::handleBackButton);
         this.detView.setSaveButton(this::handleSaveButton);
         this.detView.setDeleteButton(this::handleDeleteButton);
 
+        this.genView.setBackButton(this::handleGenerateBackButton);
 
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
@@ -64,6 +67,9 @@ public class Controller {
         listScene = new Scene(listView, 500, 600);
     }
 
+    private void createGenerateScene() {
+        generateScene = new Scene(this.genView, 500, 600);
+    }
     private void createDetailScene() {
         detailScene = new Scene(this.detView, 500, 600);
     }
@@ -72,6 +78,10 @@ public class Controller {
         listView.getRecipeList().getChildren().clear();
         loadrecipeList();
         stage.setScene(listScene);
+    }
+
+    private void setGenerateScene(){
+        stage.setScene(generateScene);
     }
 
     private void setDetailScene() {
@@ -89,13 +99,17 @@ public class Controller {
     private void handleBackButton(ActionEvent event) {
         setListScene();
     }
-
+    private void handleGenerateBackButton(ActionEvent event) {
+        setListScene();
+    }
     private void handleGenerateButton(ActionEvent event) {
         Recipe recipe = new Recipe("Yogurt");
         RecipeList recipeList = listView.getRecipeList();
         recipeList.getChildren().add(0, recipe);
         listView.setRecipeButtons(this::handleRecipeButtons);
         model.addData("Yogurt", "Gurt");
+        
+        setGenerateScene();
     }
 
     private void handleSaveButton(ActionEvent event) {

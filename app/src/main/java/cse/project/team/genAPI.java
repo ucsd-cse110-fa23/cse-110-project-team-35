@@ -119,7 +119,7 @@ public class genAPI {
 
         // chat GPT starts here
         String prompt = "Write an exiting title on the first line ended with a : then write a recipe with ingredients " + audio_generatedText;
-        String number_of_token =  "100";
+        String number_of_token =  "200";
         int maxTokens = Integer.parseInt(number_of_token);
         
         

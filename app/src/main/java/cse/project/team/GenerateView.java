@@ -18,12 +18,14 @@ class GenerateView extends FlowPane {
     private Button stopButton;
     private Button backButton;
     private Label recordingLabel;
+    
     // Set a default style for buttons and fields - background color, font size,
     // italics
     String defaultButtonStyle = "-fx-border-color: #000000; -fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px;";
     String defaultLabelStyle = "-fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px; -fx-text-fill: red; visibility: hidden";
 
     GenerateView() {
+        
         // Set properties for the flowpane
         this.setPrefSize(370, 120);
         this.setPadding(new Insets(5, 0, 5, 5));
@@ -62,5 +64,7 @@ class GenerateView extends FlowPane {
     public Label getRecordingLabel(){
         return recordingLabel;
     }
+    
+    
 
 }

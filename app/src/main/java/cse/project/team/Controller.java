@@ -21,7 +21,7 @@ public class Controller {
     private GenerateView genView;
     private Model model;
     private Stage stage;
-    private Scene listScene, detailScene,generateScene;
+    private Scene listScene, detailScene, generateScene;
     private List<String> recipeTitles;
 
     public Controller(ListView listView,
@@ -35,9 +35,6 @@ public class Controller {
         this.genView = genView;
         this.model = model;
         this.stage = stage;
-
-        model.addData("Pizza", "it's Pizza!");
-        model.addData("Pasta", "Mama Mia!");
 
         createDetailScene();
         createListScene();
@@ -58,10 +55,10 @@ public class Controller {
         this.genView.setStopButton(this::handleGenerateStopButton);
     }
 
-    private void loadrecipeList(){
+    private void loadrecipeList() {
         listView.getRecipeList().getChildren().clear();
         List<String> rlist = model.getRecipeList();
-        for(String i: rlist){
+        for (String i : rlist) {
             Recipe recipe = new Recipe(i);
             listView.getRecipeList().getChildren().add(0, recipe);
         }
@@ -76,6 +73,7 @@ public class Controller {
     private void createGenerateScene() {
         generateScene = new Scene(this.genView, 500, 600);
     }
+
     private void createDetailScene() {
         detailScene = new Scene(this.detView, 500, 600);
     }
@@ -86,7 +84,7 @@ public class Controller {
         stage.setScene(listScene);
     }
 
-    private void setGenerateScene(){
+    private void setGenerateScene() {
         stage.setScene(generateScene);
     }
 
@@ -105,29 +103,38 @@ public class Controller {
     private void handleBackButton(ActionEvent event) {
         setListScene();
     }
+
     private void handleGenerateBackButton(ActionEvent event) {
         setListScene();
     }
+
     private void handleGenerateStartButton(ActionEvent event) {
         model.startRec();
         Label rL = genView.getRecordingLabel();
         rL.setVisible(true);
-        
+
     }
+
     private void handleGenerateStopButton(ActionEvent event) {
         model.stopRec();
         Label rL = genView.getRecordingLabel();
         rL.setVisible(false);
         String recipe = model.genRecipe();
-        model.addData(recipe.split(":")[0].trim(), recipe);
-        setListScene();
+        detView.setNewRec(true);
+        detView.addDetails(recipe.split(":")[0].trim(), recipe);
+        setDetailScene();
     }
+
     private void handleGenerateButton(ActionEvent event) {
         setGenerateScene();
     }
 
     private void handleSaveButton(ActionEvent event) {
-        model.putData(detView.getCurrTitle(), detView.getDetailText());
+        if (detView.getNewRec()) {
+            model.addData(detView.getCurrTitle(), detView.getDetailText());
+            detView.setNewRec(false);
+        } else
+            model.putData(detView.getCurrTitle(), detView.getDetailText());
         setListScene();
     }
 
@@ -135,6 +142,5 @@ public class Controller {
         model.deleteData(detView.getCurrTitle());
         setListScene();
     }
-
 
 }

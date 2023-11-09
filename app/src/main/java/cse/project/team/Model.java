@@ -10,13 +10,13 @@ public class Model {
     private HashMap<String, String> data;
     private List<String> recipeList;
     private audioRec audio;
-    private test generation;
+    private genAPI generation;
 
     public Model() {
         data = new HashMap<String, String>();
         recipeList = new ArrayList<String>();
         audio = new audioRec();
-        generation = new test();
+        generation = new genAPI();
     }
 
     public void startRec(){

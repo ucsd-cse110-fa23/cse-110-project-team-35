@@ -110,19 +110,26 @@ public class Controller {
 
     private void handleGenerateStartButton(ActionEvent event) {
         model.startRec();
-        Label rL = genView.getRecordingLabel();
-        rL.setVisible(true);
+        genView.toggleRecLabel();
 
     }
 
     private void handleGenerateStopButton(ActionEvent event) {
         model.stopRec();
-        Label rL = genView.getRecordingLabel();
-        rL.setVisible(false);
-        String recipe = model.genRecipe();
-        detView.setNewRec(true);
-        detView.addDetails(recipe.split(":")[0].trim(), recipe);
+        detView.addDetails("Generating Recipe", "Generating Recipe. Please wait.......");
         setDetailScene();
+        Thread t = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        String recipe = model.genRecipe();
+                        detView.setNewRec(true);
+                        detView.addDetails(recipe.split(":")[0].trim(), recipe);
+                    }
+                });
+
+        t.start();
+        genView.reset();
     }
 
     private void handleGenerateButton(ActionEvent event) {

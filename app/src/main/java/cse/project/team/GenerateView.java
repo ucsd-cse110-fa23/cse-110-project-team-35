@@ -18,6 +18,7 @@ class GenerateView extends FlowPane {
     private Button stopButton;
     private Button backButton;
     private Label recordingLabel;
+    private Label genLabel;
     
     // Set a default style for buttons and fields - background color, font size,
     // italics
@@ -45,8 +46,13 @@ class GenerateView extends FlowPane {
 
         recordingLabel = new Label("Recording...");
         recordingLabel.setStyle(defaultLabelStyle);
+        recordingLabel.setVisible(false);
 
-        this.getChildren().addAll(startButton, stopButton, backButton, recordingLabel);
+        genLabel = new Label("Generating Recipe...");
+        genLabel.setStyle(defaultLabelStyle);
+        genLabel.setVisible(false);
+
+        this.getChildren().addAll(startButton, stopButton, backButton, recordingLabel, genLabel);
     }
 
     public void setStartButton(EventHandler<ActionEvent> eventHandler) {
@@ -61,8 +67,20 @@ class GenerateView extends FlowPane {
         backButton.setOnAction(eventHandler);
     }
 
-    public Label getRecordingLabel(){
-        return recordingLabel;
+    public void toggleRecLabel(){
+        if(recordingLabel.isVisible())
+            recordingLabel.setVisible(false);
+        else 
+            recordingLabel.setVisible(true);
+    }
+
+    public void setGenLabel() {
+        genLabel.setVisible(true);
+    }
+
+    public void reset() {
+        genLabel.setVisible(false);
+        recordingLabel.setVisible(false);
     }
     
     

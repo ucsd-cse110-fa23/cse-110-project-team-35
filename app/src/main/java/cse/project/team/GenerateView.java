@@ -8,6 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.geometry.Insets;
 import java.io.*;
+import java.net.URISyntaxException;
+
 import javax.sound.sampled.*;
 import javafx.event.*;
 
@@ -18,7 +20,7 @@ class GenerateView extends FlowPane {
     private AudioFormat audioFormat;
     private TargetDataLine targetDataLine;
     private Label recordingLabel;
-
+    private test generation = new test();
     // Set a default style for buttons and fields - background color, font size,
     // italics
     String defaultButtonStyle = "-fx-border-color: #000000; -fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px;";
@@ -63,6 +65,22 @@ class GenerateView extends FlowPane {
         // Stop Button
         stopButton.setOnAction(e -> {
             stopRecording();
+            
+            try {
+                generation.generate();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (URISyntaxException e1) {
+                e1.printStackTrace();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            /* 
+            try {
+                generation.generate();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }*/
         });
 
     }
@@ -116,7 +134,7 @@ class GenerateView extends FlowPane {
                                 targetDataLine);
 
                         // the file that will contain the audio data
-                        File audioFile = new File("recording.mp3");
+                        File audioFile = new File("recording2.mp3");
                         AudioSystem.write(
                                 audioInputStream,
                                 AudioFileFormat.Type.WAVE,

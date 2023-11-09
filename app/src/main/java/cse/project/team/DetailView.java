@@ -23,8 +23,10 @@ public class DetailView extends BorderPane{
     private Text titleText;
     private TextArea detailText;
     private String currTitle;
+    private Boolean newRec;
 
     public DetailView() {
+        newRec = false;
         header = new detailHeader();
         footer = new detailFooter();
 
@@ -109,6 +111,14 @@ public class DetailView extends BorderPane{
 
     public TextArea getDetailTextArea() {
         return detailText;
+    }
+
+    public boolean getNewRec(){
+        return newRec;
+    }
+
+    public void setNewRec(boolean val){
+        newRec = val;
     }
     
 }

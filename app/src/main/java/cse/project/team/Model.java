@@ -1,5 +1,7 @@
 package cse.project.team;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,10 +9,35 @@ import java.util.List;
 public class Model {
     private HashMap<String, String> data;
     private List<String> recipeList;
+    private audioRec audio;
+    private genAPI generation;
 
     public Model() {
         data = new HashMap<String, String>();
         recipeList = new ArrayList<String>();
+        audio = new audioRec();
+        generation = new genAPI();
+    }
+
+    public void startRec(){
+        audio.startRecording();
+    }
+
+    public void stopRec(){
+        audio.stopRecording();
+    }
+
+    public String genRecipe(){
+        try {
+                return generation.generate();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (URISyntaxException e1) {
+                e1.printStackTrace();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        return null;
     }
 
     public List<String> getRecipeList() {

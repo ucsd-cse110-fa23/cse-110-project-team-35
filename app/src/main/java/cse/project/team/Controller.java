@@ -1,5 +1,7 @@
 package cse.project.team;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class Controller {
@@ -18,7 +21,7 @@ public class Controller {
     private GenerateView genView;
     private Model model;
     private Stage stage;
-    private Scene listScene, detailScene,generateScene;
+    private Scene listScene, detailScene, generateScene;
     private List<String> recipeTitles;
 
     public Controller(ListView listView,
@@ -32,9 +35,6 @@ public class Controller {
         this.genView = genView;
         this.model = model;
         this.stage = stage;
-
-        model.addData("Pizza", "it's Pizza!");
-        model.addData("Pasta", "Mama Mia!");
 
         createDetailScene();
         createListScene();
@@ -50,12 +50,15 @@ public class Controller {
 
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
+
+        this.genView.setStartButton(this::handleGenerateStartButton);
+        this.genView.setStopButton(this::handleGenerateStopButton);
     }
 
-    private void loadrecipeList(){
+    private void loadrecipeList() {
         listView.getRecipeList().getChildren().clear();
         List<String> rlist = model.getRecipeList();
-        for(String i: rlist){
+        for (String i : rlist) {
             Recipe recipe = new Recipe(i);
             listView.getRecipeList().getChildren().add(0, recipe);
         }
@@ -70,6 +73,7 @@ public class Controller {
     private void createGenerateScene() {
         generateScene = new Scene(this.genView, 500, 600);
     }
+
     private void createDetailScene() {
         detailScene = new Scene(this.detView, 500, 600);
     }
@@ -80,7 +84,7 @@ public class Controller {
         stage.setScene(listScene);
     }
 
-    private void setGenerateScene(){
+    private void setGenerateScene() {
         stage.setScene(generateScene);
     }
 
@@ -99,21 +103,45 @@ public class Controller {
     private void handleBackButton(ActionEvent event) {
         setListScene();
     }
+
     private void handleGenerateBackButton(ActionEvent event) {
         setListScene();
     }
+
+    private void handleGenerateStartButton(ActionEvent event) {
+        model.startRec();
+        genView.toggleRecLabel();
+
+    }
+
+    private void handleGenerateStopButton(ActionEvent event) {
+        model.stopRec();
+        detView.addDetails("Generating Recipe", "Generating Recipe. Please wait.......");
+        setDetailScene();
+        Thread t = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        String recipe = model.genRecipe();
+                        detView.setNewRec(true);
+                        detView.addDetails(recipe.split(":")[0].trim(), recipe);
+                    }
+                });
+
+        t.start();
+        genView.reset();
+    }
+
     private void handleGenerateButton(ActionEvent event) {
-        Recipe recipe = new Recipe("Yogurt");
-        RecipeList recipeList = listView.getRecipeList();
-        recipeList.getChildren().add(0, recipe);
-        listView.setRecipeButtons(this::handleRecipeButtons);
-        model.addData("Yogurt", "Gurt");
-        
         setGenerateScene();
     }
 
     private void handleSaveButton(ActionEvent event) {
-        model.putData(detView.getCurrTitle(), detView.getDetailText());
+        if (detView.getNewRec()) {
+            model.addData(detView.getCurrTitle(), detView.getDetailText());
+            detView.setNewRec(false);
+        } else
+            model.putData(detView.getCurrTitle(), detView.getDetailText());
         setListScene();
     }
 
@@ -121,6 +149,5 @@ public class Controller {
         model.deleteData(detView.getCurrTitle());
         setListScene();
     }
-
 
 }

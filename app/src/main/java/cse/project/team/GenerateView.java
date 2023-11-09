@@ -17,10 +17,7 @@ class GenerateView extends FlowPane {
     private Button startButton;
     private Button stopButton;
     private Button backButton;
-    private AudioFormat audioFormat;
-    private TargetDataLine targetDataLine;
     private Label recordingLabel;
-    private test generation = new test();
     // Set a default style for buttons and fields - background color, font size,
     // italics
     String defaultButtonStyle = "-fx-border-color: #000000; -fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px;";
@@ -47,109 +44,23 @@ class GenerateView extends FlowPane {
         recordingLabel = new Label("Recording...");
         recordingLabel.setStyle(defaultLabelStyle);
 
-        this.getChildren().addAll(startButton, stopButton, backButton,recordingLabel);
-
-        // Get the audio format
-        audioFormat = getAudioFormat();
-
-        // Add the listeners to the buttons
-        addListeners();
+        this.getChildren().addAll(startButton, stopButton, backButton, recordingLabel);
     }
 
-    public void addListeners() {
-        // Start Button
-        startButton.setOnAction(e -> {
-            startRecording();
-        });
+    public void setStartButton(EventHandler<ActionEvent> eventHandler) {
+        startButton.setOnAction(eventHandler);
+    }
 
-        // Stop Button
-        stopButton.setOnAction(e -> {
-            stopRecording();
-            
-            try {
-                generation.generate();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            } catch (URISyntaxException e1) {
-                e1.printStackTrace();
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-            /* 
-            try {
-                generation.generate();
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }*/
-        });
-
+    public void setStopButton(EventHandler<ActionEvent> eventHandler) {
+        stopButton.setOnAction(eventHandler);
     }
 
     public void setBackButton(EventHandler<ActionEvent> eventHandler) {
         backButton.setOnAction(eventHandler);
     }
 
-    private AudioFormat getAudioFormat() {
-        // the number of samples of audio per second.
-        // 44100 represents the typical sample rate for CD-quality audio.
-        float sampleRate = 44100;
-
-        // the number of bits in each sample of a sound that has been digitized.
-        int sampleSizeInBits = 16;
-
-        // the number of audio channels in this format (1 for mono, 2 for stereo).
-        int channels = 1;
-
-        // whether the data is signed or unsigned.
-        boolean signed = true;
-
-        // whether the audio data is stored in big-endian or little-endian order.
-        boolean bigEndian = false;
-
-        return new AudioFormat(
-                sampleRate,
-                sampleSizeInBits,
-                channels,
-                signed,
-                bigEndian);
+    public Label getRecordingLabel(){
+        return recordingLabel;
     }
 
-    private void startRecording() {
-        Thread t = new Thread(
-            new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        // the format of the TargetDataLine
-                        DataLine.Info dataLineInfo = new DataLine.Info(
-                                TargetDataLine.class,
-                                audioFormat);
-                        // the TargetDataLine used to capture audio data from the microphone
-                        targetDataLine = (TargetDataLine) AudioSystem.getLine(dataLineInfo);
-                        targetDataLine.open(audioFormat);
-                        targetDataLine.start();
-                        recordingLabel.setVisible(true);
-                        // the AudioInputStream that will be used to write the audio data to a file
-                        AudioInputStream audioInputStream = new AudioInputStream(
-                                targetDataLine);
-
-                        // the file that will contain the audio data
-                        File audioFile = new File("recording2.mp3");
-                        AudioSystem.write(
-                                audioInputStream,
-                                AudioFileFormat.Type.WAVE,
-                                audioFile);
-                        recordingLabel.setVisible(false);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            });
-        t.start();
-    }
-
-    private void stopRecording() {
-        targetDataLine.stop();
-        targetDataLine.close();
-    }
 }

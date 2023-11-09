@@ -1,5 +1,7 @@
 package cse.project.team;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class Controller {
@@ -50,6 +53,9 @@ public class Controller {
 
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
+
+        this.genView.setStartButton(this::handleGenerateStartButton);
+        this.genView.setStopButton(this::handleGenerateStopButton);
     }
 
     private void loadrecipeList(){
@@ -102,13 +108,21 @@ public class Controller {
     private void handleGenerateBackButton(ActionEvent event) {
         setListScene();
     }
-    private void handleGenerateButton(ActionEvent event) {
-        Recipe recipe = new Recipe("Yogurt");
-        RecipeList recipeList = listView.getRecipeList();
-        recipeList.getChildren().add(0, recipe);
-        listView.setRecipeButtons(this::handleRecipeButtons);
-        model.addData("Yogurt", "Gurt");
+    private void handleGenerateStartButton(ActionEvent event) {
+        model.startRec();
+        Label rL = genView.getRecordingLabel();
+        rL.setVisible(true);
         
+    }
+    private void handleGenerateStopButton(ActionEvent event) {
+        model.stopRec();
+        Label rL = genView.getRecordingLabel();
+        rL.setVisible(false);
+        String recipe = model.genRecipe();
+        model.addData(recipe.split(":")[0].trim(), recipe);
+        setListScene();
+    }
+    private void handleGenerateButton(ActionEvent event) {
         setGenerateScene();
     }
 

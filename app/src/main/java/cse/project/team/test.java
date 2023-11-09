@@ -78,9 +78,9 @@ public class test {
         System.out.println("Error Result: " + errorResult);
     }
 
-    public void generate() throws IOException, URISyntaxException,Exception {
+    public String generate() throws IOException, URISyntaxException,Exception {
         // Create file object from file path
-        File file = new File("/Users/gaoyiming/Desktop/cse-110-project-team-35/recording.mp3");
+        File file = new File("../recording.mp3");
         // Set up HTTP connection
         URL url = new URI(API_ENDPOINT).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -118,7 +118,7 @@ public class test {
 
 
         // chat GPT starts here
-        String prompt = audio_generatedText;
+        String prompt = "Write an exiting title on the first line ended with a : then write a recipe with ingredients " + audio_generatedText;
         String number_of_token =  "100";
         int maxTokens = Integer.parseInt(number_of_token);
         
@@ -152,6 +152,7 @@ public class test {
         String generatedText = choices.getJSONObject(0).getString("text"); 
         
         System.out.println("ChatGPT response: \n"+generatedText);
+        return generatedText;
     }
 }
 

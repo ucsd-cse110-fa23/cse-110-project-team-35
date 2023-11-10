@@ -1,18 +1,13 @@
 package cse.project.team;
 
-import java.io.IOException;
-import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
-import java.util.HashMap;
 
 public class DetailView extends BorderPane{
-    private VBox details;
     private detailHeader header;
     private detailFooter footer;
     private ScrollPane scrollPane;
@@ -99,9 +94,6 @@ public class DetailView extends BorderPane{
         } else {
             editButton.setText("Enter Edit Mode");
             detailText.setEditable(false); // Disable editing in the TextArea
-            // Save the changes made in the TextArea, if needed
-            String updatedTitle = detailText.getText();
-            // You can process and save the updatedTitle as needed
         }
     }
 

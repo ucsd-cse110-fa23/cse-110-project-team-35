@@ -1,18 +1,10 @@
 package cse.project.team;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.Action;
-
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class Controller {
@@ -22,8 +14,6 @@ public class Controller {
     private Model model;
     private Stage stage;
     private Scene listScene, detailScene, generateScene;
-    private List<String> recipeTitles;
-
     public Controller(ListView listView,
             DetailView detView,
             GenerateView genView,

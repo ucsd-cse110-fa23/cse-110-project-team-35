@@ -52,7 +52,6 @@ public class Controller {
         this.listView.setGenerateButton(this::handleGenerateButton);
 
         this.genView.setStartButton(this::handleGenerateStartButton);
-        this.genView.setStopButton(this::handleGenerateStopButton);
     }
 
     private void loadrecipeList() {
@@ -109,27 +108,28 @@ public class Controller {
     }
 
     private void handleGenerateStartButton(ActionEvent event) {
-        model.startRec();
-        genView.toggleRecLabel();
+        if (((Button) event.getSource()).getText().equals("Start")) {
+            model.startRec();
+            genView.toggleRecLabel();
+            ((Button) event.getSource()).setText("Stop");
+        } else {
+            model.stopRec();
+            detView.addDetails("Generating Recipe", "Generating Recipe. Please wait.......");
+            setDetailScene();
+            Thread t = new Thread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            String recipe = model.genRecipe();
+                            detView.setNewRec(true);
+                            detView.addDetails(recipe.trim().split("\n")[0], recipe);
+                        }
+                    });
 
-    }
+            t.start();
+            genView.reset();
+        }
 
-    private void handleGenerateStopButton(ActionEvent event) {
-        model.stopRec();
-        detView.addDetails("Generating Recipe", "Generating Recipe. Please wait.......");
-        setDetailScene();
-        Thread t = new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        String recipe = model.genRecipe();
-                        detView.setNewRec(true);
-                        detView.addDetails(recipe.split(":")[0].trim(), recipe);
-                    }
-                });
-
-        t.start();
-        genView.reset();
     }
 
     private void handleGenerateButton(ActionEvent event) {

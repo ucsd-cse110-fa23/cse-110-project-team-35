@@ -1,0 +1,80 @@
+#generateButton {
+    -fx-background-color: #F3B709;
+    -fx-pref-width: 220px;
+    -fx-pref-height: 40px;
+    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;
+    -fx-border-width: 2px;
+    -fx-border-color: black;
+    -fx-effect: dropshadow(gaussian, black, 1, 1, 0, 2);
+    -fx-background-insets: 2px;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+}
+
+#generateButton:hover {
+    -fx-background-color: #88AFE8;
+}
+
+#footer {
+    -fx-padding: 30;
+    -fx-background-color: #EB6E52;
+    -fx-alignment: center;
+    -fx-border-width: 2px;
+    -fx-border-color: black;
+    -fx-border-radius: 20px 20px 0 0;
+    -fx-background-radius: 20px 20px 0 0;
+}
+
+#titleText {
+    -fx-font-size: 35;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, black, 0, 0, 0, 1);
+}
+
+#smileyText {
+    -fx-font-size: 35;
+    -fx-font-weight: bold;
+    -fx-font-family: serif;
+}
+
+#header {
+    -fx-padding: 60px 40px 0 30px;
+    -fx-background-color: #EFEBE3;
+    -fx-alignment: center-left;
+    -fx-spacing: 5px;
+}
+
+#listView {
+    -fx-background-color: #EFEBE3;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-outline: none;
+}
+
+#scrollPane {
+    -fx-background-color: #EFEBE3;
+    -fx-pref-width: 200px;
+    -fx-pref-height: 200px;
+}
+
+#recipeList {
+    -fx-spacing: 10px;
+    -fx-padding: 22px 30px 30px 30px;
+    -fx-background-color: #EFEBE3;
+}
+
+#recipe {
+    -fx-cursor: hand;
+    -fx-background-color: white;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-border-width: 2px;
+    -fx-border-color: black;
+    -fx-font-weight: bold;
+    -fx-pref-width: 300px;
+    -fx-pref-height: 50px;
+    -fx-background-insets: 2px;
+    -fx-effect: dropshadow(gaussian, black, 1, 1, 1, 1);
+    -fx-alignment: center-left;
+}

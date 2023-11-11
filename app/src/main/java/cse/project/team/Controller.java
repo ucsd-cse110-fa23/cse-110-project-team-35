@@ -64,7 +64,7 @@ public class Controller {
     private void createListScene() {
         loadrecipeList();
         listScene = new Scene(listView, WIDTH, HEIGHT);
-        listScene.getStylesheets().add("file:app/build/resources/listStyle.css");
+        listScene.getStylesheets().add("file:app/src/main/java/cse/project/team/listStyle.css");
     }
 
     private void createGenerateScene() {

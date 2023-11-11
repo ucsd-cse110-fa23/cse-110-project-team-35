@@ -17,6 +17,10 @@ public class Controller {
     private Model model;
     private Stage stage;
     private Scene listScene, detailScene, generateScene;
+
+    final int HEIGHT = 650;
+    final int WIDTH = 360;
+
     public Controller(ListView listView,
             DetailView detView,
             GenerateView genView,
@@ -33,17 +37,20 @@ public class Controller {
         createListScene();
         createGenerateScene();
 
+        model.addData("Creamy Spinach with Chicken Dinner", "Stuff");
+        model.addData("Also a long dinner recipe with many words", "Stuff");
+        model.addData("Milky chocolate-y breakfast recipe", "Stuff");
+
         setListScene();
 
         this.detView.setBackButton(this::handleBackButton);
         this.detView.setSaveButton(this::handleSaveButton);
         this.detView.setDeleteButton(this::handleDeleteButton);
 
-        this.genView.setBackButton(this::handleGenerateBackButton);
-
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
 
+        this.genView.setBackButton(this::handleGenerateBackButton);        
         this.genView.setStartButton(this::handleGenerateStartButton);
     }
 
@@ -59,15 +66,16 @@ public class Controller {
 
     private void createListScene() {
         loadrecipeList();
-        listScene = new Scene(listView, 500, 600);
+        listScene = new Scene(listView, WIDTH, HEIGHT);
+        listScene.getStylesheets().add("file:app/src/main/java/cse/project/team/listStyle.css");
     }
 
     private void createGenerateScene() {
-        generateScene = new Scene(this.genView, 500, 600);
+        generateScene = new Scene(this.genView, WIDTH, HEIGHT);
     }
 
     private void createDetailScene() {
-        detailScene = new Scene(this.detView, 500, 600);
+        detailScene = new Scene(this.detView, WIDTH, HEIGHT);
     }
 
     private void setListScene() {

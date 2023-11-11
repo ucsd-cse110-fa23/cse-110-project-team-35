@@ -1,10 +1,13 @@
 package cse.project.team;
 
+import java.util.Random;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.*;
 
 public class ListView extends BorderPane {
@@ -20,13 +23,17 @@ public class ListView extends BorderPane {
         recipeList = new RecipeList();
 
         scrollPane = new ScrollPane(recipeList);
-        scrollPane.setFitToHeight(true);
+        scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
+        scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setId("scrollPane");
 
         this.setCenter(recipeList);
         this.setTop(header);
         this.setCenter(scrollPane);
         this.setBottom(footer);
+        this.setId("listView");
 
         generateButton = footer.getGenerateButton();
     }
@@ -50,17 +57,18 @@ public class ListView extends BorderPane {
 
 class Recipe extends Button {
     Recipe(String name) {
-        this.setPrefSize(500, 20); // sets size of task
-        this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0; -fx-font-weight: bold; -fx-cursor: hand;");
         this.setText(name);
+        this.setId("recipe");
+        String[] colors = { "#F26B86", "#FFDFB6", "#05AEEF", "#0BBDA9", "#C1B7EE", "#89AFE8", "#F5EBC4" };
+        int randomNumber = new Random().nextInt(7);
+        this.setOnMouseEntered(e -> this.setStyle("-fx-background-color: " + colors[randomNumber]));
+        this.setOnMouseExited(e -> this.setStyle("-fx-background-color: white;"));
     }
 }
 
 class RecipeList extends VBox {
     RecipeList() {
-        this.setSpacing(5); 
-        this.setPrefSize(500, 560);
-        this.setStyle("-fx-background-color: #F0F8FF;");
+        this.setId("recipeList");
     }
 }
 
@@ -68,13 +76,10 @@ class Footer extends HBox {
     private Button generateButton;
 
     Footer() {
-        this.setPrefSize(500, 60);
-        this.setStyle("-fx-background-color: #F0F8FF;");
-        this.setSpacing(15);
-        generateButton = new Button("Generate Recipe");
-
+        generateButton = new Button("Generate a Recipe!");
+        generateButton.setId("generateButton");
         this.getChildren().addAll(generateButton);
-        this.setAlignment(Pos.CENTER);
+        this.setId("footer");
     }
 
     public Button getGenerateButton() {
@@ -85,12 +90,15 @@ class Footer extends HBox {
 
 class Header extends HBox {
     Header() {
-        this.setPrefSize(500, 60);
-        this.setStyle("-fx-background-color: #F0F8FF;");
-
         Text titleText = new Text("PantryPal");
-        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
-        this.getChildren().add(titleText);
-        this.setAlignment(Pos.CENTER);
+        Text smileyText = new Text(" ☺");
+        Circle face = new Circle(10, Color.YELLOW);
+        
+        smileyText.setTranslateX(face.getCenterX() - 42);
+        titleText.setId("titleText");
+        smileyText.setId("smileyText");
+
+        this.setId("header");
+        this.getChildren().addAll(titleText, face, smileyText);
     }
 }

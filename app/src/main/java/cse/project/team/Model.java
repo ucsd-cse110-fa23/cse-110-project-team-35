@@ -19,24 +19,24 @@ public class Model {
         generation = new genAPI();
     }
 
-    public void startRec(){
+    public void startRec() {
         audio.startRecording();
     }
 
-    public void stopRec(){
+    public void stopRec() {
         audio.stopRecording();
     }
 
-    public String genRecipe(){
+    public String genRecipe() {
         try {
-                return generation.generate();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            } catch (URISyntaxException e1) {
-                e1.printStackTrace();
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
+            return generation.generate();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        } catch (URISyntaxException e1) {
+            e1.printStackTrace();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
         return null;
     }
 

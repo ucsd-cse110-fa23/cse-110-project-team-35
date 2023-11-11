@@ -78,8 +78,6 @@ public class genAPI {
     }
 
     public String generate() throws IOException, URISyntaxException,Exception {
-        return "Mock Recipe Info";
-        /*
         // Create file object from file path
         File file = new File("../recording.mp3");
         // Set up HTTP connection
@@ -154,7 +152,6 @@ public class genAPI {
         
         System.out.println("ChatGPT response: \n"+generatedText);
         return generatedText;
-        */
     }
 }
 

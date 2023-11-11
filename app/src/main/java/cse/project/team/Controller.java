@@ -128,7 +128,7 @@ public class Controller {
 
     private void handleSaveButton(ActionEvent event) {
         if (detView.getNewRec()) {
-            model.addData(detView.getCurrTitle(), detView.getDetailText());
+            model.putData(detView.getCurrTitle(), detView.getDetailText());
             detView.setNewRec(false);
         } else
             model.putData(detView.getCurrTitle(), detView.getDetailText());

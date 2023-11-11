@@ -37,10 +37,6 @@ public class Controller {
         createListScene();
         createGenerateScene();
 
-        model.addData("Creamy Spinach with Chicken Dinner", "Stuff");
-        model.addData("Also a long dinner recipe with many words", "Stuff");
-        model.addData("Milky chocolate-y breakfast recipe", "Stuff");
-
         setListScene();
 
         this.detView.setBackButton(this::handleBackButton);

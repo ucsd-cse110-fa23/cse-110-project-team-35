@@ -7,6 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
+import org.bson.Document;
+import org.bson.conversions.Bson;
+
 public class Controller {
     private ListView listView;
     private DetailView detView;
@@ -46,9 +49,9 @@ public class Controller {
 
     private void loadrecipeList() {
         listView.getRecipeList().getChildren().clear();
-        List<String> rlist = model.getRecipeList();
-        for (String i : rlist) {
-            Recipe recipe = new Recipe(i);
+        List<Document> rlist = model.getRecipeList();
+        for (Document i : rlist) {
+            Recipe recipe = new Recipe(i.getString("title"));
             listView.getRecipeList().getChildren().add(0, recipe);
         }
         listView.setRecipeButtons(this::handleRecipeButtons);
@@ -139,5 +142,4 @@ public class Controller {
         model.deleteData(detView.getCurrTitle());
         setListScene();
     }
-
 }

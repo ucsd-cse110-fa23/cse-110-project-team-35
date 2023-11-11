@@ -11,7 +11,10 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
+
+import org.bson.types.ObjectId;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -20,15 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Model {
-    private HashMap<String, String> data;
-    private List<String> recipeList;
     private audioRec audio;
     private genAPI generation;
     private MongoCollection<Document> recipeCollection;
 
     public Model() {
-        data = new HashMap<String, String>();
-        recipeList = new ArrayList<String>();
         audio = new audioRec();
         generation = new genAPI();
         
@@ -61,37 +60,30 @@ public class Model {
         return null;
     }
 
-    public List<String> getRecipeList() {
-        return recipeList;
-    }
-
-    public HashMap<String, String> getData() {
-        return data;
-    }
-
-    public void addData(String title, String text) {
-        data.put(title, text);
-        recipeList.add(title);
+    public List<Document> getRecipeList() {
+        List<Document> recipes = recipeCollection.find().into(new ArrayList<>());
+        return recipes;
     }
 
     public void putData(String title, String text) {
-        Bson filter = eq(title);
-        Bson updateOperation = com.mongodb.client.model.Updates.push(title, text);
+        Bson filter = eq("title", title);
+        Bson updateOperation = com.mongodb.client.model.Updates.set("description", text);
         UpdateOptions options = new UpdateOptions().upsert(true);
         UpdateResult updateResult = recipeCollection.updateOne(filter, updateOperation, options);
-        data.put(title, text);
     }
 
     public void deleteData(String title) {
-        data.remove(title);
-        recipeList.remove(title);
+        Bson filter = eq("title", title);
+        recipeCollection.deleteOne(filter);
     }
 
     public String getDetails(String title) {
-        return data.get(title);
-    }
-
-    public MongoCollection<Document> getMongoCollection() {
-        return this.recipeCollection;
+        String result = "";
+        Bson filter = eq("title", title);
+        List<Document> target = recipeCollection.find(filter).into(new ArrayList<>());
+        for (Document i : target) {
+            result = i.getString("description");
+        }
+        return result;
     }
 }

@@ -22,7 +22,14 @@ public class RequestHandler implements HttpHandler {
 
     public RequestHandler() {
         generation = new genAPI();
+<<<<<<< HEAD
         MongoClient mongoClient = MongoClients.create("mongodb+srv://yig017:Gym201919@cluster0.cfigpzh.mongodb.net/?retryWrites=true&w=majority");
+=======
+
+        //String uri = "mongodb+srv://yax016:Xyg19970609@cluster0.tqvgogm.mongodb.net/?retryWrites=true&w=majority";
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://yig017:Gym201919@cluster0.cfigpzh.mongodb.net/?retryWrites=true&w=majority");
+        //MongoClient mongoClient = MongoClients.create(uri);
+>>>>>>> da968706891e56ce716c713abf09d547eec8e4ab
         MongoDatabase db = mongoClient.getDatabase("cse110_project");
         this.recipeCollection = db.getCollection("recipes");
     }

@@ -1,45 +1,19 @@
 package cse.project.team;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.text;
-
-import org.bson.Document;
-import org.bson.conversions.Bson;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.UpdateResult;
-
-import cse.project.team.server.audioRec;
-import cse.project.team.server.genAPI;
-
-import org.bson.types.ObjectId;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLEncoder;
 
 public class Model {
     private audioRec audio;
-    private genAPI generation;
-    private MongoCollection<Document> recipeCollection;
 
     public Model() {
         audio = new audioRec();
-        generation = new genAPI();
-        
-
-        String uri = "mongodb+srv://bbreeze:Breeze1011@cluster0.6mbm76b.mongodb.net/?retryWrites=true&w=majority";
-
-        MongoClient mongoClient = MongoClients.create(uri);
-        MongoDatabase db = mongoClient.getDatabase("cse110_project");
-        this.recipeCollection = db.getCollection("recipes");
     }
 
     public void startRec() {
@@ -50,43 +24,34 @@ public class Model {
         audio.stopRecording();
     }
 
-    public String genRecipe() {
+    public String performRequest(String method, String title, String details, String query) {
+        // Implement your HTTP request logic here and return the response
+
         try {
-            return generation.generate();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        } catch (URISyntaxException e1) {
-            e1.printStackTrace();
-        } catch (Exception e1) {
-            e1.printStackTrace();
+            String urlString = "http://localhost:8100/";
+            if (query != null) {
+                urlString += "?=" + URLEncoder.encode(query, "UTF-8");
+            }
+            URL url = new URI(urlString).toURL();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod(method);
+            conn.setDoOutput(true);
+
+            if (method.equals("POST") || method.equals("PUT")) {
+                OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+                out.write(title + "," + details);
+                out.flush();
+                out.close();
+            }
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            System.out.println("GETTING THIS STUFF: " + in);
+            String response = in.readLine();
+            in.close();
+            return response;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "Error: " + ex.getMessage();
         }
-        return null;
-    }
-
-    public List<Document> getRecipeList() {
-        List<Document> recipes = recipeCollection.find().into(new ArrayList<>());
-        return recipes;
-    }
-
-    public void putData(String title, String text) {
-        Bson filter = eq("title", title);
-        Bson updateOperation = com.mongodb.client.model.Updates.set("description", text);
-        UpdateOptions options = new UpdateOptions().upsert(true);
-        UpdateResult updateResult = recipeCollection.updateOne(filter, updateOperation, options);
-    }
-
-    public void deleteData(String title) {
-        Bson filter = eq("title", title);
-        recipeCollection.deleteOne(filter);
-    }
-
-    public String getDetails(String title) {
-        String result = "";
-        Bson filter = eq("title", title);
-        List<Document> target = recipeCollection.find(filter).into(new ArrayList<>());
-        for (Document i : target) {
-            result = i.getString("description");
-        }
-        return result;
     }
 }

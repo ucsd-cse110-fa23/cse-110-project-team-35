@@ -1,4 +1,4 @@
-package cse.project.team.server;
+package cse.project.team;
 
 import java.io.File;
 

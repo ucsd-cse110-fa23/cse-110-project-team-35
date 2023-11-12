@@ -52,9 +52,9 @@ public class Controller {
 
     private void loadrecipeList() {
         listView.getRecipeList().getChildren().clear();
-        List<Document> rlist = model.getRecipeList();
-        for (Document i : rlist) {
-            Recipe recipe = new Recipe(i.getString("title"));
+        String[] rlist = model.performRequest("GET",null,null,null).split("\\*");
+        for (String i : rlist) {
+            Recipe recipe = new Recipe(i);
             listView.getRecipeList().getChildren().add(0, recipe);
         }
         listView.setRecipeButtons(this::handleRecipeButtons);
@@ -96,7 +96,7 @@ public class Controller {
 
     private void handleRecipeButtons(ActionEvent event) {
         String recipeTitle = ((Button) event.getSource()).getText();
-        detView.addDetails(recipeTitle, model.getDetails(recipeTitle));
+        detView.addDetails(recipeTitle, model.performRequest("GET", null, null, recipeTitle));
         setDetailScene();
     }
 
@@ -123,10 +123,8 @@ public class Controller {
                     new Runnable() {
                         @Override
                         public void run() {
-                            String recipe = model.genRecipe();
-                            detView.setNewRec(true);
-                            String title = recipe.trim().split("\n")[0];
-                            detView.addDetails(title, recipe.trim().substring(title.length()+2));
+                            String[] recipe = model.performRequest("GEN", null, null, null).split("\\*");
+                            detView.addDetails(recipe[0], recipe[1]);
                         }
                     });
 
@@ -141,16 +139,12 @@ public class Controller {
     }
 
     private void handleSaveButton(ActionEvent event) {
-        if (detView.getNewRec()) {
-            model.putData(detView.getCurrTitle(), detView.getDetailText());
-            detView.setNewRec(false);
-        } else
-            model.putData(detView.getCurrTitle(), detView.getDetailText());
+        model.performRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), null);
         setListScene();
     }
 
     private void handleDeleteButton(ActionEvent event) {
-        model.deleteData(detView.getCurrTitle());
+        model.performRequest(null,null,null,detView.getCurrTitle());
         setListScene();
     }
 }

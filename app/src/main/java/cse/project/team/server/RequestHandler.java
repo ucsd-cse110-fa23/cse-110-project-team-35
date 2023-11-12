@@ -77,15 +77,18 @@ public class RequestHandler implements HttpHandler {
         if (query != null) {
             String title = URLDecoder.decode(query.substring(query.indexOf("=") + 1),"UTF-8");
             String result = title;
-            Document target = recipeCollection.find(eq("title", title.trim())).first();
-            return target.getString("description").trim();
+            Document target = recipeCollection.find(eq("title", title)).first();
+            System.out.println("DESC: " + target.getString("description"));
+    
+            return title;
         } else {
             StringBuilder response = new StringBuilder();
             List<Document> recipes = recipeCollection.find().into(new ArrayList<>());
             for (Document i : recipes) {
-                response.append(" * " + i.getString("title"));
+                response.append("*" + i.getString("title"));
             }
             return response.toString();
+
         }
     }
 

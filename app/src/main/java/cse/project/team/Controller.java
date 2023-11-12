@@ -96,7 +96,13 @@ public class Controller {
 
     private void handleRecipeButtons(ActionEvent event) {
         String recipeTitle = ((Button) event.getSource()).getText();
-        detView.addDetails(recipeTitle, model.performRequest("GET", null, null, recipeTitle));
+        String test = model.performRequest("GET", null, null, recipeTitle);
+        String result;
+        if(recipeTitle.equals(test))
+            result = "Equal";
+        else
+            result = "Not equal " + recipeTitle + " != " + test;
+        detView.addDetails(recipeTitle, result);
         setDetailScene();
     }
 

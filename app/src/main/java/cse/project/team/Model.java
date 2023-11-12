@@ -45,7 +45,6 @@ public class Model {
             }
 
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            System.out.println("GETTING THIS STUFF: " + in);
             String response = in.readLine();
             in.close();
             return response;

@@ -19,4 +19,4 @@ Sources used: <br>
 checking ci
 
 # Our Burndown Chart:
-<img width="782" alt="burndown" src="https://github.com/ucsd-cse110-fa23/cse-110-project-team-35/assets/97484485/f0809d73-1fb5-44c0-8125-c95ada627da4">
+![Burndown chart](burndown.png)

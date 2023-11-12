@@ -6,47 +6,54 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.geometry.Pos;
+import javafx.scene.text.TextFlow;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 import javafx.event.*;
 
-class GenerateView extends BorderPane{
+class GenerateView extends BorderPane {
     private Button startButton;
     private Button backButton;
     private Label recordingLabel;
     private genFooter footer;
     private genHeader header;
     private VBox textBox;
-    
-    // Set a default style for buttons and fields - background color, font size,
-    // italics
-    String defaultButtonStyle = "-fx-border-color: #000000; -fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px;";
-    String defaultLabelStyle = "-fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px; -fx-text-fill: red; visibility: hidden";
+
+    private int currentIndex;
+    private Timeline timeline;
 
     GenerateView() {
         footer = new genFooter();
         header = new genHeader();
         textBox = new VBox();
 
-        textBox.getChildren().add(new Text("Press start!"));
-        textBox.getChildren().add(new Text("Please say your prefered meal type (breakfast, lunch, dinner):"));
-        textBox.getChildren().add(new Text("Then state your ingredients:"));
-        textBox.getChildren().add(new Text("When you are finished recording, click stop"));
+        TextFlow promptFlow = new TextFlow();
+        Text prompt = new Text("Press start! " +
+                "For best results, list your prefered " +
+                "meal type--breakfast, lunch, or dinner--" +
+                "then state the ingredients you have available. " +
+                "When you are finished recording, click stop! " +
+                "Then just wait for the magic to brew.");
+        prompt.setWrappingWidth(300);
+        setAnimation(prompt, promptFlow);
 
-        // Add the buttons and text fields
         startButton = new Button("Start");
-        startButton.setStyle(defaultButtonStyle);
-
         backButton = new Button("Back");
-        backButton.setStyle(defaultButtonStyle);
-
-        footer.getChildren().addAll(startButton, backButton);
-
         recordingLabel = new Label("Recording...");
-        recordingLabel.setStyle(defaultLabelStyle);
+
+        textBox.getStyleClass().add("center");
+        promptFlow.getStyleClass().addAll("textBox", "largeBox");
+        startButton.getStyleClass().add("footerButton");
+        backButton.getStyleClass().add("footerButton");
+
+        recordingLabel.getStyleClass().add("textBox");
         recordingLabel.setVisible(false);
 
-        textBox.getChildren().add(recordingLabel);
+        footer.getChildren().addAll(startButton, backButton);
+        textBox.getChildren().addAll(promptFlow, recordingLabel);
+
         this.setCenter(textBox);
         this.setBottom(footer);
         this.setTop(header);
@@ -60,39 +67,60 @@ class GenerateView extends BorderPane{
         backButton.setOnAction(eventHandler);
     }
 
-    public void toggleRecLabel(){
-        if(recordingLabel.isVisible())
+    public void toggleRecLabel() {
+        if (recordingLabel.isVisible())
             recordingLabel.setVisible(false);
-        else 
+        else
             recordingLabel.setVisible(true);
+    }
+
+    public void startTextAnim() {
+        timeline.play();
+    }
+
+    public void setAnimation(Text prompt, TextFlow promptFlow) {
+        currentIndex = 0;
+        timeline = new Timeline(
+                new KeyFrame(Duration.seconds(5.0 / prompt.getText().length()), event -> {
+                    if (currentIndex < prompt.getText().length()) {
+                        char nextChar = prompt.getText().charAt(currentIndex);
+                        Text nextText = new Text(String.valueOf(nextChar));
+                        promptFlow.getChildren().add(nextText);
+                        currentIndex++;
+                    } else {
+                        timeline.stop();
+                    }
+                }));
+
+        timeline.setCycleCount(Timeline.INDEFINITE);
     }
 
     public void reset() {
         recordingLabel.setVisible(false);
         startButton.setText("Start");
+        enableBackButton();
     }
-    
-    
 
+    public void disableBackButton() {
+        backButton.setDisable(true);
+    }
+
+    public void enableBackButton() {
+        backButton.setDisable(false);
+    }
 }
 
 class genFooter extends HBox {
     genFooter() {
-        this.setPrefSize(500, 60);
-        this.setStyle("-fx-background-color: white");
-        this.setSpacing(15);
-        this.setAlignment(Pos.CENTER);
+        this.getStyleClass().add("footer");
     }
 }
 
 class genHeader extends HBox {
     genHeader() {
-        this.setPrefSize(500, 60); // Size of the header
-        this.setStyle("-fx-background-color: #F0F8FF;");
-
-        Text titleText = new Text("Generate Your Recipe"); // Text of the Header
-        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
+        Text titleText = new Text("Generate a recipe!");
+        titleText.getStyleClass().add("titleText");
+        this.getStyleClass().add("header");
         this.getChildren().add(titleText);
-        this.setAlignment(Pos.CENTER); // Align the text to the Center
     }
 }

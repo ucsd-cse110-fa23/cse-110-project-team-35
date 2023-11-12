@@ -32,13 +32,12 @@ public class Model {
         generation = new genAPI();
         
 
-        //String uri = "mongodb+srv://yax016:@cluster0.tqvgogm.mongodb.net/?retryWrites=true&w=majority";
+        String uri = "mongodb+srv://yax016:@cluster0.tqvgogm.mongodb.net/?retryWrites=true&w=majority";
 
-        //MongoClient mongoClient = MongoClients.create(uri);
-
-        MongoClient mongoClient = MongoClients.create("mongodb+srv://yig017:@cluster0.cfigpzh.mongodb.net/?retryWrites=true&w=majority");
+        MongoClient mongoClient = MongoClients.create(uri);
         MongoDatabase db = mongoClient.getDatabase("cse110_project");
         this.recipeCollection = db.getCollection("recipes");
+
     }
 
     public void startRec() {

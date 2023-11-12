@@ -1,4 +1,4 @@
-package cse.project.team;
+package cse.project.team.server;
 import java.io.*;
 import java.net.*;
 import org.json.JSONArray;

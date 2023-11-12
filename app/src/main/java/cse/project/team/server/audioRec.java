@@ -1,4 +1,4 @@
-package cse.project.team;
+package cse.project.team.server;
 
 import java.io.File;
 
@@ -13,7 +13,7 @@ public class audioRec {
     private AudioFormat audioFormat;
     private TargetDataLine targetDataLine;
 
-    audioRec(){
+    public audioRec(){
         audioFormat = getAudioFormat();
     }
 

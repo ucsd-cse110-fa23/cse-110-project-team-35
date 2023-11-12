@@ -14,6 +14,9 @@ import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 
+import cse.project.team.server.audioRec;
+import cse.project.team.server.genAPI;
+
 import org.bson.types.ObjectId;
 
 import java.io.IOException;

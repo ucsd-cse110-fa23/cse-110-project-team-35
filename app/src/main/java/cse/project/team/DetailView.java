@@ -80,8 +80,7 @@ public class DetailView extends BorderPane {
                     } else {
                         timeline.stop();
                     }
-                })
-        );
+                }));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
@@ -154,6 +153,13 @@ public class DetailView extends BorderPane {
 
     public void setNewRec(boolean val) {
         newRec = val;
+    }
+
+    public void disableButtons(Boolean value) {
+        back.setDisable(value);
+        editButton.setDisable(value);
+        saveButton.setDisable(value);
+        deleteButton.setDisable(value);
     }
 
 }

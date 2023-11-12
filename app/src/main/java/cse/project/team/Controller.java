@@ -116,6 +116,7 @@ public class Controller {
         } else {
             model.stopRec();
             detView.addDetails("Magic Happening", "Generating your new recipe! Please wait...");
+            detView.disableButtons(true);
             setDetailScene();
             Thread t = new Thread(
                     new Runnable() {
@@ -123,6 +124,7 @@ public class Controller {
                         public void run() {
                             String recipe = model.performRequest("GET", null, null,"Team35110");
                             detView.addDetails(recipe.split("\n")[0], recipe.substring(recipe.split("\n")[0].length()).trim());
+                            detView.disableButtons(false);
                         }
                     });
 

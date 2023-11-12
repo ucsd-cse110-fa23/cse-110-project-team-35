@@ -25,8 +25,6 @@ public class Model {
     }
 
     public String performRequest(String method, String title, String details, String query) {
-        // Implement your HTTP request logic here and return the response
-
         try {
             String urlString = "http://localhost:8100/";            
             if (query != null) {

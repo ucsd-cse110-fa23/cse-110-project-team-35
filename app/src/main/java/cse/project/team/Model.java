@@ -45,9 +45,17 @@ public class Model {
                 out.close();
             }
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String response = in.lines().collect(Collectors.joining("\n"));
-            in.close();
+            //BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            // String response = in.lines().collect(Collectors.joining("\n"));
+            StringBuilder resultStringBuilder = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    resultStringBuilder.append(line);
+                }
+            }
+            String response = resultStringBuilder.toString();
+            System.out.println("Model: " + response);
             return response;
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -54,6 +54,8 @@ public class Controller {
         listView.getRecipeList().getChildren().clear();
         String[] rlist = model.performRequest("GET",null,null,null).split("\\*");
         for (String i : rlist) {
+            if(i.length() == 0)
+                continue;
             Recipe recipe = new Recipe(i);
             listView.getRecipeList().getChildren().add(0, recipe);
         }
@@ -97,7 +99,7 @@ public class Controller {
     private void handleRecipeButtons(ActionEvent event) {
         String recipeTitle = ((Button) event.getSource()).getText();
         String details = model.performRequest("GET", null, null, recipeTitle);
-        detView.addDetails(recipeTitle, details);
+        detView.addDetails(recipeTitle, details.trim());
         setDetailScene();
     }
 
@@ -124,8 +126,9 @@ public class Controller {
                     new Runnable() {
                         @Override
                         public void run() {
-                            String[] recipe = model.performRequest("GEN", null, null, null).split("\\*");
-                            detView.addDetails(recipe[0], recipe[1]);
+                            String recipe = model.performRequest("GET", null, null,"Team35110");
+                            System.out.println("Controllor: " + recipe);
+                            detView.addDetails(recipe.split("\n")[0], recipe);
                         }
                     });
 

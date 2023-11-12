@@ -117,7 +117,7 @@ public class genAPI {
 
 
         // chat GPT starts here
-        String prompt = "Write an exiting title on the first line ended, then write a recipe with ingredients " + audio_generatedText;
+        String prompt = "Write a title on the first line followed by a single newline character, then write a recipe with ingredients " + audio_generatedText;
         String number_of_token =  "200";
         int maxTokens = Integer.parseInt(number_of_token);
         
@@ -150,8 +150,8 @@ public class genAPI {
         JSONArray choices = responseJson.getJSONArray("choices");
         String generatedText = choices.getJSONObject(0).getString("text"); 
         
-        System.out.println("ChatGPT response: \n"+generatedText);
-        return generatedText;
+        System.out.println("ChatGPT response: \n"+generatedText.trim());
+        return generatedText.trim();
     }
 }
 

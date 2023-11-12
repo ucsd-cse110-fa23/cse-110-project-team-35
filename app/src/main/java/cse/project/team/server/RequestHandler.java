@@ -5,7 +5,6 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.result.UpdateResult;
 import com.sun.net.httpserver.*;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -96,7 +95,7 @@ public class RequestHandler implements HttpHandler {
         Bson filter = eq("title", title);
         Bson updateOperation = com.mongodb.client.model.Updates.set("description", details);
         UpdateOptions options = new UpdateOptions().upsert(true);
-        UpdateResult updateResult = recipeCollection.updateOne(filter, updateOperation, options);
+        recipeCollection.updateOne(filter, updateOperation, options);
         scanner.close();
 
         return "Did Something?";

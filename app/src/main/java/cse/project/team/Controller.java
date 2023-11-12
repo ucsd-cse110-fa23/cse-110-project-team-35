@@ -122,7 +122,6 @@ public class Controller {
                         @Override
                         public void run() {
                             String recipe = model.performRequest("GET", null, null,"Team35110");
-                            System.out.println("Controllor: " + recipe);
                             detView.addDetails(recipe.split("\n")[0], recipe.substring(recipe.split("\n")[0].length()).trim());
                         }
                     });

@@ -145,7 +145,7 @@ public class Controller {
     }
 
     private void handleDeleteButton(ActionEvent event) {
-        model.performRequest(null,null,null,detView.getCurrTitle());
+        model.performRequest("DELETE",null,null,detView.getCurrTitle());
         setListScene();
     }
 }

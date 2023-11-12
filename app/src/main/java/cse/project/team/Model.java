@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.stream.Collectors;
 
 public class Model {
     private audioRec audio;
@@ -45,7 +46,7 @@ public class Model {
             }
 
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String response = in.readLine();
+            String response = in.lines().collect(Collectors.joining("\n"));
             in.close();
             return response;
         } catch (Exception ex) {

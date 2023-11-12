@@ -76,8 +76,9 @@ public class RequestHandler implements HttpHandler {
         
         if (query != null) {
             String title = URLDecoder.decode(query.substring(query.indexOf("=") + 1),"UTF-8");
-            String result = title;
             Document target = recipeCollection.find(eq("title", title)).first();
+
+            System.out.println(target.getString("description"));
     
             return target.getString("description");
         } else {
@@ -130,7 +131,7 @@ public class RequestHandler implements HttpHandler {
         String query = uri.getRawQuery();
         String response = "Could not delete";
         if (query != null) {
-            String title = query.substring(query.indexOf("=") + 1);
+            String title = URLDecoder.decode(query.substring(query.indexOf("=") + 1),"UTF-8");
             Bson filter = eq("title", title);
             recipeCollection.deleteOne(filter);
             response = "Deleted Entry";

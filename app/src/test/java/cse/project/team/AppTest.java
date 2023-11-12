@@ -1,8 +1,15 @@
 package cse.project.team;
-
+import cse.project.team.server.server;
 import org.junit.jupiter.api.Test;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import com.sun.net.httpserver.HttpServer;
 import static org.junit.jupiter.api.Assertions.*;
-
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,79 +18,94 @@ class AppTest {
     String m_details = "Get potatoes. Mash. Done.";
     String p_title = "Pancakes";
     String p_details = "Get cake. Get pan. Put cake in pan. Done.";
-
     
-    /* User Story 1 */
-    /*
+    @BeforeClass
+    public static void setUp() {
+        // Start the server in a separate thread
+        Thread serverThread = new Thread(() -> {
+            try {
+                cse.project.team.server.server.main(null); // You may need to adjust this based on your server class
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        serverThread.start();
+        // Add a delay to ensure the server is started before tests are executed
+        try {
+            Thread.sleep(2000); // Adjust the delay as needed
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+/* 
+    @AfterClass
+    public static void tearDown() {
+        // Stop the server
+        serverThread.interrupt();
+    }
+*/
+    private static final String SERVER_URL = "http://localhost:8100/";
+    // the server should be already running
     @Test
-    void viewRecipeListEmpty() {
-        Model classUnderTest = new Model();
-        List<String> recipeList = new ArrayList<>();
-        assertEquals(classUnderTest.getRecipeList(), recipeList);
+    public void testHandlePost() throws Exception{
+        String expectedResponse_title = "Mashed potat";
+        String expectedResponse_detail = m_details;
+        Model model = new Model();
+        String response_post = model.performRequest("POST",m_title,m_details,"m");
+        String response = model.performRequest("GET",m_title,m_details,null);
+        String response_detail = model.performRequest("GET", null, null, response);
+        assertEquals(expectedResponse_title, response);
+        assertEquals(expectedResponse_detail, response_detail);
     }
 
     @Test
-    void viewRecipeListSorted() {
-        Model classUnderTest = new Model();
-        classUnderTest.addData(m_title, m_details);
-        classUnderTest.addData(p_title, p_details);
+    public void testHandleGet() throws IOException {
 
-        List<String> recipeList = new ArrayList<>();
-        recipeList.add(m_title);
-        recipeList.add(p_title);
-        assertEquals(classUnderTest.getRecipeList(), recipeList);
+        String expectedResponse = "";
+        Model model = new Model();
+        // Perform the GET request
+        //String responseDelete = model.performRequest("DELETE", null, null, "Mashed potat");
+        String response = model.performRequest("GET",m_title,m_details,null);
+
+        assertEquals(expectedResponse, response);
     }
-
-    @Test
-    void viewDetailsNotEmpty() {
-        Model classUnderTest = new Model();
-        classUnderTest.addData(m_title, m_details);
-        assertEquals(classUnderTest.getDetails(m_title), m_details);
-    }
-
-    @Test
-    void viewDetailsInvalidTitle() {
-        Model classUnderTest = new Model();
-        assertEquals(classUnderTest.getDetails(m_title), null);
-    }
-
-    @Test
-    void viewDetailsEmpty() {
-        Model classUnderTest = new Model();
-        classUnderTest.addData(m_title, "");
-        assertEquals(classUnderTest.getDetails(m_title), "");
-    }
-
-    @Test
-    void saveRecipe() {
-        Model classUnderTest = new Model();
-        classUnderTest.putData(m_title, m_details);
-        classUnderTest.putData(m_title, p_details);
-        assertEquals(classUnderTest.getDetails(m_title), p_details);
-    }
-
-    @Test
-     void deleteRecipeInvalid() {
-        Model classUnderTest = new Model();
-        classUnderTest.addData(m_title, m_details);
-        classUnderTest.deleteData(p_title);
-
-        List<String> recipeList = new ArrayList<>();
-        recipeList.add(m_title);
-        assertEquals(classUnderTest.getRecipeList(), recipeList);
-     }
 
      @Test
-     void deleteRecipe() {
-        Model classUnderTest = new Model();
-        classUnderTest.addData(p_title, p_details);
-        classUnderTest.addData(m_title, m_details);
-        
-        List<String> recipeList = new ArrayList<>();
-        recipeList.add(p_title);
+    public void testHandlePUTandGET() throws IOException {
 
-        classUnderTest.deleteData(m_title);
-        assertEquals(classUnderTest.getRecipeList(), recipeList);
-     }
-     */
+        String expectedResponse_title = "Mashed potat";
+        String expectedResponse_detail = m_details;
+        String putdone = "Did Something?";
+        Model model = new Model();
+        String response_put = model.performRequest("PUT",m_title,m_details,null);
+        String response = model.performRequest("GET",m_title,m_details,null);
+
+         assertEquals(response_put, putdone);
+         assertEquals(expectedResponse_title, response);
+
+    }
+
+    @Test
+    public void testHandlePUT() throws IOException {
+        String expectedResponse_title = "Mashed potat";
+        String putdone = "Did Something?";
+        String expectedResponse_detail = m_details;
+        Model model = new Model();
+        String response_put = model.performRequest("PUT",m_title,m_details,null);
+         assertEquals(putdone, response_put);
+
+    }
+
+    @Test
+    public void testHandlDELETE() throws Exception{
+        String expectedResponse_title = "Mashed potat";
+        String expectedResponse_detail = m_details;
+        Model model = new Model();
+        String response_post = model.performRequest("PUT",m_title,m_details,null);
+        String response = model.performRequest("GET",m_title,m_details,null);
+        String response_detail = model.performRequest("GET", null, null, response);
+        String responseDelete = model.performRequest("DELETE", null, null, response);
+        assertEquals(expectedResponse_title, response);
+        assertEquals(expectedResponse_detail, response_detail);
+    }
 }

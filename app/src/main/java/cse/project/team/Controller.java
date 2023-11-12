@@ -128,7 +128,7 @@ public class Controller {
                         }
                     });
 
-            t.start();
+            t.start();  
             genView.reset();
         }
 

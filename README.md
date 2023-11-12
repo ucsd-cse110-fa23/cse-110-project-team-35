@@ -17,3 +17,6 @@ Sources used: <br>
     Use:           For information on switching scenes in JavaFX.<br>
 
 checking ci
+
+# Our Burndown Chart:
+![Burndown chart](burndown.png)

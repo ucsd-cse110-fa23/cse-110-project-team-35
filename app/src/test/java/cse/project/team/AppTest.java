@@ -47,6 +47,10 @@ class AppTest {
     private static final String SERVER_URL = "http://localhost:8100/";
     // the server should be already running
     @Test
+    public void testCheck() throws Exception{
+        assertEquals(1+1, 2);
+    }
+    @Test
     public void testHandlePost() throws Exception{
         String expectedResponse_title = "Mashed potat";
         String expectedResponse_detail = m_details;

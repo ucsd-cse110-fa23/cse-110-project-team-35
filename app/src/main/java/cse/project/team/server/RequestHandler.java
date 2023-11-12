@@ -78,9 +78,8 @@ public class RequestHandler implements HttpHandler {
             String title = URLDecoder.decode(query.substring(query.indexOf("=") + 1),"UTF-8");
             String result = title;
             Document target = recipeCollection.find(eq("title", title)).first();
-            System.out.println("DESC: " + target.getString("description"));
     
-            return title;
+            return target.getString("description");
         } else {
             StringBuilder response = new StringBuilder();
             List<Document> recipes = recipeCollection.find().into(new ArrayList<>());

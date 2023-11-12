@@ -34,7 +34,7 @@ public class Controller {
         createListScene();
         createGenerateScene();
 
-        model.addData("Creamy Spinach with Chicken Dinner", "Stuff");
+        model.addData("Creamy Spinach with Chicken Dinner", "as;dlkjflk aklsdj f;lkasjdfija sdfjaisdfasdf");
         model.addData("Also a long dinner recipe with many words", "Stuff");
         model.addData("Milky chocolate-y breakfast recipe", "Stuff");
 
@@ -64,15 +64,17 @@ public class Controller {
     private void createListScene() {
         loadrecipeList();
         listScene = new Scene(listView, WIDTH, HEIGHT);
-        listScene.getStylesheets().add("file:app/src/main/java/cse/project/team/listStyle.css");
+        listScene.getStylesheets().add("file:app/src/main/java/cse/project/team/style.css");
     }
 
     private void createGenerateScene() {
         generateScene = new Scene(this.genView, WIDTH, HEIGHT);
+        generateScene.getStylesheets().add("file:app/src/main/java/cse/project/team/style.css");
     }
 
     private void createDetailScene() {
         detailScene = new Scene(this.detView, WIDTH, HEIGHT);
+        detailScene.getStylesheets().add("file:app/src/main/java/cse/project/team/style.css");
     }
 
     private void setListScene() {
@@ -82,22 +84,25 @@ public class Controller {
     }
 
     private void setGenerateScene() {
+        genView.startTextAnim();
         stage.setScene(generateScene);
     }
 
     private void setDetailScene() {
-        detView.getEditButton().setText("Enter Edit Mode");
+        detView.setEditButtonTextToEdit();
         detView.getDetailTextArea().setEditable(false);
+        detView.getTitleTextArea().setEditable(false);
         stage.setScene(detailScene);
     }
 
     private void handleRecipeButtons(ActionEvent event) {
-        setDetailScene();
         String recipeTitle = ((Button) event.getSource()).getText();
         detView.addDetails(recipeTitle, model.getDetails(recipeTitle));
+        setDetailScene();
     }
 
     private void handleBackButton(ActionEvent event) {
+        detView.stopTextAnim();
         setListScene();
     }
 
@@ -107,12 +112,13 @@ public class Controller {
 
     private void handleGenerateStartButton(ActionEvent event) {
         if (((Button) event.getSource()).getText().equals("Start")) {
+            genView.disableBackButton();
             model.startRec();
             genView.toggleRecLabel();
             ((Button) event.getSource()).setText("Stop");
         } else {
             model.stopRec();
-            detView.addDetails("Generating Recipe", "Generating Recipe. Please wait.......");
+            detView.addDetails("Magic Happening", "Generating your new recipe! Please wait...");
             setDetailScene();
             Thread t = new Thread(
                     new Runnable() {
@@ -120,7 +126,8 @@ public class Controller {
                         public void run() {
                             String recipe = model.genRecipe();
                             detView.setNewRec(true);
-                            detView.addDetails(recipe.trim().split("\n")[0], recipe);
+                            String title = recipe.trim().split("\n")[0];
+                            detView.addDetails(title, recipe.trim().substring(title.length()+2));
                         }
                     });
 

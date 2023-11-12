@@ -27,13 +27,12 @@ public class ListView extends BorderPane {
         scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
-        scrollPane.setId("scrollPane");
+        scrollPane.getStyleClass().add("scrollPane");
 
         this.setCenter(recipeList);
         this.setTop(header);
         this.setCenter(scrollPane);
         this.setBottom(footer);
-        this.setId("listView");
 
         generateButton = footer.getGenerateButton();
     }
@@ -58,7 +57,7 @@ public class ListView extends BorderPane {
 class Recipe extends Button {
     Recipe(String name) {
         this.setText(name);
-        this.setId("recipe");
+        this.getStyleClass().add("textBox");
         String[] colors = { "#F26B86", "#FFDFB6", "#05AEEF", "#0BBDA9", "#C1B7EE", "#89AFE8", "#F5EBC4" };
         int randomNumber = new Random().nextInt(7);
         this.setOnMouseEntered(e -> this.setStyle("-fx-background-color: " + colors[randomNumber]));
@@ -68,7 +67,7 @@ class Recipe extends Button {
 
 class RecipeList extends VBox {
     RecipeList() {
-        this.setId("recipeList");
+        this.getStyleClass().add("center");
     }
 }
 
@@ -77,9 +76,9 @@ class Footer extends HBox {
 
     Footer() {
         generateButton = new Button("Generate a Recipe!");
-        generateButton.setId("generateButton");
+        generateButton.getStyleClass().add("footerButton");
         this.getChildren().addAll(generateButton);
-        this.setId("footer");
+        this.getStyleClass().add("footer");
     }
 
     public Button getGenerateButton() {
@@ -95,10 +94,10 @@ class Header extends HBox {
         Circle face = new Circle(10, Color.YELLOW);
         
         smileyText.setTranslateX(face.getCenterX() - 42);
-        titleText.setId("titleText");
-        smileyText.setId("smileyText");
+        titleText.getStyleClass().add("titleText");
+        smileyText.getStyleClass().add("smileyText");
 
-        this.setId("header");
+        this.getStyleClass().add("header");
         this.getChildren().addAll(titleText, face, smileyText);
     }
 }

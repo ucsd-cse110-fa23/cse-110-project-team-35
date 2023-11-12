@@ -32,7 +32,7 @@ public class Model {
         generation = new genAPI();
         
 
-        String uri = "";
+        String uri = "mongodb+srv://yax016:@cluster0.tqvgogm.mongodb.net/?retryWrites=true&w=majority";
 
         MongoClient mongoClient = MongoClients.create(uri);
         MongoDatabase db = mongoClient.getDatabase("cse110_project");

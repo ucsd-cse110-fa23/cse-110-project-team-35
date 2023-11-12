@@ -50,14 +50,12 @@ public class RequestHandler implements HttpHandler {
                 throw new Exception("Not Valid Request Method");
             }
         } catch (Exception e) {
-            System.out.println("An erroneous request, method: " + method);
             response = e.toString();
             e.printStackTrace();
         }
 
         // Sending back response to the client
-        System.out.println("Request out: " + response);
-        httpExchange.sendResponseHeaders(200, response.length());
+        httpExchange.sendResponseHeaders(200, response.getBytes().length);
         OutputStream outStream = httpExchange.getResponseBody();
         outStream.write(response.getBytes());
         outStream.flush();
@@ -72,7 +70,6 @@ public class RequestHandler implements HttpHandler {
             String title = URLDecoder.decode(query.substring(query.indexOf("=") + 1), "UTF-8");
             if (title.equals("Team35110")) {
                 String genResponse = genRecipe();
-                System.out.println(genResponse);
                 return genResponse;
             } else {
                 Document target = recipeCollection.find(eq("title", title)).first();
@@ -111,7 +108,6 @@ public class RequestHandler implements HttpHandler {
         InputStream inStream = httpExchange.getRequestBody();
         BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
         String postData = in.lines().collect(Collectors.joining("\n"));
-        System.out.println(postData);
         String title = postData.substring(
                 0,
                 postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1);

@@ -29,15 +29,16 @@ public class Model {
         // Implement your HTTP request logic here and return the response
 
         try {
-            String urlString = "http://localhost:8100/";
+            String urlString = "http://localhost:8100/";            
             if (query != null) {
                 urlString += "?=" + URLEncoder.encode(query, "UTF-8");
             }
-            URL url = new URI(urlString).toURL();
+            
+            URL url = new URI(urlString).toURL();            
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(method);
             conn.setDoOutput(true);
-
+            
             if (method.equals("POST") || method.equals("PUT")) {
                 OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
                 out.write(title + "," + details);
@@ -47,7 +48,6 @@ public class Model {
 
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String response = in.lines().collect(Collectors.joining("\n"));
-            System.out.println("Model: " + response);
             in.close();
             return response;
         } catch (Exception ex) {

@@ -9,8 +9,6 @@ import com.mongodb.client.result.UpdateResult;
 import com.sun.net.httpserver.*;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.text;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;

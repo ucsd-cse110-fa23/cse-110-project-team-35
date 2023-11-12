@@ -1,14 +1,9 @@
 package cse.project.team;
 
-import java.util.List;
-
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
-
-import org.bson.Document;
-import org.bson.conversions.Bson;
 
 public class Controller {
     private ListView listView;

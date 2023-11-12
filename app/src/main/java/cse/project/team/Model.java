@@ -1,5 +1,21 @@
 package cse.project.team;
 
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.text;
+
+import org.bson.Document;
+import org.bson.conversions.Bson;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
+
+import org.bson.types.ObjectId;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -7,62 +23,67 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Model {
-    private HashMap<String, String> data;
-    private List<String> recipeList;
     private audioRec audio;
     private genAPI generation;
+    private MongoCollection<Document> recipeCollection;
 
     public Model() {
-        data = new HashMap<String, String>();
-        recipeList = new ArrayList<String>();
         audio = new audioRec();
         generation = new genAPI();
+        
+
+        String uri = "mongodb+srv://bbreeze:Breeze1011@cluster0.6mbm76b.mongodb.net/?retryWrites=true&w=majority";
+
+        MongoClient mongoClient = MongoClients.create(uri);
+        MongoDatabase db = mongoClient.getDatabase("cse110_project");
+        this.recipeCollection = db.getCollection("recipes");
     }
 
-    public void startRec(){
+    public void startRec() {
         audio.startRecording();
     }
 
-    public void stopRec(){
+    public void stopRec() {
         audio.stopRecording();
     }
 
-    public String genRecipe(){
+    public String genRecipe() {
         try {
-                return generation.generate();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            } catch (URISyntaxException e1) {
-                e1.printStackTrace();
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
+            return generation.generate();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        } catch (URISyntaxException e1) {
+            e1.printStackTrace();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
         return null;
     }
 
-    public List<String> getRecipeList() {
-        return recipeList;
-    }
-
-    public HashMap<String, String> getData() {
-        return data;
-    }
-
-    public void addData(String title, String text) {
-        data.put(title, text);
-        recipeList.add(title);
+    public List<Document> getRecipeList() {
+        List<Document> recipes = recipeCollection.find().into(new ArrayList<>());
+        return recipes;
     }
 
     public void putData(String title, String text) {
-        data.put(title, text);
+        Bson filter = eq("title", title);
+        Bson updateOperation = com.mongodb.client.model.Updates.set("description", text);
+        UpdateOptions options = new UpdateOptions().upsert(true);
+        UpdateResult updateResult = recipeCollection.updateOne(filter, updateOperation, options);
     }
 
     public void deleteData(String title) {
-        data.remove(title);
-        recipeList.remove(title);
+        Bson filter = eq("title", title);
+        recipeCollection.deleteOne(filter);
     }
 
     public String getDetails(String title) {
-        return data.get(title);
+        String result = "";
+        Bson filter = eq("title", title);
+        List<Document> target = recipeCollection.find(filter).into(new ArrayList<>());
+        for (Document i : target) {
+            result = i.getString("description");
+        }
+        return result;
     }
 }

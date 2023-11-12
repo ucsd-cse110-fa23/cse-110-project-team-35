@@ -1,88 +1,126 @@
 package cse.project.team;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
-import javafx.geometry.Insets;
-import java.io.*;
-import java.net.URISyntaxException;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
-import javax.sound.sampled.*;
 import javafx.event.*;
 
-class GenerateView extends FlowPane {
+class GenerateView extends BorderPane {
     private Button startButton;
-    private Button stopButton;
     private Button backButton;
     private Label recordingLabel;
-    private Label genLabel;
-    
-    // Set a default style for buttons and fields - background color, font size,
-    // italics
-    String defaultButtonStyle = "-fx-border-color: #000000; -fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px;";
-    String defaultLabelStyle = "-fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px; -fx-text-fill: red; visibility: hidden";
+    private genFooter footer;
+    private genHeader header;
+    private VBox textBox;
+
+    private int currentIndex;
+    private Timeline timeline;
 
     GenerateView() {
-        
-        // Set properties for the flowpane
-        this.setPrefSize(370, 120);
-        this.setPadding(new Insets(5, 0, 5, 5));
-        this.setVgap(10);
-        this.setHgap(10);
-        this.setPrefWrapLength(170);
+        footer = new genFooter();
+        header = new genHeader();
+        textBox = new VBox();
 
-        // Add the buttons and text fields
+        TextFlow promptFlow = new TextFlow();
+        Text prompt = new Text("Press start! " +
+                "For best results, list your prefered " +
+                "meal type--breakfast, lunch, or dinner--" +
+                "then state the ingredients you have available. " +
+                "When you are finished recording, click stop! " +
+                "Then just wait for the magic to brew.");
+        prompt.setWrappingWidth(300);
+        setAnimation(prompt, promptFlow);
+
         startButton = new Button("Start");
-        startButton.setStyle(defaultButtonStyle);
-
-        stopButton = new Button("Stop");
-        stopButton.setStyle(defaultButtonStyle);
-
         backButton = new Button("Back");
-        backButton.setStyle(defaultButtonStyle);
-
         recordingLabel = new Label("Recording...");
-        recordingLabel.setStyle(defaultLabelStyle);
+
+        textBox.getStyleClass().add("center");
+        promptFlow.getStyleClass().addAll("textBox", "largeBox");
+        startButton.getStyleClass().add("footerButton");
+        backButton.getStyleClass().add("footerButton");
+
+        recordingLabel.getStyleClass().add("textBox");
         recordingLabel.setVisible(false);
 
-        genLabel = new Label("Generating Recipe...");
-        genLabel.setStyle(defaultLabelStyle);
-        genLabel.setVisible(false);
+        footer.getChildren().addAll(startButton, backButton);
+        textBox.getChildren().addAll(promptFlow, recordingLabel);
 
-        this.getChildren().addAll(startButton, stopButton, backButton, recordingLabel, genLabel);
+        this.setCenter(textBox);
+        this.setBottom(footer);
+        this.setTop(header);
     }
 
     public void setStartButton(EventHandler<ActionEvent> eventHandler) {
         startButton.setOnAction(eventHandler);
     }
 
-    public void setStopButton(EventHandler<ActionEvent> eventHandler) {
-        stopButton.setOnAction(eventHandler);
-    }
-
     public void setBackButton(EventHandler<ActionEvent> eventHandler) {
         backButton.setOnAction(eventHandler);
     }
 
-    public void toggleRecLabel(){
-        if(recordingLabel.isVisible())
+    public void toggleRecLabel() {
+        if (recordingLabel.isVisible())
             recordingLabel.setVisible(false);
-        else 
+        else
             recordingLabel.setVisible(true);
     }
 
-    public void setGenLabel() {
-        genLabel.setVisible(true);
+    public void startTextAnim() {
+        timeline.play();
+    }
+
+    public void setAnimation(Text prompt, TextFlow promptFlow) {
+        currentIndex = 0;
+        timeline = new Timeline(
+                new KeyFrame(Duration.seconds(5.0 / prompt.getText().length()), event -> {
+                    if (currentIndex < prompt.getText().length()) {
+                        char nextChar = prompt.getText().charAt(currentIndex);
+                        Text nextText = new Text(String.valueOf(nextChar));
+                        promptFlow.getChildren().add(nextText);
+                        currentIndex++;
+                    } else {
+                        timeline.stop();
+                    }
+                }));
+
+        timeline.setCycleCount(Timeline.INDEFINITE);
     }
 
     public void reset() {
-        genLabel.setVisible(false);
         recordingLabel.setVisible(false);
+        startButton.setText("Start");
+        enableBackButton();
     }
-    
-    
 
+    public void disableBackButton() {
+        backButton.setDisable(true);
+    }
+
+    public void enableBackButton() {
+        backButton.setDisable(false);
+    }
+}
+
+class genFooter extends HBox {
+    genFooter() {
+        this.getStyleClass().add("footer");
+    }
+}
+
+class genHeader extends HBox {
+    genHeader() {
+        Text titleText = new Text("Generate a recipe!");
+        titleText.getStyleClass().add("titleText");
+        this.getStyleClass().add("header");
+        this.getChildren().add(titleText);
+    }
 }

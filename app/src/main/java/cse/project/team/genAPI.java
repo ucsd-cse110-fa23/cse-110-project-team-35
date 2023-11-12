@@ -1,5 +1,4 @@
 package cse.project.team;
-import javax.sound.sampled.*;
 import java.io.*;
 import java.net.*;
 import org.json.JSONArray;
@@ -118,7 +117,7 @@ public class genAPI {
 
 
         // chat GPT starts here
-        String prompt = "Write an exiting title on the first line ended with a : then write a recipe with ingredients " + audio_generatedText;
+        String prompt = "Write an exiting title on the first line ended, then write a recipe with ingredients " + audio_generatedText;
         String number_of_token =  "200";
         int maxTokens = Integer.parseInt(number_of_token);
         

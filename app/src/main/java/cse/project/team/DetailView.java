@@ -1,70 +1,93 @@
 package cse.project.team;
 
-import java.io.IOException;
-import java.util.List;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
-import java.util.HashMap;
+import javafx.util.Duration;
 
-public class DetailView extends BorderPane{
-    private VBox details;
+public class DetailView extends BorderPane {
     private detailHeader header;
     private detailFooter footer;
-    private ScrollPane scrollPane;
+
     private Button back;
     private Button editButton;
     private Button saveButton;
     private Button deleteButton;
-    private Text titleText;
-    private TextArea detailText;
+
+    private TextArea titleText, detailText;
+
     private String currTitle;
     private Boolean newRec;
+    private int currentIndex;
+    private Timeline timeline;
 
     public DetailView() {
         newRec = false;
         header = new detailHeader();
         footer = new detailFooter();
 
-        // Create the "back" button and add it to the footer
         back = new Button("Back");
-        editButton = new Button("Enter Edit Mode");
+        editButton = new Button("Edit Mode");
         saveButton = new Button("Save Recipe");
         deleteButton = new Button("Delete Recipe");
 
-        footer.getChildren().add(editButton);
-        footer.getChildren().add(saveButton);
-        footer.getChildren().add(back);
-        footer.getChildren().add(deleteButton);
+        back.getStyleClass().add("footerButton");
+        saveButton.getStyleClass().add("footerButton");
+        editButton.getStyleClass().add("footerButton");
+        deleteButton.getStyleClass().add("footerButton");
 
-        scrollPane = new ScrollPane();
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
+        footer.add(editButton, 0, 0);
+        footer.add(saveButton, 0, 1);
+        footer.add(back, 1, 1);
+        footer.add(deleteButton, 1, 0);
+
+        titleText = new TextArea();
+        titleText.setWrapText(true);
+        titleText.setEditable(false);
+        titleText.getStyleClass().addAll("textBox", "extraPadding");
+
+        detailText = new TextArea();
+        detailText.setWrapText(true);
+        detailText.setEditable(false);
+        detailText.getStyleClass().addAll("textBox", "largeBox");
 
         VBox details = new VBox();
-        details.setStyle("-fx-background-color: yellow");
-        titleText = new Text("Recipe title: ");
-        detailText = new TextArea();
-        detailText.setPrefRowCount(28);
         details.getChildren().addAll(titleText, detailText);
-        detailText.setEditable(false);
+        details.getStyleClass().add("center");
 
-        scrollPane.setContent(details);
-
-        // Set the header at the top, the scroll pane in the center, and the footer at the bottom
         this.setTop(header);
-        this.setCenter(scrollPane);
+        this.setCenter(details);
         this.setBottom(footer);
 
-        // set button functionality
         editButton.setOnAction(event -> {
             toggleEditMode();
         });
 
+    }
+
+    public void setAnimation(String details) {
+        detailText.clear();
+        currentIndex = 0;
+        timeline = new Timeline(
+                new KeyFrame(Duration.seconds(0.01), event -> {
+                    if (currentIndex < details.length()) {
+                        detailText.appendText(String.valueOf(details.charAt(currentIndex)));
+                        currentIndex++;
+                    } else {
+                        timeline.stop();
+                    }
+                })
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+    public void stopTextAnim() {
+        timeline.stop();
     }
 
     public String getCurrTitle() {
@@ -77,8 +100,8 @@ public class DetailView extends BorderPane{
 
     public void addDetails(String title, String recipeDetails) {
         this.currTitle = title;
-        titleText.setText("Recipe title: " + title);
-        detailText.setText(recipeDetails);
+        titleText.setText(title);
+        setAnimation(recipeDetails);
     }
 
     public void setBackButton(EventHandler<ActionEvent> eventHandler) {
@@ -88,24 +111,32 @@ public class DetailView extends BorderPane{
     public void setSaveButton(EventHandler<ActionEvent> eventHandler) {
         saveButton.setOnAction(eventHandler);
     }
+
     public void setDeleteButton(EventHandler<ActionEvent> eventHandler) {
         deleteButton.setOnAction(eventHandler);
     }
 
     public void toggleEditMode() {
-        if ("Enter Edit Mode".equals(editButton.getText())) {
-            editButton.setText("Enter View Mode");
-            detailText.setEditable(true); // Enable editing in the TextArea
+        if ("Edit Mode".equals(editButton.getText())) {
+            setEditButtonTextToView();
+            titleText.setEditable(true);
+            detailText.setEditable(true);
         } else {
-            editButton.setText("Enter Edit Mode");
-            detailText.setEditable(false); // Disable editing in the TextArea
-            // Save the changes made in the TextArea, if needed
-            String updatedTitle = detailText.getText();
-            // You can process and save the updatedTitle as needed
+            setEditButtonTextToEdit();
+            titleText.setEditable(false);
+            detailText.setEditable(false);
         }
     }
 
-    public Button getEditButton(){
+    public void setEditButtonTextToEdit() {
+        editButton.setText("Edit Mode");
+    }
+
+    public void setEditButtonTextToView() {
+        editButton.setText("View Mode");
+    }
+
+    public Button getEditButton() {
         return editButton;
     }
 
@@ -113,33 +144,32 @@ public class DetailView extends BorderPane{
         return detailText;
     }
 
-    public boolean getNewRec(){
+    public TextArea getTitleTextArea() {
+        return titleText;
+    }
+
+    public boolean getNewRec() {
         return newRec;
     }
 
-    public void setNewRec(boolean val){
+    public void setNewRec(boolean val) {
         newRec = val;
     }
-    
+
 }
 
-class detailFooter extends HBox {
+class detailFooter extends GridPane {
     detailFooter() {
-        this.setPrefSize(500, 60);
-        this.setStyle("-fx-background-color: white");
-        this.setSpacing(15);
-        this.setAlignment(Pos.CENTER);
+        this.getStyleClass().add("footer");
     }
 }
 
 class detailHeader extends HBox {
     detailHeader() {
-        this.setPrefSize(500, 60); // Size of the header
-        this.setStyle("-fx-background-color: #F0F8FF;");
+        Text titleText = new Text("Recipe deets");
+        titleText.getStyleClass().add("titleText");
 
-        Text titleText = new Text("Recipe Detail"); // Text of the Header
-        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
+        this.getStyleClass().add("header");
         this.getChildren().add(titleText);
-        this.setAlignment(Pos.CENTER); // Align the text to the Center
     }
 }

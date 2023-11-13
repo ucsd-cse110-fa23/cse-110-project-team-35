@@ -84,3 +84,5 @@ Sources used: <br>
 
 # Our Burndown Chart:
 ![Burndown chart](burndown.png)
+
+Note: We marked US4 as finished for iteration 1. However, we decided to use MongoDB in iteration 2 to keep track of all data. So, I put US4 into iteration 2.

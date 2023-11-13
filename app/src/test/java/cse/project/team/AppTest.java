@@ -94,7 +94,7 @@ class AppTest {
     public void deleteThen(String title, String response) {
         assertEquals(response, handler.getRecDetail(title));
     }
-
+    //US7
     // Given voice input.
     // When the user use the start and stop button to record the voice input,
     // Then a general recipe will be generated based on the input voice.

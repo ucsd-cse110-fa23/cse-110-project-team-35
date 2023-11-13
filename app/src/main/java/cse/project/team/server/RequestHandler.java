@@ -127,7 +127,7 @@ public class RequestHandler implements HttpHandler {
             return genResponse;
         } else {
             Document target = recipeCollection.find(eq("title", title)).first();
-            return target.getString("description");
+            return (target == null) ? "Does not exist" : target.getString("description");
         }
     }
 

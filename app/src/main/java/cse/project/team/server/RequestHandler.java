@@ -153,4 +153,8 @@ public class RequestHandler implements HttpHandler {
         recipeCollection.deleteOne(filter);
     }
 
+    public void clear() {
+        recipeCollection.deleteMany(new Document());
+    }
+
 }

@@ -28,6 +28,21 @@ class AppTest {
     public void testCheck() throws Exception{
         assertEquals(1+1, 2);
     }
+
+    @Test
+    public void testHandleViewList() throws Exception{
+    }
+
+
+    @Test
+    public void testHandleViewDetails() throws Exception{
+        String expectedResponse_title = "Mashed potat";
+        String expectedResponse_detail = m_details;
+        RequestHandler rh = new RequestHandler(new genAPI());
+        String detail = rh.getRecDetail(m_title);
+        assertEquals(expectedResponse_detail, detail);
+    }
+
     @Test
     public void testHandlePost() throws Exception{
         String expectedResponse_title = "Mashed potat";

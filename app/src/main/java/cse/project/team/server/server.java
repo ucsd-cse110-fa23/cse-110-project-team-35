@@ -8,16 +8,13 @@ import java.util.concurrent.*;
 public class server {
     private static final int SERVER_PORT = 8100;
     private static final String SERVER_HOSTNAME = "localhost";
-    private static genI generation;
     static HttpServer server;
 
-    public server(genI genI) throws IOException{
-        generation = genI;
+    public server() throws IOException{
         init();
     }
 
     public static void main(String[] args) throws IOException {
-        generation = new genMock();
         init();
     }
 
@@ -37,7 +34,7 @@ public class server {
                      * handlers.
                      */
 
-        server.createContext("/", new RequestHandler(generation));
+        server.createContext("/", new RequestHandler(new genAPI()));
         server.setExecutor(threadPoolExecutor);
         server.start();
 

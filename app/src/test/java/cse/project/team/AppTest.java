@@ -1,25 +1,13 @@
 package cse.project.team;
 
 import cse.project.team.server.RequestHandler;
-import cse.project.team.server.genAPI;
 import cse.project.team.server.genMock;
-import cse.project.team.server.server;
-
 import org.junit.jupiter.api.BeforeEach;
+import cse.project.team.server.genI;
 import org.junit.jupiter.api.Test;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.jupiter.api.*;
-import com.sun.net.httpserver.HttpServer;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URISyntaxException;
 
 class AppTest {
     String m_title = "Mashed potat";
@@ -39,16 +27,32 @@ class AppTest {
         assertEquals(1 + 1, 2);
     }
 
+    // US3: Edit Recipe
     @Test
     public void testHandleEditRecipe() throws Exception {
-        String expectedResponse_detail = "Get potatoes. Mash. Done.";
-        handler.doPost(m_title, expectedResponse_detail);
-        String detail = handler.getRecDetail(m_title);
-        assertEquals(expectedResponse_detail, detail);
+        // Given a recipe title and details are visible
+        editGiven();
+        // When the user edits the recipe
+        editWhen(m_details);
+        // then the recipe should be saved
+        editThen(m_details);
+    }
+
+    public void editGiven() {
+        handler.doPost(p_title, p_details);
+    }
+
+    public void editWhen(String editedDetails) {
+        handler.doPost(p_title, editedDetails);
+    }
+
+    public void editThen(String editedDetails) {
+        String actualDetails = handler.getRecDetail(p_title);
+        assertEquals(editedDetails, actualDetails);
     }
 
     @Test
-    public void testEmptyList() throws Exception{
+    public void testEmptyList() throws Exception {
         String list = handler.getRecList();
         String expect = "";
         assertEquals(expect, list);
@@ -110,4 +114,29 @@ class AppTest {
     public void deleteThen(String title, String response) {
         assertEquals(response, handler.getRecDetail(title));
     }
+    //US7
+    // Given voice input.
+    // When the user use the start and stop button to record the voice input,
+    // Then a general recipe will be generated based on the input voice.
+    @Test
+    public void TestGen() throws Exception{
+        givenGen();
+        whenGen();
+        thenGen();
+    }
+
+    public void givenGen(){
+        
+    }
+
+    public void whenGen(){
+        
+    }
+
+    public void thenGen() throws IOException, URISyntaxException, Exception{
+        genI gen = new genMock();
+        String newGen = gen.generate();
+        assertEquals("Mashed potats?\n Take potatoe. Mash. Done. :)", newGen);
+    }
+
 }

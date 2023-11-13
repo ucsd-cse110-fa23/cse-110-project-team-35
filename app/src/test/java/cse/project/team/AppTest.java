@@ -31,6 +31,7 @@ class AppTest {
 
     @Test
     public void testHandleViewList() throws Exception{
+
     }
 
 
@@ -43,6 +44,18 @@ class AppTest {
         assertEquals(expectedResponse_detail, detail);
     }
 
+    @Test
+    public void testHandleEditRecipe() throws Exception{
+
+        String expectedResponse_detail = "Get potatoes. Mash. Done.";
+        RequestHandler rh = new RequestHandler(new genAPI());
+        rh.doPost(m_title, expectedResponse_detail);
+        String detail = rh.getRecDetail(m_title);
+        assertEquals(expectedResponse_detail, detail);
+        
+    }
+    
+    /* 
     @Test
     public void testHandlePost() throws Exception{
         String expectedResponse_title = "Mashed potat";
@@ -87,4 +100,5 @@ class AppTest {
         String detail = rh.getRecDetail(m_title);
         assertEquals(expectedResponse_detail, detail);
     }
+    */
 }

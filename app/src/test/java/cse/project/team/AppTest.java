@@ -12,10 +12,10 @@ import java.net.URISyntaxException;
 class AppTest {
     String mock_title = "Mashed potat";
     String mock_details = "Get potatoes. Mash. Done.";
-    
+
     String other_title = "Pancakes";
     String other_details = "Get cake. Get pan. Put cake in pan. Done.";
-    
+
     private static final String SERVER_URL = "http://localhost:8100/";
     RequestHandler handler = new RequestHandler(new genMock());
 
@@ -48,45 +48,6 @@ class AppTest {
         genI gen = givenGen();
         String result = whenGen(gen);
         thenGen(result);
-    }
-
-    public void editGiven() {
-        handler.doPost(other_title, other_details);
-    }
-
-    public void editWhen(String editedDetails) {
-        handler.doPost(other_title, editedDetails);
-    }
-
-    public void editThen(String editedDetails) {
-        String actualDetails = handler.getRecDetail(other_title);
-        assertEquals(editedDetails, actualDetails);
-    }
-
-    public void deleteGiven(String title, String details) {
-        handler.doPost(title, details);
-    }
-
-    public void deleteWhen(String title) {
-        handler.doDelete(title);
-    }
-
-    public void deleteThen(String title, String response) {
-        assertEquals(response, handler.getRecDetail(title));
-    }
-
-    public genI givenGen() {
-        genI gen = new genMock();
-        return gen;
-    }
-
-    public String whenGen(genI gen) throws IOException, URISyntaxException, Exception {
-        String newGen = gen.generate();
-        return newGen;
-    }
-
-    public void thenGen(String newGen) {
-        assertEquals("Mashed potats?\n Take potatoe. Mash. Done. :)", newGen);
     }
 
     @Test
@@ -132,6 +93,59 @@ class AppTest {
         assertEquals(detail, "2 lemons, butter, sugar, vanilla extract");
         assertNotEquals(detail, "2 lemons, butter, sugar");
         assertNotEquals(detail, outdatedDetail);
+    }
+
+    @Test
+    public void testEndToEnd() throws IOException, URISyntaxException, Exception {
+        genI gen = new genMock();
+        String newGen = gen.generate();
+        String title = newGen.split("\n")[0];
+        String details = newGen.substring(title.length());
+        handler.doPost(title, details);
+        assertEquals(details, handler.getRecDetail(title));
+        handler.doPost(title, other_details);
+        assertEquals(other_details, handler.getRecDetail(title));
+        handler.doDelete(title);
+        assertEquals("Does not exist", handler.getRecDetail(mock_title));
+    }
+
+    public void editGiven() {
+        handler.doPost(other_title, other_details);
+    }
+
+    public void editWhen(String editedDetails) {
+        handler.doPost(other_title, editedDetails);
+    }
+
+    public void editThen(String editedDetails) {
+        String actualDetails = handler.getRecDetail(other_title);
+        assertEquals(editedDetails, actualDetails);
+    }
+
+    public void deleteGiven(String title, String details) {
+        handler.doPost(title, details);
+    }
+
+    public void deleteWhen(String title) {
+        handler.doDelete(title);
+    }
+
+    public void deleteThen(String title, String response) {
+        assertEquals(response, handler.getRecDetail(title));
+    }
+
+    public genI givenGen() {
+        genI gen = new genMock();
+        return gen;
+    }
+
+    public String whenGen(genI gen) throws IOException, URISyntaxException, Exception {
+        String newGen = gen.generate();
+        return newGen;
+    }
+
+    public void thenGen(String newGen) {
+        assertEquals("Mashed potats?\n Take potatoe. Mash. Done. :)", newGen);
     }
 
 }

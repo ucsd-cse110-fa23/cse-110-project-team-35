@@ -1,5 +1,27 @@
 _CSE 110 Project: Team 35_
 
+# Our Burndown Chart:
+![Burndown chart](burndown.png)
+
+**VSCODE INSTRUCTIONS**
+# Instructions for Running App
+1. Clone the Repo
+2. Download JavaFX
+3. Create a launch.json file in the .vscode folder
+4. Add run arguments
+   
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "cse.project.team.App",
+            "projectName": "app",
+            "vmArgs": "--module-path '<PATH TO YOUR JAVAFX LIB DIR' --add-modules javafx.controls,javafx.fxml"
+        }
+   
+5. Run Server.java to start up the server which will process http requests
+6. Run App.java to launch the GUI and access the app's main functionality
+
 Sources used: <br>
   The getSource() Method <br>
     Link:           https://chortle.ccsu.edu/java5/notes/chap64/ch64_10.html<br>
@@ -81,8 +103,3 @@ Sources used: <br>
     Link:           https://stackoverflow.com/questions/33646317/typing-animation-on-a-text-with-javafx<br>
     Date captured:  11/2023<br>
     Use:            For information on using the Timeline and Keyframe classes to create a "typed out" animation in JavaFX.<br>
-
-# Our Burndown Chart:
-![Burndown chart](burndown.png)
-
-Note: We marked US4 as finished for iteration 1. However, we decided to use MongoDB in iteration 2 to keep track of all data. So, I put US4 into iteration 2.

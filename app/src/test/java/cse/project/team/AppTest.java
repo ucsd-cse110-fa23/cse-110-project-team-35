@@ -1,141 +1,151 @@
 package cse.project.team;
 
-import cse.project.team.server.server;
+import cse.project.team.server.RequestHandler;
+import cse.project.team.server.genMock;
+import org.junit.jupiter.api.BeforeEach;
+import cse.project.team.server.genI;
 import org.junit.jupiter.api.Test;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import com.sun.net.httpserver.HttpServer;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URISyntaxException;
 
 class AppTest {
-    String m_title = "Mashed potat";
-    String m_details = "Get potatoes. Mash. Done.";
-    String p_title = "Pancakes";
-    String p_details = "Get cake. Get pan. Put cake in pan. Done.";
-    private static server server;
+    String mock_title = "Mashed potat";
+    String mock_details = "Get potatoes. Mash. Done.";
 
-    @BeforeClass
-    public static void setUp() {
-        try {
-            server = new server();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    String other_title = "Pancakes";
+    String other_details = "Get cake. Get pan. Put cake in pan. Done.";
 
-    }
-
-    @AfterClass
-    public static void stopServer() {
-        server.stop();
-        
-    }
-    
     private static final String SERVER_URL = "http://localhost:8100/";
+    RequestHandler handler = new RequestHandler(new genMock());
 
-    // the server should be already running
-    @Test
-    public void testCheck() throws Exception{
-        assertEquals(1+1, 2);
-    }
-    @Test
-    public void testHandlePost() throws Exception{
-        try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        String expectedResponse_title = "Mashed potat";
-        String expectedResponse_detail = m_details;
-        Model model = new Model();
-        String response_post = model.performRequest("POST", m_title, m_details, "m");
-        String response = model.performRequest("GET", m_title, m_details, null);
-        String response_detail = model.performRequest("GET", null, null, response);
-        assertEquals(expectedResponse_title, response);
-        assertEquals(expectedResponse_detail, response_detail);
+    @BeforeEach
+    public void clearDatabase() {
+        handler.clear();
     }
 
     @Test
-    public void testHandleGet() throws IOException {
-        try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-        String expectedResponse = "";
-        Model model = new Model();
-        // Perform the GET request
-        // String responseDelete = model.performRequest("DELETE", null, null, "Mashed
-        // potat");
-        String response = model.performRequest("GET", m_title, m_details, null);
-
-        assertEquals(expectedResponse, response);
+    public void basicTestCheck() throws Exception {
+        assertEquals(1 + 1, 2);
     }
 
     @Test
-    public void testHandlePUTandGET() throws IOException {
-        try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-        String expectedResponse_title = "Mashed potat";
-        String expectedResponse_detail = m_details;
-        String putdone = "Did Something?";
-        Model model = new Model();
-        String response_put = model.performRequest("PUT", m_title, m_details, null);
-        String response = model.performRequest("GET", m_title, m_details, null);
-
-        assertEquals(response_put, putdone);
-        assertEquals(expectedResponse_title, response);
-
+    public void testHandleEdit() throws Exception {
+        editGiven();
+        editWhen(mock_details);
+        editThen(mock_details);
     }
 
     @Test
-    public void testHandlePUT() throws IOException {
-        try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        String expectedResponse_title = "Mashed potat";
-        String putdone = "Did Something?";
-        String expectedResponse_detail = m_details;
-        Model model = new Model();
-        String response_put = model.performRequest("PUT", m_title, m_details, null);
-        assertEquals(putdone, response_put);
-
+    public void testHandleDelete() throws Exception {
+        deleteGiven(mock_title, mock_details);
+        deleteWhen(mock_title);
+        deleteThen(mock_title, "Does not exist");
     }
 
     @Test
-    public void testHandlDELETE() throws Exception {
-        try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        String expectedResponse_title = "Mashed potat";
-        String expectedResponse_detail = m_details;
-        Model model = new Model();
-        String response_post = model.performRequest("PUT", m_title, m_details, null);
-        String response = model.performRequest("GET", m_title, m_details, null);
-        String response_detail = model.performRequest("GET", null, null, response);
-        String responseDelete = model.performRequest("DELETE", null, null, response);
-        assertEquals(expectedResponse_title, response);
-        assertEquals(expectedResponse_detail, response_detail);
+    public void testGen() throws Exception {
+        genI gen = givenGen();
+        String result = whenGen(gen);
+        thenGen(result);
     }
+
+    @Test
+    public void testViewEmptyList() throws Exception {
+        String list = handler.getRecList();
+        String expect = "";
+        assertEquals(expect, list);
+    }
+
+    @Test
+    public void testViewFullList() throws Exception {
+        handler.doPost(mock_title, mock_details);
+        handler.doPost(other_title, other_details);
+        String list = handler.getRecList();
+        String expect = mock_title + "*" + other_title;
+        assertEquals(expect, list);
+        handler.clear();
+    }
+
+    @Test
+    public void testViewDetail() throws Exception {
+        String expectedResponse_detail = "Get potatoes. Mash. Done.";
+        handler.doPost(mock_title, mock_details);
+        String detail = handler.getRecDetail(mock_title);
+        assertEquals(expectedResponse_detail, detail);
+    }
+
+    @Test
+    public void testSaveNew() throws Exception {
+        handler.doPost("apple pie", "3 apples, cinnamon, 1 cup brown sugar");
+        String appleDetail = handler.getRecDetail("apple pie");
+        String rhubarbDetail = handler.getRecDetail("rhubarb pie");
+        assertEquals(appleDetail, "3 apples, cinnamon, 1 cup brown sugar");
+        assertEquals(rhubarbDetail, "Does not exist");
+    }
+
+    @Test
+    public void testSaveEdited() throws Exception {
+        handler.doPost("lemon meringue", "2 lemons, butter, sugar");
+        String outdatedDetail = handler.getRecDetail("lemon meringue");
+        handler.doPost("lemon meringue", "2 lemons, butter, sugar, vanilla extract");
+        String detail = handler.getRecDetail("lemon meringue");
+        assertEquals(detail, "2 lemons, butter, sugar, vanilla extract");
+        assertNotEquals(detail, "2 lemons, butter, sugar");
+        assertNotEquals(detail, outdatedDetail);
+    }
+
+    @Test
+    public void testEndToEnd() throws IOException, URISyntaxException, Exception {
+        genI gen = new genMock();
+        String newGen = gen.generate();
+        String title = newGen.split("\n")[0];
+        String details = newGen.substring(title.length());
+        handler.doPost(title, details);
+        assertEquals(details, handler.getRecDetail(title));
+        handler.doPost(title, other_details);
+        assertEquals(other_details, handler.getRecDetail(title));
+        handler.doDelete(title);
+        assertEquals("Does not exist", handler.getRecDetail(mock_title));
+    }
+
+    public void editGiven() {
+        handler.doPost(other_title, other_details);
+    }
+
+    public void editWhen(String editedDetails) {
+        handler.doPost(other_title, editedDetails);
+    }
+
+    public void editThen(String editedDetails) {
+        String actualDetails = handler.getRecDetail(other_title);
+        assertEquals(editedDetails, actualDetails);
+    }
+
+    public void deleteGiven(String title, String details) {
+        handler.doPost(title, details);
+    }
+
+    public void deleteWhen(String title) {
+        handler.doDelete(title);
+    }
+
+    public void deleteThen(String title, String response) {
+        assertEquals(response, handler.getRecDetail(title));
+    }
+
+    public genI givenGen() {
+        genI gen = new genMock();
+        return gen;
+    }
+
+    public String whenGen(genI gen) throws IOException, URISyntaxException, Exception {
+        String newGen = gen.generate();
+        return newGen;
+    }
+
+    public void thenGen(String newGen) {
+        assertEquals("Mashed potats?\n Take potatoe. Mash. Done. :)", newGen);
+    }
+
 }

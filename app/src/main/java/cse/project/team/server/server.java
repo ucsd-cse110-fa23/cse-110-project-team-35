@@ -5,24 +5,17 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.*;
 
-import org.checkerframework.checker.units.qual.s;
-
 public class server {
-
-    // initialize server port and hostname
     private static final int SERVER_PORT = 8100;
     private static final String SERVER_HOSTNAME = "localhost";
     static HttpServer server;
 
-    
     public server() throws IOException{
         init();
     }
 
     public static void main(String[] args) throws IOException {
         init();
-                
-
     }
 
     public static void init() throws IOException{
@@ -52,7 +45,4 @@ public class server {
     public void stop() {
         server.stop(0);
     }
-
-    
-
 }

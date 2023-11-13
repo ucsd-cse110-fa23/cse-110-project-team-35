@@ -42,7 +42,11 @@ class AppTest {
 
     // the server should be already running
     @Test
-    public void testHandlePost() throws Exception {
+    public void testCheck() throws Exception{
+        assertEquals(1+1, 2);
+    }
+    @Test
+    public void testHandlePost() throws Exception{
         String expectedResponse_title = "Mashed potat";
         String expectedResponse_detail = m_details;
         Model model = new Model();

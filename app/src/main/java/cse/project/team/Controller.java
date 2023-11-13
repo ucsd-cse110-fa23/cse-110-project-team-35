@@ -12,6 +12,9 @@ public class Controller {
     private Model model;
     private Stage stage;
     private Scene listScene, detailScene, generateScene;
+    
+    static final String S = System.getProperty("file.separator");
+    static final String STYLESHEET = "file:app"+S+"src"+S+"main"+S+"java"+S+"cse"+S+"project"+S+"team"+S+"style.css";
 
     final int HEIGHT = 650;
     final int WIDTH = 360;
@@ -60,17 +63,17 @@ public class Controller {
     private void createListScene() {
         loadrecipeList();
         listScene = new Scene(listView, WIDTH, HEIGHT);
-        listScene.getStylesheets().add("file:app/src/main/java/cse/project/team/style.css");
+        listScene.getStylesheets().add(STYLESHEET);
     }
 
     private void createGenerateScene() {
         generateScene = new Scene(this.genView, WIDTH, HEIGHT);
-        generateScene.getStylesheets().add("file:app/src/main/java/cse/project/team/style.css");
+        generateScene.getStylesheets().add(STYLESHEET);
     }
 
     private void createDetailScene() {
         detailScene = new Scene(this.detView, WIDTH, HEIGHT);
-        detailScene.getStylesheets().add("file:app/src/main/java/cse/project/team/style.css");
+        detailScene.getStylesheets().add(STYLESHEET);
     }
 
     private void setListScene() {

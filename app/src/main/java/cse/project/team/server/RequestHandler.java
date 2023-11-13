@@ -17,11 +17,11 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 public class RequestHandler implements HttpHandler {
-    private genAPI generation;
     private MongoCollection<Document> recipeCollection;
+    private genI generation;
 
-    public RequestHandler() {
-        generation = new genAPI();
+    public RequestHandler(genI generation) {
+        this.generation = generation;
         MongoClient mongoClient = MongoClients.create("mongodb+srv://yig017:Gym201919@cluster0.cfigpzh.mongodb.net/?retryWrites=true&w=majority");
         MongoDatabase db = mongoClient.getDatabase("cse110_project");
         this.recipeCollection = db.getCollection("recipes");
@@ -111,7 +111,7 @@ public class RequestHandler implements HttpHandler {
         recipeCollection.updateOne(filter, updateOperation, options);
         in.close();
 
-        return "Did Something?";
+        return "Did Something";
     }
 
     private String handleDelete(HttpExchange httpExchange) throws IOException {

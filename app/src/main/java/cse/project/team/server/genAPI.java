@@ -5,7 +5,7 @@ import org.json.JSONArray;
 import java.net.http.*;
 import org.json.JSONObject;
 import org.json.JSONException;
-public class genAPI {
+public class genAPI implements genI {
     private static final String API_ENDPOINT = "https://api.openai.com/v1/audio/transcriptions";
     private static final String TOKEN = "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";
     private static final String MODEL = "whisper-1";

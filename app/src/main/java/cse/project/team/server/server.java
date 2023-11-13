@@ -28,7 +28,7 @@ public class server {
                      * handlers.
                      */
 
-        server.createContext("/", new RequestHandler());
+        server.createContext("/", new RequestHandler(new genAPI()));
         server.setExecutor(threadPoolExecutor);
         server.start();
 

@@ -11,8 +11,6 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        server server = new server();
-        Thread.sleep(1000);
         ListView listView = new ListView();
         DetailView detView = new DetailView();
         GenerateView genView = new GenerateView();

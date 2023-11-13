@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.jupiter.api.*;
 import com.sun.net.httpserver.HttpServer;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
@@ -25,7 +26,7 @@ class AppTest {
     private static final String SERVER_URL = "http://localhost:8100/";
     RequestHandler handler = new RequestHandler(new genAPI());
 
-    @Before
+    @BeforeEach
     public void clearDatabase() {;
         handler.clear();
     }

@@ -36,6 +36,14 @@ class AppTest {
         assertEquals(1+1, 2);
     }
 
+    @Test
+    public void testHandleViewDetail() throws Exception{
+        String expectedResponse_detail = "Get potatoes. Mash. Done.";
+        RequestHandler rh = new RequestHandler(new genAPI());
+        String detail = rh.getRecDetail(m_title);
+        assertEquals(expectedResponse_detail, detail);
+        
+    }
 
     @Test
     public void testHandleEditRecipe() throws Exception{

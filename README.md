@@ -3,15 +3,12 @@ _CSE 110 Project: Team 35_
 # Our Burndown Chart:
 ![Burndown chart](burndown.png)
 
+**VSCODE INSTRUCTIONS**
 # Instructions for Running App
 1. Clone the Repo
 2. Download JavaFX
-
-**VSCODE INSTRUCTIONS**
-
-
-4. Create a launch.json file in the .vscode folder
-5. Add run arguments
+3. Create a launch.json file in the .vscode folder
+4. Add run arguments
    
         {
             "type": "java",
@@ -22,8 +19,8 @@ _CSE 110 Project: Team 35_
             "vmArgs": "--module-path '<PATH TO YOUR JAVAFX LIB DIR' --add-modules javafx.controls,javafx.fxml"
         }
    
-6. Run Server.java to start up the server which will process http requests
-7. Run App.java to launch the GUI and access the app's main functionality
+5. Run Server.java to start up the server which will process http requests
+6. Run App.java to launch the GUI and access the app's main functionality
 
 Sources used: <br>
   The getSource() Method <br>

@@ -3,6 +3,11 @@ _CSE 110 Project: Team 35_
 # Our Burndown Chart:
 ![Burndown chart](burndown.png)
 
+# Instructions for Running App
+1. Make sure JavaFX dependencies are present on your local machine and configured correctly in your launch.json file or otherwise
+2. Run Server.java to start up the server which will process http requests
+3. Run App.java to launch the GUI and access the app's main functionality
+
 Sources used: <br>
   The getSource() Method <br>
     Link:           https://chortle.ccsu.edu/java5/notes/chap64/ch64_10.html<br>

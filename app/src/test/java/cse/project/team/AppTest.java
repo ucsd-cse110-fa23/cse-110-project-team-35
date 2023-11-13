@@ -1,9 +1,6 @@
 package cse.project.team;
 
-<<<<<<< HEAD
 import cse.project.team.server.RequestHandler;
-=======
->>>>>>> 4cebd11c9db823d7a8004ab39a61f01553849db9
 import cse.project.team.server.genAPI;
 import cse.project.team.server.server;
 import org.junit.jupiter.api.Test;

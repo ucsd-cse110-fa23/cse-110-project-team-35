@@ -13,7 +13,7 @@ public class audioRec {
     private AudioFormat audioFormat;
     private TargetDataLine targetDataLine;
 
-    audioRec(){
+    public audioRec(){
         audioFormat = getAudioFormat();
     }
 

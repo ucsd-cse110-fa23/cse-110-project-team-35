@@ -1,14 +1,9 @@
 package cse.project.team;
 
-import java.util.List;
-
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
-
-import org.bson.Document;
-import org.bson.conversions.Bson;
 
 public class Controller {
     private ListView listView;
@@ -17,6 +12,9 @@ public class Controller {
     private Model model;
     private Stage stage;
     private Scene listScene, detailScene, generateScene;
+    
+    static final String S = System.getProperty("file.separator");
+    static final String STYLESHEET = "file:app"+S+"src"+S+"main"+S+"java"+S+"cse"+S+"project"+S+"team"+S+"style.css";
 
     final int HEIGHT = 650;
     final int WIDTH = 360;
@@ -52,9 +50,11 @@ public class Controller {
 
     private void loadrecipeList() {
         listView.getRecipeList().getChildren().clear();
-        List<Document> rlist = model.getRecipeList();
-        for (Document i : rlist) {
-            Recipe recipe = new Recipe(i.getString("title"));
+        String[] rlist = model.performRequest("GET",null,null,null).split("\\*");
+        for (String i : rlist) {
+            if(i.length() == 0)
+                continue;
+            Recipe recipe = new Recipe(i);
             listView.getRecipeList().getChildren().add(0, recipe);
         }
         listView.setRecipeButtons(this::handleRecipeButtons);
@@ -63,17 +63,17 @@ public class Controller {
     private void createListScene() {
         loadrecipeList();
         listScene = new Scene(listView, WIDTH, HEIGHT);
-        listScene.getStylesheets().add("file:app/src/main/java/cse/project/team/style.css");
+        listScene.getStylesheets().add(STYLESHEET);
     }
 
     private void createGenerateScene() {
         generateScene = new Scene(this.genView, WIDTH, HEIGHT);
-        generateScene.getStylesheets().add("file:app/src/main/java/cse/project/team/style.css");
+        generateScene.getStylesheets().add(STYLESHEET);
     }
 
     private void createDetailScene() {
         detailScene = new Scene(this.detView, WIDTH, HEIGHT);
-        detailScene.getStylesheets().add("file:app/src/main/java/cse/project/team/style.css");
+        detailScene.getStylesheets().add(STYLESHEET);
     }
 
     private void setListScene() {
@@ -96,7 +96,8 @@ public class Controller {
 
     private void handleRecipeButtons(ActionEvent event) {
         String recipeTitle = ((Button) event.getSource()).getText();
-        detView.addDetails(recipeTitle, model.getDetails(recipeTitle));
+        String details = model.performRequest("GET", null, null, recipeTitle);
+        detView.addDetails(recipeTitle, details.trim());
         setDetailScene();
     }
 
@@ -118,19 +119,19 @@ public class Controller {
         } else {
             model.stopRec();
             detView.addDetails("Magic Happening", "Generating your new recipe! Please wait...");
+            detView.disableButtons(true);
             setDetailScene();
             Thread t = new Thread(
                     new Runnable() {
                         @Override
                         public void run() {
-                            String recipe = model.genRecipe();
-                            detView.setNewRec(true);
-                            String title = recipe.trim().split("\n")[0];
-                            detView.addDetails(title, recipe.trim().substring(title.length()+2));
+                            String recipe = model.performRequest("GET", null, null,"Team35110");
+                            detView.addDetails(recipe.split("\n")[0], recipe.substring(recipe.split("\n")[0].length()).trim());
+                            detView.disableButtons(false);
                         }
                     });
 
-            t.start();
+            t.start();  
             genView.reset();
         }
 
@@ -141,16 +142,14 @@ public class Controller {
     }
 
     private void handleSaveButton(ActionEvent event) {
-        if (detView.getNewRec()) {
-            model.putData(detView.getCurrTitle(), detView.getDetailText());
-            detView.setNewRec(false);
-        } else
-            model.putData(detView.getCurrTitle(), detView.getDetailText());
+        model.performRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), null);
+        detView.stopTextAnim();
         setListScene();
     }
 
     private void handleDeleteButton(ActionEvent event) {
-        model.deleteData(detView.getCurrTitle());
+        model.performRequest("DELETE",null,null,detView.getCurrTitle());
+        detView.stopTextAnim();
         setListScene();
     }
 }

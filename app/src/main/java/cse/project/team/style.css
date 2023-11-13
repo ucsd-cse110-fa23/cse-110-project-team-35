@@ -115,11 +115,11 @@
 }
 
 .textBox .content {
-    -fx-background-color: #fff;
+    -fx-background-color: white;
 }
 
 .textBox:focused .content {
-    -fx-background-color: #fff;
+    -fx-background-color: white;
 }
 
 .textBox .scroll-bar:vertical {

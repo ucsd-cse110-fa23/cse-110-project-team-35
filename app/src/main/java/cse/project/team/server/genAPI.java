@@ -1,11 +1,11 @@
-package cse.project.team;
+package cse.project.team.server;
 import java.io.*;
 import java.net.*;
 import org.json.JSONArray;
 import java.net.http.*;
 import org.json.JSONObject;
 import org.json.JSONException;
-public class genAPI {
+public class genAPI implements genI {
     private static final String API_ENDPOINT = "https://api.openai.com/v1/audio/transcriptions";
     private static final String TOKEN = "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";
     private static final String MODEL = "whisper-1";
@@ -117,8 +117,8 @@ public class genAPI {
 
 
         // chat GPT starts here
-        String prompt = "Write an exiting title on the first line ended, then write a recipe with ingredients " + audio_generatedText;
-        String number_of_token =  "200";
+        String prompt = "Write a title on the first line followed by a single newline character, then write a recipe with ingredients " + audio_generatedText;
+        String number_of_token =  "400";
         int maxTokens = Integer.parseInt(number_of_token);
         
         
@@ -150,8 +150,8 @@ public class genAPI {
         JSONArray choices = responseJson.getJSONArray("choices");
         String generatedText = choices.getJSONObject(0).getString("text"); 
         
-        System.out.println("ChatGPT response: \n"+generatedText);
-        return generatedText;
+        System.out.println("ChatGPT response: \n"+generatedText.trim());
+        return generatedText.trim();
     }
 }
 

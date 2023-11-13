@@ -23,10 +23,10 @@ class AppTest {
     String p_title = "Pancakes";
     String p_details = "Get cake. Get pan. Put cake in pan. Done.";
     private static final String SERVER_URL = "http://localhost:8100/";
-    RequestHandler handler = new RequestHandler(new genAPI());
 
     @Before
-    public void clearDatabase() {;
+    public void clearDatabase() {
+        RequestHandler handler = new RequestHandler(new genAPI());
         handler.clear();
     }
 
@@ -37,36 +37,46 @@ class AppTest {
     }
 
     @Test
-    public void testHandleViewDetail() throws Exception{
+    public void testHandleEditRecipe() throws Exception{
         String expectedResponse_detail = "Get potatoes. Mash. Done.";
         RequestHandler rh = new RequestHandler(new genAPI());
+        rh.clear();
+        rh.doPost(m_title, expectedResponse_detail);
         String detail = rh.getRecDetail(m_title);
         assertEquals(expectedResponse_detail, detail);
         
     }
 
-    @Test
-    public void testHandleEditRecipe() throws Exception{
-        String expectedResponse_detail = "Get potatoes. Mash. Done.";
-        handler.doPost(m_title, expectedResponse_detail);
-        String detail = handler.getRecDetail(m_title);
-        assertEquals(expectedResponse_detail, detail);
-    }
 
     @Test
     public void testEmptyList() throws Exception{
-        String list = handler.getRecList();
+        RequestHandler rh = new RequestHandler(new genAPI());
+        rh.clear();
+        String list = rh.getRecList();
         String expect = "";
         assertEquals(expect,list);
     }
 
     @Test
     public void testFullList() throws Exception{
-        handler.doPost(m_title, m_details);
-        handler.doPost(p_title, p_details);
-        String list = handler.getRecList();
+        RequestHandler rh = new RequestHandler(new genAPI());
+        rh.clear();
+        rh.doPost(m_title, m_details);
+        rh.doPost(p_title, p_details);
+        String list = rh.getRecList();
         String expect = m_title+"*"+p_title;
         assertEquals(expect,list);
         rh.clear();
     }
+
+    @Test
+    public void testHandleViewDetail2() throws Exception{
+        String expectedResponse_detail = "Get potatoes. Mash. Done.";
+        RequestHandler rh = new RequestHandler(new genAPI());
+        rh.clear();
+        rh.doPost(m_title, m_details);
+        String detail = rh.getRecDetail(m_title);
+        assertEquals(expectedResponse_detail, detail); 
+    }
+
 }

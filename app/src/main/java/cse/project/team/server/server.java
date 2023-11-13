@@ -10,9 +10,18 @@ public class server {
     // initialize server port and hostname
     private static final int SERVER_PORT = 8100;
     private static final String SERVER_HOSTNAME = "localhost";
+    
+    public server() throws IOException{
+        init();
+    }
 
     public static void main(String[] args) throws IOException {
+        init();
+                
 
+    }
+
+    public static void init() throws IOException{
         // create a thread pool to handle requests
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 
@@ -35,5 +44,7 @@ public class server {
         System.out.println("Server started on port " + SERVER_PORT);
 
     }
+
+    
 
 }

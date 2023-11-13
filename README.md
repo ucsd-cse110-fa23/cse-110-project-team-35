@@ -82,3 +82,5 @@ Sources used: <br>
     Date captured:  11/2023<br>
     Use:            For information on using the Timeline and Keyframe classes to create a "typed out" animation in JavaFX.<br>
 
+# Our Burndown Chart:
+![Burndown chart](burndown.png)

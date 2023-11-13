@@ -1,5 +1,6 @@
 package cse.project.team;
 
+import cse.project.team.server.genAPI;
 import cse.project.team.server.server;
 import org.junit.jupiter.api.Test;
 import org.junit.AfterClass;
@@ -24,9 +25,8 @@ class AppTest {
     @BeforeClass
     public static void setUp() {
         try {
-            server = new server();
+            server = new server(new genAPI());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

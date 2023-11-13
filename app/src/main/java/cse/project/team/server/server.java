@@ -6,21 +6,19 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.*;
 
 public class server {
-
-    // initialize server port and hostname
     private static final int SERVER_PORT = 8100;
     private static final String SERVER_HOSTNAME = "localhost";
+    private static genI generation;
     static HttpServer server;
 
-    
-    public server() throws IOException{
+    public server(genI genI) throws IOException{
+        generation = genI;
         init();
     }
 
     public static void main(String[] args) throws IOException {
+        generation = new genMock();
         init();
-                
-
     }
 
     public static void init() throws IOException{
@@ -39,7 +37,7 @@ public class server {
                      * handlers.
                      */
 
-        server.createContext("/", new RequestHandler(new genAPI()));
+        server.createContext("/", new RequestHandler(generation));
         server.setExecutor(threadPoolExecutor);
         server.start();
 
@@ -50,7 +48,4 @@ public class server {
     public void stop() {
         server.stop(0);
     }
-
-    
-
 }

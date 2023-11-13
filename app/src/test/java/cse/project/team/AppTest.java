@@ -73,12 +73,23 @@ class AppTest {
     }
 
     @Test
-    public void testSaveOne() throws Exception {
+    public void testSaveNew() throws Exception {
         handler.doPost("apple pie", "3 apples, cinnamon, 1 cup brown sugar");
         String appleDetail = handler.getRecDetail("apple pie");
         String rhubarbDetail = handler.getRecDetail("rhubarb pie");
         assertEquals(appleDetail, "3 apples, cinnamon, 1 cup brown sugar");
-        assertEquals(rhubarbDetail, "");
+        assertEquals(rhubarbDetail, "Does not exist");
+    }
+
+    @Test
+    public void testSaveEdited() throws Exception {
+        handler.doPost("lemon meringue", "2 lemons, butter, sugar");
+        String outdatedDetail = handler.getRecDetail("lemon meringue");
+        handler.doPost("lemon meringue", "2 lemons, butter, sugar, vanilla extract");
+        String detail = handler.getRecDetail("lemon meringue");
+        assertEquals(detail, "2 lemons, butter, sugar, vanilla extract");
+        assertNotEquals(detail, "2 lemons, butter, sugar");
+        assertNotEquals(detail, outdatedDetail);
     }
 
     @Test

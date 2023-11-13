@@ -5,11 +5,15 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.*;
 
+import org.checkerframework.checker.units.qual.s;
+
 public class server {
 
     // initialize server port and hostname
     private static final int SERVER_PORT = 8100;
     private static final String SERVER_HOSTNAME = "localhost";
+    static HttpServer server;
+
     
     public server() throws IOException{
         init();
@@ -26,7 +30,7 @@ public class server {
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 
         // create a server
-        HttpServer server = HttpServer.create(
+        server = HttpServer.create(
                 new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT),
                 0); /*
                      * this code creates an HTTP server instance
@@ -43,6 +47,10 @@ public class server {
 
         System.out.println("Server started on port " + SERVER_PORT);
 
+    }
+
+    public void stop() {
+        server.stop(0);
     }
 
     

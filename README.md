@@ -6,9 +6,12 @@ _CSE 110 Project: Team 35_
 # Instructions for Running App
 1. Clone the Repo
 2. Download JavaFX
+
 **VSCODE INSTRUCTIONS**
-3. Create a launch.json file in the .vscode folder
-4. Add run arguments
+
+
+4. Create a launch.json file in the .vscode folder
+5. Add run arguments
    
         {
             "type": "java",

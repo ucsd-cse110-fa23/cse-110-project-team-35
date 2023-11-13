@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import java.io.File;
 
 public class Controller {
     private ListView listView;
@@ -13,8 +14,8 @@ public class Controller {
     private Stage stage;
     private Scene listScene, detailScene, generateScene;
     
-    static final String S = System.getProperty("file.separator");
-    static final String STYLESHEET = "file:app"+S+"src"+S+"main"+S+"java"+S+"cse"+S+"project"+S+"team"+S+"style.css";
+    final File STYLE = new File("style.css");
+    final String STYLESHEET = "file:" + STYLE.getPath();
 
     final int HEIGHT = 650;
     final int WIDTH = 360;

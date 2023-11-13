@@ -1,6 +1,9 @@
 package cse.project.team;
 
+<<<<<<< HEAD
 import cse.project.team.server.RequestHandler;
+=======
+>>>>>>> 4cebd11c9db823d7a8004ab39a61f01553849db9
 import cse.project.team.server.genAPI;
 import cse.project.team.server.server;
 import org.junit.jupiter.api.Test;
@@ -21,8 +24,6 @@ class AppTest {
     String m_details = "Get potatoes. Mash. Done.";
     String p_title = "Pancakes";
     String p_details = "Get cake. Get pan. Put cake in pan. Done.";
-    RequestHandler rh;
-    
     private static final String SERVER_URL = "http://localhost:8100/";
 
     // the server should be already running

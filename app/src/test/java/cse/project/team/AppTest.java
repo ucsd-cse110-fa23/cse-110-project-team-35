@@ -69,4 +69,13 @@ class AppTest {
         String detail = handler.getRecDetail(m_title);
         assertEquals(expectedResponse_detail, detail); 
     }
+
+    @Test
+    public void testSaveOne() throws Exception {
+        handler.doPost("apple pie", "3 apples, cinnamon, 1 cup brown sugar");
+        String appleDetail = handler.getRecDetail("apple pie");
+        String rhubarbDetail = handler.getRecDetail("rhubarb pie");
+        assertEquals(appleDetail, "3 apples, cinnamon, 1 cup brown sugar");
+        assertEquals(rhubarbDetail, "");
+    }
 }

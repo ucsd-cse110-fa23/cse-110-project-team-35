@@ -40,46 +40,33 @@ class AppTest {
     @Test
     public void testHandleEditRecipe() throws Exception{
         String expectedResponse_detail = "Get potatoes. Mash. Done.";
-        RequestHandler rh = new RequestHandler(new genAPI());
-        rh.clear();
-        rh.doPost(m_title, expectedResponse_detail);
-        String detail = rh.getRecDetail(m_title);
+        handler.doPost(m_title, expectedResponse_detail);
+        String detail = handler.getRecDetail(m_title);
         assertEquals(expectedResponse_detail, detail);
-
-
-        
     }
-
 
     @Test
     public void testEmptyList() throws Exception{
-        RequestHandler rh = new RequestHandler(new genAPI());
-        rh.clear();
-        String list = rh.getRecList();
+        String list = handler.getRecList();
         String expect = "";
         assertEquals(expect,list);
     }
 
     @Test
     public void testFullList() throws Exception{
-        RequestHandler rh = new RequestHandler(new genAPI());
-        rh.clear();
-        rh.doPost(m_title, m_details);
-        rh.doPost(p_title, p_details);
-        String list = rh.getRecList();
+        handler.doPost(m_title, m_details);
+        handler.doPost(p_title, p_details);
+        String list = handler.getRecList();
         String expect = m_title+"*"+p_title;
         assertEquals(expect,list);
-        rh.clear();
+        handler.clear();
     }
 
     @Test
     public void testHandleViewDetail2() throws Exception{
         String expectedResponse_detail = "Get potatoes. Mash. Done.";
-        RequestHandler rh = new RequestHandler(new genAPI());
-        rh.clear();
-        rh.doPost(m_title, m_details);
-        String detail = rh.getRecDetail(m_title);
+        handler.doPost(m_title, m_details);
+        String detail = handler.getRecDetail(m_title);
         assertEquals(expectedResponse_detail, detail); 
     }
-
 }

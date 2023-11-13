@@ -67,5 +67,6 @@ class AppTest {
         String list = rh.getRecList();
         String expect = m_title+"*"+p_title;
         assertEquals(expect,list);
+        rh.clear();
     }
 }

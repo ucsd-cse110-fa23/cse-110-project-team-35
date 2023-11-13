@@ -29,27 +29,7 @@ class AppTest {
         assertEquals(1 + 1, 2);
     }
 
-    @Test
-    public void testHandleEdit() throws Exception {
-        editGiven();
-        editWhen(mock_details);
-        editThen(mock_details);
-    }
-
-    @Test
-    public void testHandleDelete() throws Exception {
-        deleteGiven(mock_title, mock_details);
-        deleteWhen(mock_title);
-        deleteThen(mock_title, "Does not exist");
-    }
-
-    @Test
-    public void testGen() throws Exception {
-        genI gen = givenGen();
-        String result = whenGen(gen);
-        thenGen(result);
-    }
-
+    // US1: View list of saved recipes
     @Test
     public void testViewEmptyList() throws Exception {
         String list = handler.getRecList();
@@ -67,6 +47,7 @@ class AppTest {
         handler.clear();
     }
 
+    // US2: View Details of Recipe
     @Test
     public void testViewDetail() throws Exception {
         String expectedResponse_detail = "Get potatoes. Mash. Done.";
@@ -75,6 +56,28 @@ class AppTest {
         assertEquals(expectedResponse_detail, detail);
     }
 
+    // US3: Edit Recipe
+    @Test
+    public void testHandleEdit() throws Exception {
+        editGiven();
+        editWhen(mock_details);
+        editThen(mock_details);
+    }
+
+    public void editGiven() {
+        handler.doPost(other_title, other_details);
+    }
+
+    public void editWhen(String editedDetails) {
+        handler.doPost(other_title, editedDetails);
+    }
+
+    public void editThen(String editedDetails) {
+        String actualDetails = handler.getRecDetail(other_title);
+        assertEquals(editedDetails, actualDetails);
+    }
+
+    // US4: Save Recipe
     @Test
     public void testSaveNew() throws Exception {
         handler.doPost("apple pie", "3 apples, cinnamon, 1 cup brown sugar");
@@ -95,31 +98,12 @@ class AppTest {
         assertNotEquals(detail, outdatedDetail);
     }
 
+    // US5: Delete Recipe
     @Test
-    public void testEndToEnd() throws IOException, URISyntaxException, Exception {
-        genI gen = new genMock();
-        String newGen = gen.generate();
-        String title = newGen.split("\n")[0];
-        String details = newGen.substring(title.length());
-        handler.doPost(title, details);
-        assertEquals(details, handler.getRecDetail(title));
-        handler.doPost(title, other_details);
-        assertEquals(other_details, handler.getRecDetail(title));
-        handler.doDelete(title);
-        assertEquals("Does not exist", handler.getRecDetail(mock_title));
-    }
-
-    public void editGiven() {
-        handler.doPost(other_title, other_details);
-    }
-
-    public void editWhen(String editedDetails) {
-        handler.doPost(other_title, editedDetails);
-    }
-
-    public void editThen(String editedDetails) {
-        String actualDetails = handler.getRecDetail(other_title);
-        assertEquals(editedDetails, actualDetails);
+    public void testHandleDelete() throws Exception {
+        deleteGiven(mock_title, mock_details);
+        deleteWhen(mock_title);
+        deleteThen(mock_title, "Does not exist");
     }
 
     public void deleteGiven(String title, String details) {
@@ -132,6 +116,23 @@ class AppTest {
 
     public void deleteThen(String title, String response) {
         assertEquals(response, handler.getRecDetail(title));
+    }
+
+    /* US6: Return to main page
+       Not tested here due to being a GUI component
+    */
+
+
+    /* US7: Generate Recipe Based on Voice Input
+     * Given voice input.
+     * When the user use the start and stop button to record the voice input,
+     * Then a general recipe will be generated based on the input voice. 
+     * */
+    @Test
+    public void testGen() throws Exception {
+        genI gen = givenGen();
+        String result = whenGen(gen);
+        thenGen(result);
     }
 
     public genI givenGen() {
@@ -148,4 +149,24 @@ class AppTest {
         assertEquals("Mashed potats?\n Take potatoe. Mash. Done. :)", newGen);
     }
 
+    /* US8: Prompt users to list ingredients and specify the meal type,
+       offering options like "Breakfast," "Lunch," or "Dinner."
+
+       Not tested here due to implementation being combined with the previous story
+    */
+
+    // End to End Scnario Test
+    @Test
+    public void testEndToEnd() throws IOException, URISyntaxException, Exception {
+        genI gen = new genMock();
+        String newGen = gen.generate();
+        String title = newGen.split("\n")[0];
+        String details = newGen.substring(title.length());
+        handler.doPost(title, details);
+        assertEquals(details, handler.getRecDetail(title));
+        handler.doPost(title, other_details);
+        assertEquals(other_details, handler.getRecDetail(title));
+        handler.doDelete(title);
+        assertEquals("Does not exist", handler.getRecDetail(mock_title));
+    }
 }

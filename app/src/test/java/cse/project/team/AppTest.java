@@ -39,9 +39,18 @@ class AppTest {
     @Test
     public void testHandleViewDetail() throws Exception{
         String expectedResponse_detail = "Get potatoes. Mash. Done.";
+        String expectedResponse_detailWithEmptyList = "";
         RequestHandler rh = new RequestHandler(new genAPI());
-        String detail = rh.getRecDetail(m_title);
-        assertEquals(expectedResponse_detail, detail);
+        String list = rh.getRecList();
+        if (list.equals(""))
+        {
+            assertEquals(expectedResponse_detail, expectedResponse_detailWithEmptyList);
+        }
+        else
+        {
+            String detail = rh.getRecDetail(m_title);
+            assertEquals(expectedResponse_detail, detail);
+        }
         
     }
 

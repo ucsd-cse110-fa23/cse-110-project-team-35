@@ -54,8 +54,7 @@ class AppTest {
         assertEquals(expectedResponse_detail, detail);
         
     }
-    
-    /* 
+
     @Test
     public void testHandlePost() throws Exception{
         String expectedResponse_title = "Mashed potat";
@@ -100,5 +99,4 @@ class AppTest {
         String detail = rh.getRecDetail(m_title);
         assertEquals(expectedResponse_detail, detail);
     }
-    */
 }

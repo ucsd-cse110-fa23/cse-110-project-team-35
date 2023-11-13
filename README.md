@@ -4,9 +4,23 @@ _CSE 110 Project: Team 35_
 ![Burndown chart](burndown.png)
 
 # Instructions for Running App
-1. Make sure JavaFX dependencies are present on your local machine and configured correctly in your launch.json file or otherwise
-2. Run Server.java to start up the server which will process http requests
-3. Run App.java to launch the GUI and access the app's main functionality
+1. Clone the Repo
+2. Download JavaFX
+**VSCODE INSTRUCTIONS**
+3. Create a launch.json file in the .vscode folder
+4. Add run arguments
+   
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "cse.project.team.App",
+            "projectName": "app",
+            "vmArgs": "--module-path '<PATH TO YOUR JAVAFX LIB DIR' --add-modules javafx.controls,javafx.fxml"
+        }
+   
+6. Run Server.java to start up the server which will process http requests
+7. Run App.java to launch the GUI and access the app's main functionality
 
 Sources used: <br>
   The getSource() Method <br>

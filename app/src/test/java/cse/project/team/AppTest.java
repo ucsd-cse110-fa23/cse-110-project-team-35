@@ -10,10 +10,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 class AppTest {
-    String m_title = "Mashed potat";
-    String m_details = "Get potatoes. Mash. Done.";
-    String p_title = "Pancakes";
-    String p_details = "Get cake. Get pan. Put cake in pan. Done.";
+    String mock_title = "Mashed potat";
+    String mock_details = "Get potatoes. Mash. Done.";
+    
+    String other_title = "Pancakes";
+    String other_details = "Get cake. Get pan. Put cake in pan. Done.";
+    
     private static final String SERVER_URL = "http://localhost:8100/";
     RequestHandler handler = new RequestHandler(new genMock());
 
@@ -23,57 +25,93 @@ class AppTest {
     }
 
     @Test
-    public void testCheck() throws Exception {
+    public void basicTestCheck() throws Exception {
         assertEquals(1 + 1, 2);
     }
 
-    // US3: Edit Recipe
     @Test
-    public void testHandleEditRecipe() throws Exception {
-        // Given a recipe title and details are visible
+    public void testHandleEdit() throws Exception {
         editGiven();
-        // When the user edits the recipe
-        editWhen(m_details);
-        // then the recipe should be saved
-        editThen(m_details);
+        editWhen(mock_details);
+        editThen(mock_details);
+    }
+
+    @Test
+    public void testHandleDelete() throws Exception {
+        deleteGiven(mock_title, mock_details);
+        deleteWhen(mock_title);
+        deleteThen(mock_title, "Does not exist");
+    }
+
+    @Test
+    public void testGen() throws Exception {
+        genI gen = givenGen();
+        String result = whenGen(gen);
+        thenGen(result);
     }
 
     public void editGiven() {
-        handler.doPost(p_title, p_details);
+        handler.doPost(other_title, other_details);
     }
 
     public void editWhen(String editedDetails) {
-        handler.doPost(p_title, editedDetails);
+        handler.doPost(other_title, editedDetails);
     }
 
     public void editThen(String editedDetails) {
-        String actualDetails = handler.getRecDetail(p_title);
+        String actualDetails = handler.getRecDetail(other_title);
         assertEquals(editedDetails, actualDetails);
     }
 
+    public void deleteGiven(String title, String details) {
+        handler.doPost(title, details);
+    }
+
+    public void deleteWhen(String title) {
+        handler.doDelete(title);
+    }
+
+    public void deleteThen(String title, String response) {
+        assertEquals(response, handler.getRecDetail(title));
+    }
+
+    public genI givenGen() {
+        genI gen = new genMock();
+        return gen;
+    }
+
+    public String whenGen(genI gen) throws IOException, URISyntaxException, Exception {
+        String newGen = gen.generate();
+        return newGen;
+    }
+
+    public void thenGen(String newGen) {
+        assertEquals("Mashed potats?\n Take potatoe. Mash. Done. :)", newGen);
+    }
+
     @Test
-    public void testEmptyList() throws Exception {
+    public void testViewEmptyList() throws Exception {
         String list = handler.getRecList();
         String expect = "";
         assertEquals(expect, list);
     }
 
     @Test
-    public void testFullList() throws Exception {
-        handler.doPost(m_title, m_details);
-        handler.doPost(p_title, p_details);
+    public void testViewFullList() throws Exception {
+        handler.doPost(mock_title, mock_details);
+        handler.doPost(other_title, other_details);
         String list = handler.getRecList();
-        String expect = m_title + "*" + p_title;
+        String expect = mock_title + "*" + other_title;
         assertEquals(expect, list);
         handler.clear();
     }
 
     @Test
-    public void testHandleViewDetail2() throws Exception {
+    public void testViewDetail() throws Exception {
         String expectedResponse_detail = "Get potatoes. Mash. Done.";
-        handler.doPost(m_title, m_details);
-        String detail = handler.getRecDetail(m_title);
-        assertEquals(expectedResponse_detail, detail); 
+        handler.doPost(mock_title, mock_details);
+        String detail = handler.getRecDetail(mock_title);
+        assertEquals(expectedResponse_detail, detail);
     }
 
     @Test
@@ -94,49 +132,6 @@ class AppTest {
         assertEquals(detail, "2 lemons, butter, sugar, vanilla extract");
         assertNotEquals(detail, "2 lemons, butter, sugar");
         assertNotEquals(detail, outdatedDetail);
-    }
-
-    @Test
-    public void testHandleDELETE() throws Exception {
-        deleteGiven(m_title, m_details);
-        deleteWhen(m_title);
-        deleteThen(m_title, "Does not exist");
-    }
-
-    public void deleteGiven(String title, String details) {
-        handler.doPost(title, details);
-    }
-
-    public void deleteWhen(String title) {
-        handler.doDelete(title);
-    }
-
-    public void deleteThen(String title, String response) {
-        assertEquals(response, handler.getRecDetail(title));
-    }
-    //US7
-    // Given voice input.
-    // When the user use the start and stop button to record the voice input,
-    // Then a general recipe will be generated based on the input voice.
-    @Test
-    public void TestGen() throws Exception{
-        givenGen();
-        whenGen();
-        thenGen();
-    }
-
-    public void givenGen(){
-        
-    }
-
-    public void whenGen(){
-        
-    }
-
-    public void thenGen() throws IOException, URISyntaxException, Exception{
-        genI gen = new genMock();
-        String newGen = gen.generate();
-        assertEquals("Mashed potats?\n Take potatoe. Mash. Done. :)", newGen);
     }
 
 }

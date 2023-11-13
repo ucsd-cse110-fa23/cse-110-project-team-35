@@ -56,6 +56,12 @@ class AppTest {
     }
 
     @Test
+    public void testHandleDelete() throws Exception{
+        
+    }
+
+
+    @Test
     public void testHandlePost() throws Exception{
         String expectedResponse_title = "Mashed potat";
         String expectedResponse_detail = m_details;

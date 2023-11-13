@@ -47,12 +47,6 @@ class AppTest {
     }
     @Test
     public void testHandlePost() throws Exception{
-        try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
         String expectedResponse_title = "Mashed potat";
         String expectedResponse_detail = m_details;
         Model model = new Model();
@@ -65,12 +59,7 @@ class AppTest {
 
     @Test
     public void testHandleGet() throws IOException {
-        try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+        
 
         String expectedResponse = "";
         Model model = new Model();
@@ -84,16 +73,10 @@ class AppTest {
 
     @Test
     public void testHandlePUTandGET() throws IOException {
-        try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
 
         String expectedResponse_title = "Mashed potat";
         String expectedResponse_detail = m_details;
-        String putdone = "Did Something?";
+        String putdone = "Did Something";
         Model model = new Model();
         String response_put = model.performRequest("PUT", m_title, m_details, null);
         String response = model.performRequest("GET", m_title, m_details, null);
@@ -105,14 +88,8 @@ class AppTest {
 
     @Test
     public void testHandlePUT() throws IOException {
-        try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
         String expectedResponse_title = "Mashed potat";
-        String putdone = "Did Something?";
+        String putdone = "Did Something";
         String expectedResponse_detail = m_details;
         Model model = new Model();
         String response_put = model.performRequest("PUT", m_title, m_details, null);
@@ -122,12 +99,6 @@ class AppTest {
 
     @Test
     public void testHandlDELETE() throws Exception {
-        try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
         String expectedResponse_title = "Mashed potat";
         String expectedResponse_detail = m_details;
         Model model = new Model();

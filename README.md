@@ -1,5 +1,8 @@
 _CSE 110 Project: Team 35_
 
+# Our Burndown Chart:
+![Burndown chart](burndown.png)
+
 Sources used: <br>
   The getSource() Method <br>
     Link:           https://chortle.ccsu.edu/java5/notes/chap64/ch64_10.html<br>
@@ -81,6 +84,3 @@ Sources used: <br>
     Link:           https://stackoverflow.com/questions/33646317/typing-animation-on-a-text-with-javafx<br>
     Date captured:  11/2023<br>
     Use:            For information on using the Timeline and Keyframe classes to create a "typed out" animation in JavaFX.<br>
-
-# Our Burndown Chart:
-![Burndown chart](burndown.png)

@@ -110,7 +110,8 @@ public class Controller {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        detView.addDetails(recipeTitle, details.trim());
+        String imagePath = new String(recipeTitle + ".jpg");
+        detView.addDetails(recipeTitle, details.trim(),imagePath);
         setDetailScene();
     }
 
@@ -131,7 +132,7 @@ public class Controller {
             ((Button) event.getSource()).setText("Stop");
         } else {
             model.stopRec();
-            detView.addDetails("Magic Happening", "Generating your new recipe! Please wait...");
+            detView.addDetails("Magic Happening", "Generating your new recipe! Please wait...",null);
             detView.disableButtons(true);
             setDetailScene();
             Thread t = new Thread(
@@ -147,7 +148,8 @@ public class Controller {
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            detView.addDetails(recipe.split("\n")[0], recipe.substring(recipe.split("\n")[0].length()).trim());
+                            String imagePath = new String(recipeTitles[0]+".jpg");
+                            detView.addDetails(recipe.split("\n")[0], recipe.substring(recipe.split("\n")[0].length()).trim(),imagePath);
                             detView.disableButtons(false);
                         }
                     });

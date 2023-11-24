@@ -8,6 +8,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 import javafx.util.Duration;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import java.io.*;
 
 public class DetailView extends BorderPane {
     private detailHeader header;
@@ -24,6 +27,8 @@ public class DetailView extends BorderPane {
     private Boolean newRec;
     private int currentIndex;
     private Timeline timeline;
+
+    private ImageView recipeImage;
 
     public DetailView() {
         newRec = false;
@@ -55,8 +60,12 @@ public class DetailView extends BorderPane {
         detailText.setEditable(false);
         detailText.getStyleClass().addAll("textBox", "largeBox");
 
+        recipeImage = new ImageView();
+        recipeImage.setFitWidth(128); 
+        recipeImage.setPreserveRatio(true);
+
         VBox details = new VBox();
-        details.getChildren().addAll(titleText, detailText);
+        details.getChildren().addAll(titleText, detailText,recipeImage);
         details.getStyleClass().add("center");
 
         this.setTop(header);
@@ -97,10 +106,17 @@ public class DetailView extends BorderPane {
         return detailText.getText();
     }
 
-    public void addDetails(String title, String recipeDetails) {
+    public void addDetails(String title, String recipeDetails, String imagePath) {
         this.currTitle = title;
         titleText.setText(title);
         setAnimation(recipeDetails);
+
+        // Load and set the image
+        if (imagePath != null && !imagePath.isEmpty()) {
+            File selectedFile = new File(imagePath);
+            Image image = new Image(selectedFile.toURI().toString());
+            recipeImage.setImage(image);
+        }
     }
 
     public void setBackButton(EventHandler<ActionEvent> eventHandler) {

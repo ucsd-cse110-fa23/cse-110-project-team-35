@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import java.io.File;
+import java.io.IOException;
 
 public class Controller {
     private ListView listView;
@@ -13,6 +14,8 @@ public class Controller {
     private Model model;
     private Stage stage;
     private Scene listScene, detailScene, generateScene;
+
+    private Dalle dalle;
     
     final File STYLE = new File("style.css");
     final String STYLESHEET = "file:" + STYLE.getPath();
@@ -24,13 +27,15 @@ public class Controller {
             DetailView detView,
             GenerateView genView,
             Model model,
-            Stage stage) {
+            Stage stage,
+            Dalle dalle) {
 
         this.listView = listView;
         this.detView = detView;
         this.genView = genView;
         this.model = model;
         this.stage = stage;
+        this.dalle = dalle;
 
         createDetailScene();
         createListScene();
@@ -98,6 +103,13 @@ public class Controller {
     private void handleRecipeButtons(ActionEvent event) {
         String recipeTitle = ((Button) event.getSource()).getText();
         String details = model.performRequest("GET", null, null, recipeTitle);
+        try {
+            dalle.generateDalle(recipeTitle);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         detView.addDetails(recipeTitle, details.trim());
         setDetailScene();
     }
@@ -127,6 +139,14 @@ public class Controller {
                         @Override
                         public void run() {
                             String recipe = model.performRequest("GET", null, null,"Team35110");
+                            String[] recipeTitles = recipe.split("\n");
+                            try {
+                                dalle.generateDalle(recipeTitles[0]);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             detView.addDetails(recipe.split("\n")[0], recipe.substring(recipe.split("\n")[0].length()).trim());
                             detView.disableButtons(false);
                         }

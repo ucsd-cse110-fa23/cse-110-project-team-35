@@ -16,6 +16,7 @@ public class ListView extends BorderPane {
     private Footer footer;
     private ScrollPane scrollPane;
     private Button generateButton;
+    private Button logOutButton;
 
     public ListView() {
         header = new Header();
@@ -35,6 +36,8 @@ public class ListView extends BorderPane {
         this.setBottom(footer);
 
         generateButton = footer.getGenerateButton();
+        logOutButton = footer.getLogOutButton();
+
     }
 
     public RecipeList getRecipeList() {
@@ -51,6 +54,10 @@ public class ListView extends BorderPane {
 
     public void setGenerateButton(EventHandler<ActionEvent> eventHandler) {
         generateButton.setOnAction(eventHandler);
+    }
+
+    public void SetLogOutButton(EventHandler<ActionEvent> eventHandler) {
+        logOutButton.setOnAction(eventHandler);
     }
 }
 
@@ -73,16 +80,25 @@ class RecipeList extends VBox {
 
 class Footer extends HBox {
     private Button generateButton;
+    private Button logOutButton;
 
     Footer() {
         generateButton = new Button("Generate a Recipe!");
         generateButton.getStyleClass().add("footerButton");
-        this.getChildren().addAll(generateButton);
+
+        logOutButton = new Button("Log Out");
+        logOutButton.getStyleClass().add("footerButton");
+
+        this.getChildren().addAll(generateButton, logOutButton);
         this.getStyleClass().add("footer");
     }
 
     public Button getGenerateButton() {
         return generateButton;
+    }
+
+     public Button getLogOutButton() {
+        return logOutButton;
     }
 
 }

@@ -23,8 +23,8 @@ public class ListView extends BorderPane {
         recipeList = new RecipeList();
 
         scrollPane = new ScrollPane(recipeList);
-        scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
-        scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+        //scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
+        //scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         scrollPane.getStyleClass().add("scrollPane");

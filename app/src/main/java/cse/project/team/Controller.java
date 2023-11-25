@@ -11,9 +11,10 @@ public class Controller {
     private ListView listView;
     private DetailView detView;
     private GenerateView genView;
+    private LoginView loginView;
     private Model model;
     private Stage stage;
-    private Scene listScene, detailScene, generateScene;
+    private Scene listScene, detailScene, generateScene,loginScene;
 
     private Dalle dalle;
     
@@ -26,6 +27,7 @@ public class Controller {
     public Controller(ListView listView,
             DetailView detView,
             GenerateView genView,
+            LoginView loginView,
             Model model,
             Stage stage,
             Dalle dalle) {
@@ -33,6 +35,7 @@ public class Controller {
         this.listView = listView;
         this.detView = detView;
         this.genView = genView;
+        this.loginView = loginView;
         this.model = model;
         this.stage = stage;
         this.dalle = dalle;
@@ -40,8 +43,10 @@ public class Controller {
         createDetailScene();
         createListScene();
         createGenerateScene();
+        createLoginScene();
 
-        setListScene();
+        //setListScene();
+        setLoginScene();
 
         this.detView.setBackButton(this::handleBackButton);
         this.detView.setSaveButton(this::handleSaveButton);
@@ -52,6 +57,9 @@ public class Controller {
 
         this.genView.setBackButton(this::handleGenerateBackButton);        
         this.genView.setStartButton(this::handleGenerateStartButton);
+
+        this.loginView.setCreateButton(this::handleCreateButton);
+        this.loginView.setLoginButton(this::handleLoginButton);
     }
 
     private void loadrecipeList() {
@@ -82,6 +90,11 @@ public class Controller {
         detailScene.getStylesheets().add(STYLESHEET);
     }
 
+    private void createLoginScene(){
+        loginScene = new Scene(loginView,WIDTH,HEIGHT);
+        loginScene.getStylesheets().add(STYLESHEET);
+    }
+
     private void setListScene() {
         listView.getRecipeList().getChildren().clear();
         loadrecipeList();
@@ -98,6 +111,10 @@ public class Controller {
         detView.getDetailTextArea().setEditable(false);
         detView.getTitleTextArea().setEditable(false);
         stage.setScene(detailScene);
+    }
+    
+    private void setLoginScene(){
+        stage.setScene(loginScene);
     }
 
     private void handleRecipeButtons(ActionEvent event) {
@@ -173,6 +190,14 @@ public class Controller {
     private void handleDeleteButton(ActionEvent event) {
         model.performRequest("DELETE",null,null,detView.getCurrTitle());
         detView.stopTextAnim();
+        setListScene();
+    }
+
+    private void handleCreateButton(ActionEvent event){
+        setListScene();
+    }
+
+    private void handleLoginButton(ActionEvent event){
         setListScene();
     }
 }

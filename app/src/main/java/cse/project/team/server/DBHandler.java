@@ -16,15 +16,13 @@ import java.util.stream.Collectors;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-public class RequestHandler implements HttpHandler {
+public class DBHandler implements HttpHandler {
     private MongoCollection<Document> recipeCollection;
-    private genI generation;
 
-    public RequestHandler(genI generation) {
-        this.generation = generation;
+    public DBHandler() {
         MongoClient mongoClient = MongoClients
                 .create("mongodb://yig017:Gym201919@ac-lzsqbrn-shard-00-00.cfigpzh.mongodb.net:27017,ac-lzsqbrn-shard-00-01.cfigpzh.mongodb.net:27017,ac-lzsqbrn-shard-00-02.cfigpzh.mongodb.net:27017/?ssl=true&replicaSet=atlas-9thc6y-shard-0&authSource=admin&retryWrites=true&w=majority");
-        MongoDatabase db = mongoClient.getDatabase("cse110_project");
+        MongoDatabase db = mongoClient.getDatabase("cse110_project_test");
         this.recipeCollection = db.getCollection("recipes");
     }
 
@@ -108,27 +106,10 @@ public class RequestHandler implements HttpHandler {
         return response;
     }
 
-    private String genRecipe() {
-        try {
-            return generation.generate();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        } catch (URISyntaxException e1) {
-            e1.printStackTrace();
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
-        return null;
-    }
 
     public String getRecDetail(String title) {
-        if (title.equals("Team35110")) {
-            String genResponse = genRecipe();
-            return genResponse;
-        } else {
-            Document target = recipeCollection.find(eq("title", title)).first();
-            return (target == null) ? "Does not exist" : target.getString("description");
-        }
+        Document target = recipeCollection.find(eq("title", title)).first();
+        return (target == null) ? "Does not exist" : target.getString("description");
     }
 
     public String getRecList() {

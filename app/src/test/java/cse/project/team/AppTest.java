@@ -1,6 +1,6 @@
 package cse.project.team;
 
-import cse.project.team.server.RequestHandler;
+import cse.project.team.server.DBHandler;
 import cse.project.team.server.genMock;
 import org.junit.jupiter.api.BeforeEach;
 import cse.project.team.server.genI;
@@ -17,7 +17,7 @@ class AppTest {
     String other_details = "Get cake. Get pan. Put cake in pan. Done.";
 
     private static final String SERVER_URL = "http://localhost:8100/";
-    RequestHandler handler = new RequestHandler(new genMock());
+    DBHandler handler = new DBHandler();
 
     @BeforeEach
     public void clearDatabase() {
@@ -141,7 +141,7 @@ class AppTest {
     }
 
     public String whenGen(genI gen) throws IOException, URISyntaxException, Exception {
-        String newGen = gen.generate();
+        String newGen = gen.chatgen("dinner, potato");
         return newGen;
     }
 
@@ -159,7 +159,7 @@ class AppTest {
     @Test
     public void testEndToEnd() throws IOException, URISyntaxException, Exception {
         genI gen = new genMock();
-        String newGen = gen.generate();
+        String newGen = gen.chatgen("dinner potato");
         String title = newGen.split("\n")[0];
         String details = newGen.substring(title.length());
         handler.doPost(title, details);

@@ -22,28 +22,27 @@ public class genAPI implements genI {
 
     private static void writeFileToOutputStream(
         OutputStream outputStream,
-        File file,
+        InputStream audio,
         String boundary
         ) throws IOException {
         outputStream.write(("--" + boundary + "\r\n").getBytes());
         outputStream.write(
           (
            "Content-Disposition: form-data; name=\"file\"; filename=\"" +
-           file.getName() +
+           "audio.mp3" +
            "\"\r\n"
           ).getBytes()
               );
         outputStream.write(("Content-Type: audio/mpeg\r\n\r\n").getBytes());
         
-        
-        FileInputStream fileInputStream = new FileInputStream(file);
         byte[] buffer = new byte[1024];
         int bytesRead;
-        while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+        while ((bytesRead = audio.read(buffer)) != -1) {
              outputStream.write(buffer, 0, bytesRead);
         }
-        fileInputStream.close();
-        }
+        audio.close();
+    }
+
     private static String handleSuccessResponse(HttpURLConnection connection)
         throws IOException, JSONException {
         BufferedReader in = new BufferedReader(
@@ -59,7 +58,7 @@ public class genAPI implements genI {
         JSONObject responseJson = new JSONObject(response.toString());
         String generatedText = responseJson.getString("text");
         // Print the transcription result
-        System.out.println("Transcription Result: " + generatedText);
+        //System.out.println("Transcription Result: " + generatedText);
         return generatedText;
     }
     private static void handleErrorResponse(HttpURLConnection connection)
@@ -77,9 +76,7 @@ public class genAPI implements genI {
         System.out.println("Error Result: " + errorResult);
     }
 
-    public String generate() throws IOException, URISyntaxException,Exception {
-        // Create file object from file path
-        File file = new File("../recording.mp3");
+    public String audioGen(InputStream in) throws IOException, URISyntaxException,Exception {
         // Set up HTTP connection
         URL url = new URI(API_ENDPOINT).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -97,7 +94,7 @@ public class genAPI implements genI {
         // Write model parameter to request body
         writeParameterToOutputStream(outputStream, "model", MODEL, boundary);
         // Write file parameter to request body
-        writeFileToOutputStream(outputStream, file, boundary);
+        writeFileToOutputStream(outputStream, in, boundary);
         // Write closing boundary to request body
         outputStream.write(("\r\n--" + boundary + "--\r\n").getBytes());
         // Flush and close output stream
@@ -114,8 +111,12 @@ public class genAPI implements genI {
         }
         // Disconnect connection
         connection.disconnect();
+        return audio_generatedText;
+    }
 
 
+
+    public String chatgen(String audio_generatedText) throws URISyntaxException, IOException, InterruptedException{
         // chat GPT starts here
         String prompt = "Write a title on the first line followed by a single newline character, then write a recipe with ingredients " + audio_generatedText;
         String number_of_token =  "400";
@@ -150,7 +151,7 @@ public class genAPI implements genI {
         JSONArray choices = responseJson.getJSONArray("choices");
         String generatedText = choices.getJSONObject(0).getString("text"); 
         
-        System.out.println("ChatGPT response: \n"+generatedText.trim());
+        //System.out.println("ChatGPT response: \n"+generatedText.trim());
         return generatedText.trim();
     }
 }

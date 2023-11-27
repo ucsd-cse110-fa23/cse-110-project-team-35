@@ -34,7 +34,8 @@ public class server {
                      * handlers.
                      */
 
-        server.createContext("/", new RequestHandler(new genAPI()));
+        server.createContext("/db/", new DBHandler());
+        server.createContext("/gen/", new GenHandler(new genAPI()));
         server.setExecutor(threadPoolExecutor);
         server.start();
 

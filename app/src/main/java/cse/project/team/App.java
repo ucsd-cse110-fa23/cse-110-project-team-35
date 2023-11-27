@@ -1,6 +1,5 @@
 package cse.project.team;
 
-import cse.project.team.server.server;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

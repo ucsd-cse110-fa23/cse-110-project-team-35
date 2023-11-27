@@ -51,7 +51,7 @@ public class Controller {
 
     private void loadrecipeList() {
         listView.getRecipeList().getChildren().clear();
-        String[] rlist = model.performRequest("GET",null,null,null).split("\\*");
+        String[] rlist = model.dBRequest("GET",null,null,null).split("\\*");
         for (String i : rlist) {
             if(i.length() == 0)
                 continue;
@@ -97,7 +97,7 @@ public class Controller {
 
     private void handleRecipeButtons(ActionEvent event) {
         String recipeTitle = ((Button) event.getSource()).getText();
-        String details = model.performRequest("GET", null, null, recipeTitle);
+        String details = model.dBRequest("GET", null, null, recipeTitle);
         detView.addDetails(recipeTitle, details.trim());
         setDetailScene();
     }
@@ -126,7 +126,9 @@ public class Controller {
                     new Runnable() {
                         @Override
                         public void run() {
-                            String recipe = model.performRequest("GET", null, null,"Team35110");
+                            String audioTxt = model.genRequest("POST", null);
+                            System.out.println(audioTxt);
+                            String recipe = model.genRequest("GET",audioTxt);
                             detView.addDetails(recipe.split("\n")[0], recipe.substring(recipe.split("\n")[0].length()).trim());
                             detView.disableButtons(false);
                         }
@@ -143,13 +145,13 @@ public class Controller {
     }
 
     private void handleSaveButton(ActionEvent event) {
-        model.performRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), null);
+        model.dBRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), null);
         detView.stopTextAnim();
         setListScene();
     }
 
     private void handleDeleteButton(ActionEvent event) {
-        model.performRequest("DELETE",null,null,detView.getCurrTitle());
+        model.dBRequest("DELETE",null,null,detView.getCurrTitle());
         detView.stopTextAnim();
         setListScene();
     }

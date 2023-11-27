@@ -23,16 +23,16 @@ public class ListView extends BorderPane {
         recipeList = new RecipeList();
 
         scrollPane = new ScrollPane(recipeList);
-        scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
         scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
         scrollPane.getStyleClass().add("scrollPane");
 
         this.setCenter(recipeList);
         this.setTop(header);
         this.setCenter(scrollPane);
         this.setBottom(footer);
+        this.getStyleClass().add("BorderPane");
 
         generateButton = footer.getGenerateButton();
     }
@@ -67,7 +67,7 @@ class Recipe extends Button {
 
 class RecipeList extends VBox {
     RecipeList() {
-        this.getStyleClass().add("center");
+        this.getStyleClass().add("listCenter");
     }
 }
 

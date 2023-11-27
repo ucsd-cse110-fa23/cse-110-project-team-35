@@ -1,5 +1,6 @@
 package cse.project.team;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,7 +14,7 @@ public class Controller {
     private Model model;
     private Stage stage;
     private Scene listScene, detailScene, generateScene;
-    
+
     final File STYLE = new File("style.css");
     final String STYLESHEET = "file:" + STYLE.getPath();
 
@@ -45,15 +46,15 @@ public class Controller {
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
 
-        this.genView.setBackButton(this::handleGenerateBackButton);        
+        this.genView.setBackButton(this::handleGenerateBackButton);
         this.genView.setStartButton(this::handleGenerateStartButton);
     }
 
     private void loadrecipeList() {
         listView.getRecipeList().getChildren().clear();
-        String[] rlist = model.dBRequest("GET",null,null,null).split("\\*");
+        String[] rlist = model.dBRequest("GET", null, null, null).split("\\*");
         for (String i : rlist) {
-            if(i.length() == 0)
+            if (i.length() == 0)
                 continue;
             Recipe recipe = new Recipe(i);
             listView.getRecipeList().getChildren().add(0, recipe);
@@ -121,20 +122,39 @@ public class Controller {
             model.stopRec();
             detView.addDetails("Magic Happening", "Generating your new recipe! Please wait...");
             detView.disableButtons(true);
-            setDetailScene();
             Thread t = new Thread(
                     new Runnable() {
                         @Override
                         public void run() {
-                            String audioTxt = model.genRequest("POST", null);
-                            System.out.println(audioTxt);
-                            String recipe = model.genRequest("GET",audioTxt);
-                            detView.addDetails(recipe.split("\n")[0], recipe.substring(recipe.split("\n")[0].length()).trim());
-                            detView.disableButtons(false);
+                            String audio = model.genRequest("POST", null);
+                            System.out.println(audio);
+                            String audioTxt = audio.toLowerCase();
+                            if (audioTxt.contains("breakfast") || audioTxt.contains("lunch")
+                                    || audioTxt.contains("dinner")) {
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        String recipe = model.genRequest("GET", audioTxt);
+                                        detView.addDetails(recipe.split("\n")[0],
+                                                recipe.substring(recipe.split("\n")[0].length()).trim());
+                                        detView.disableButtons(false);
+                                        setDetailScene();
+                                    }
+                                });
+
+                            } else {
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        genView.setRecordingLabel("Breakfast received!");
+                                        genView.toggleRecLabel();
+                                    }
+                                });
+                            }
                         }
                     });
 
-            t.start();  
+            t.start();
             genView.reset();
         }
 
@@ -151,7 +171,7 @@ public class Controller {
     }
 
     private void handleDeleteButton(ActionEvent event) {
-        model.dBRequest("DELETE",null,null,detView.getCurrTitle());
+        model.dBRequest("DELETE", null, null, detView.getCurrTitle());
         detView.stopTextAnim();
         setListScene();
     }

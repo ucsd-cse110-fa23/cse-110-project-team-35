@@ -59,6 +59,10 @@ class GenerateView extends BorderPane {
         this.setTop(header);
     }
 
+    public void setRecordingLabel(String input) {
+        recordingLabel.setText(input);
+    }
+
     public void setStartButton(EventHandler<ActionEvent> eventHandler) {
         startButton.setOnAction(eventHandler);
     }

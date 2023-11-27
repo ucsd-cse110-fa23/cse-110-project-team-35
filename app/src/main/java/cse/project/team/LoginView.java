@@ -66,6 +66,17 @@ public class LoginView extends BorderPane {
 
     public void setLoginButton(EventHandler<ActionEvent> eventHandler) {
         loginButton.setOnAction(eventHandler);
+
+    }
+
+    public String userAccount()
+    {
+        return username.getText();
+    }
+
+    public String userPassword()
+    {
+        return password.getText();
     }
 
 }

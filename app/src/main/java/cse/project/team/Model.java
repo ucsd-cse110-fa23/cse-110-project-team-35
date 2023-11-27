@@ -42,7 +42,6 @@ public class Model {
                 out.flush();
                 out.close();
             }
-
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String response = in.lines().collect(Collectors.joining("\n"));
             in.close();

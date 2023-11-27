@@ -277,32 +277,35 @@ public class RequestHandler implements HttpHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
         String response = "Request Received";
         String method = httpExchange.getRequestMethod();
-        URI uri = httpExchange.getRequestURI();
-        String query = uri.getRawQuery();
-
         try {
             if (method.equals("GET")) {
-                response = handleGet(httpExchange);
-                
-                if(query.equals("password"))
+                URI uri = httpExchange.getRequestURI();
+                String query = uri.getRawQuery();
+
+                if(query != null && query.equals("password"))
                 {
                     response = handleGetAccount(httpExchange);
+                    return;
                 }
-                else
-                {
+                else{
                     response = handleGet(httpExchange);
+
                 }
             } else if (method.equals("POST")) {
+
                 response = handlePost(httpExchange);
             } else if (method.equals("DELETE")) {
                 response = handleDelete(httpExchange);
             } else if (method.equals("PUT")) {
-               if(query.equals("password"))
+                 URI uri = httpExchange.getRequestURI();
+                 String query = uri.getRawQuery();
+               if(query != null && query.equals("password"))
                 {
                     response = handlePutAccount(httpExchange);
+                    return;
                 }
-                else
-                {
+                else{
+                
                     response = handlePut(httpExchange);
                 }
             } else {
@@ -422,7 +425,7 @@ public class RequestHandler implements HttpHandler {
     }
 
     public String getAccountPassword(String account) {
-        Document target = accountCollection.find(eq("account", account)).first();
+        Document target = accountCollection.find(eq("username", account)).first();
         return target.getString("password"); 
     }
 
@@ -442,7 +445,7 @@ public class RequestHandler implements HttpHandler {
         StringBuilder response = new StringBuilder();
         List<Document> account = accountCollection.find().into(new ArrayList<>());
         for (Document i : account) {
-            response.append("*" + i.getString("account"));
+            response.append("*" + i.getString("username"));
         }
         response.delete(0, 1);
         return response.toString();

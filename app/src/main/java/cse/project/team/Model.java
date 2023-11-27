@@ -37,10 +37,10 @@ public class Model {
             conn.setDoOutput(true);
             
             if (method.equals("POST") || method.equals("PUT")) {
-                OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-                out.write(title + "," + details);
-                out.flush();
-                out.close();
+                    OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+                    out.write(title + "," + details);
+                    out.flush();
+                    out.close();
             }
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String response = in.lines().collect(Collectors.joining("\n"));

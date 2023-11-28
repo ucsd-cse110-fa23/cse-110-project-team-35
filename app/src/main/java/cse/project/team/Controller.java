@@ -61,6 +61,8 @@ public class Controller {
 
         this.loginView.setCreateButton(this::handleCreateButton);
         this.loginView.setLoginButton(this::handleLoginButton);
+
+        this.listView.SetLogOutButton(this::handleLogOutButton);
     }
 
     private void loadrecipeList() {
@@ -222,4 +224,8 @@ public class Controller {
     private void handleLoginButton(ActionEvent event) {
         setListScene();
     }
+
+    private void handleLogOutButton(ActionEvent event){
+        setLoginScene();
+     }
 }

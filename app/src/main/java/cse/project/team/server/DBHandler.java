@@ -73,9 +73,10 @@ public class DBHandler implements HttpHandler {
         String postData = scanner.toString();
         String title = postData.substring(
                 0,
-                postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1);
+                postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1),
+                username = postData.substring(postData.indexOf(",") + 1);
         scanner.close();
-        doPost(title, details);
+        doPost(title, details, username);
 
         return "Did Something?";
     }
@@ -83,11 +84,24 @@ public class DBHandler implements HttpHandler {
     private String handlePut(HttpExchange httpExchange) throws IOException {
         InputStream inStream = httpExchange.getRequestBody();
         BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
+        
         String postData = in.lines().collect(Collectors.joining("\n"));
+        /* 
         String title = postData.substring(
                 0,
-                postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1);
-        doPost(title, details);
+                postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1), 
+                username  = postData.substring(postData.indexOf(",") + 1);*/
+
+
+        String title = postData.substring(0, postData.indexOf("#"));
+
+        int firstCommaIndex = postData.indexOf("#") + 1;
+        int secondCommaIndex = postData.indexOf("#", firstCommaIndex);
+                
+        String details = postData.substring(firstCommaIndex, secondCommaIndex);
+        String username = postData.substring(secondCommaIndex + 1);
+
+        doPost(title, details, username);
         in.close();
 
         return "Did Something";
@@ -112,21 +126,40 @@ public class DBHandler implements HttpHandler {
         return (target == null) ? "Does not exist" : target.getString("description");
     }
 
+
+
     public String getRecList() {
         StringBuilder response = new StringBuilder();
         List<Document> recipes = recipeCollection.find().into(new ArrayList<>());
         for (Document i : recipes) {
-            response.append("*" + i.getString("title"));
+            response.append("*" + i.getString("title") + "%" + i.getString("username"));
         }
         response.delete(0, 1);
         return response.toString();
     }
 
-    public void doPost(String title, String details) {
+    public void doPost(String title, String details, String username) {
+        /* 
         Bson filter = eq("title", title);
-        Bson updateOperation = com.mongodb.client.model.Updates.set("description", details);
+        Bson updateDescription = com.mongodb.client.model.Updates.set("description", details);
+       
         UpdateOptions options = new UpdateOptions().upsert(true);
+        recipeCollection.updateOne(filter, updateDescription, options);
+        Bson updateUsername = com.mongodb.client.model.Updates.set("username", username);
+         recipeCollection.updateOne(filter, updateUsername, options);
+         */
+
+         Bson filter = eq("title", title);
+
+        Bson updateDescription = com.mongodb.client.model.Updates.set("description", details);
+        Bson updateUsername = com.mongodb.client.model.Updates.set("username", username);
+
+        Bson updateOperation = com.mongodb.client.model.Updates.combine(updateDescription, updateUsername);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
         recipeCollection.updateOne(filter, updateOperation, options);
+
     }
 
     public void doDelete(String title) {

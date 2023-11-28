@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import java.io.File;
+import java.util.Arrays;
 
 public class Controller {
     private ListView listView;
@@ -59,15 +60,24 @@ public class Controller {
     }
 
     private void loadrecipeList() {
+        
         listView.getRecipeList().getChildren().clear();
-        String[] rlist = model.dBRequest("GET", null, null, null).split("\\*");
+        String[] rlist = model.dBRequest("GET", null, null, null, null).split("\\*");
+       
         for (String i : rlist) {
+
             if (i.length() == 0)
                 continue;
-            Recipe recipe = new Recipe(i);
-            listView.getRecipeList().getChildren().add(0, recipe);
+            String[] info = i.split("\\%");
+            if(info[1].equals(loginView.getUsername()))
+            {
+                Recipe recipe = new Recipe(info[0]);
+                listView.getRecipeList().getChildren().add(0, recipe);
+
+            }
         }
         listView.setRecipeButtons(this::handleRecipeButtons);
+        
     }
 
     private void createListScene() {
@@ -115,7 +125,7 @@ public class Controller {
 
     private void handleRecipeButtons(ActionEvent event) {
         String recipeTitle = ((Button) event.getSource()).getText();
-        String details = model.dBRequest("GET", null, null, recipeTitle);
+        String details = model.dBRequest("GET", null, null, null, recipeTitle);
         String imagePath = new String(recipeTitle + ".jpg");
 
         model.generateImage(recipeTitle);
@@ -225,13 +235,13 @@ public class Controller {
     }
 
     private void handleSaveButton(ActionEvent event) {
-        model.dBRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), null);
+        model.dBRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), loginView.getUsername(), null);
         detView.stopTextAnim();
         setListScene();
     }
 
     private void handleDeleteButton(ActionEvent event) {
-        model.dBRequest("DELETE", null, null, detView.getCurrTitle());
+        model.dBRequest("DELETE", null, null, loginView.getUsername(), detView.getCurrTitle());
         detView.stopTextAnim();
         setListScene();
     }

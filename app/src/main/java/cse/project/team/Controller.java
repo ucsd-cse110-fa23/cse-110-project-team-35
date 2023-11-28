@@ -61,6 +61,8 @@ public class Controller {
 
         this.loginView.setCreateButton(this::handleCreateButton);
         this.loginView.setLoginButton(this::handleLoginButton);
+
+        this.listView.SetLogOutButton(this::handleLogOutButton);
     }
 
     private void loadrecipeList() {
@@ -238,4 +240,8 @@ public class Controller {
             System.out.println("password not correct");
         }
     }
+
+    private void handleLogOutButton(ActionEvent event){
+        setLoginScene();
+     }
 }

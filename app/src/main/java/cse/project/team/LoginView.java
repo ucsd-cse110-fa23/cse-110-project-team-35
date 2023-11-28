@@ -68,6 +68,13 @@ public class LoginView extends BorderPane {
         loginButton.setOnAction(eventHandler);
     }
 
+    public String getUsername(){
+        return username.getText();
+    }
+
+    public String getPassword(){
+        return password.getText();
+    }
 }
 
 class loginFooter extends GridPane {

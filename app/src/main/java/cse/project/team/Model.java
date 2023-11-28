@@ -57,6 +57,36 @@ public class Model {
         }
     }
 
+
+    public String accountRequest(String method, String title, String details, String query) {
+        try {
+            String urlString = "http://localhost:8100/account/";
+            if (query != null) {
+                urlString += "?=" + URLEncoder.encode(query, "UTF-8");
+            }
+
+            URL url = new URI(urlString).toURL();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod(method);
+            conn.setDoOutput(true);
+
+            if (method.equals("POST") || method.equals("PUT")) {
+                OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+                out.write(title + "," + details);
+                out.flush();
+                out.close();
+            }
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String response = in.lines().collect(Collectors.joining("\n"));
+            in.close();
+            return response;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "Error: " + ex.getMessage();
+        }
+    }
+
     public String genRequest(String method, String query) {
         try {
             String urlString = "http://localhost:8100/gen/";

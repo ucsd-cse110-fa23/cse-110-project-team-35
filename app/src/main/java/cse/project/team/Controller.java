@@ -216,10 +216,26 @@ public class Controller {
     }
 
     private void handleCreateButton(ActionEvent event) {
-        setListScene();
+        String username = loginView.getUsername();
+        String new_password = loginView.getPassword();
+        String password = model.accountRequest("GET", username, null, "checkpassword");
+        if (password.equals("Does not exist")){
+            String put_message = model.accountRequest("PUT", username, new_password, null);
+            setListScene();
+        }
     }
 
     private void handleLoginButton(ActionEvent event) {
-        setListScene();
+        String username = loginView.getUsername();
+        String new_password = loginView.getPassword();
+        String password = model.accountRequest("GET", username, null, username);
+        System.out.println(password);
+        if (password.equals("Does not exist")){
+            System.out.println("account not exist");
+        }else if(password.equals(new_password)){
+            setListScene();
+        }else{
+            System.out.println("password not correct");
+        }
     }
 }

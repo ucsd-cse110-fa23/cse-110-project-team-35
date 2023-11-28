@@ -16,14 +16,14 @@ import java.util.stream.Collectors;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-public class DBHandler implements HttpHandler {
-    private MongoCollection<Document> recipeCollection;
+public class accountHandler implements HttpHandler {
+    private MongoCollection<Document> accountCollection;
 
-    public DBHandler() {
+    public accountHandler() {
         MongoClient mongoClient = MongoClients
                 .create("mongodb://yig017:Gym201919@ac-lzsqbrn-shard-00-00.cfigpzh.mongodb.net:27017,ac-lzsqbrn-shard-00-01.cfigpzh.mongodb.net:27017,ac-lzsqbrn-shard-00-02.cfigpzh.mongodb.net:27017/?ssl=true&replicaSet=atlas-9thc6y-shard-0&authSource=admin&retryWrites=true&w=majority");
         MongoDatabase db = mongoClient.getDatabase("cse110_project");
-        this.recipeCollection = db.getCollection("recipes");
+        this.accountCollection = db.getCollection("accounts");
     }
 
     public void handle(HttpExchange httpExchange) throws IOException {
@@ -108,13 +108,13 @@ public class DBHandler implements HttpHandler {
 
 
     public String getRecDetail(String title) {
-        Document target = recipeCollection.find(eq("title", title)).first();
+        Document target = accountCollection.find(eq("title", title)).first();
         return (target == null) ? "Does not exist" : target.getString("description");
     }
 
     public String getRecList() {
         StringBuilder response = new StringBuilder();
-        List<Document> recipes = recipeCollection.find().into(new ArrayList<>());
+        List<Document> recipes = accountCollection.find().into(new ArrayList<>());
         for (Document i : recipes) {
             response.append("*" + i.getString("title"));
         }
@@ -126,15 +126,15 @@ public class DBHandler implements HttpHandler {
         Bson filter = eq("title", title);
         Bson updateOperation = com.mongodb.client.model.Updates.set("description", details);
         UpdateOptions options = new UpdateOptions().upsert(true);
-        recipeCollection.updateOne(filter, updateOperation, options);
+        accountCollection.updateOne(filter, updateOperation, options);
     }
 
     public void doDelete(String title) {
         Bson filter = eq("title", title);
-        recipeCollection.deleteOne(filter);
+        accountCollection.deleteOne(filter);
     }
 
     public void clear() {
-        recipeCollection.deleteMany(new Document());
+        accountCollection.deleteMany(new Document());
     }
 }

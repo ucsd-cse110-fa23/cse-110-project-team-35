@@ -19,10 +19,10 @@ import org.bson.conversions.Bson;
 public class accountHandler implements HttpHandler {
     private MongoCollection<Document> accountCollection;
 
-    public accountHandler() {
+    public accountHandler(String dataBase) {
         MongoClient mongoClient = MongoClients
                 .create("mongodb://yig017:Gym201919@ac-lzsqbrn-shard-00-00.cfigpzh.mongodb.net:27017,ac-lzsqbrn-shard-00-01.cfigpzh.mongodb.net:27017,ac-lzsqbrn-shard-00-02.cfigpzh.mongodb.net:27017/?ssl=true&replicaSet=atlas-9thc6y-shard-0&authSource=admin&retryWrites=true&w=majority");
-        MongoDatabase db = mongoClient.getDatabase("cse110_project");
+        MongoDatabase db = mongoClient.getDatabase(dataBase);
         this.accountCollection = db.getCollection("accounts");
     }
 

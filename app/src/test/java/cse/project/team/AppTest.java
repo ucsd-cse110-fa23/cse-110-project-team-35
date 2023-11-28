@@ -1,6 +1,7 @@
 package cse.project.team;
 
 import cse.project.team.server.DBHandler;
+import cse.project.team.server.accountHandler;
 import cse.project.team.server.genMock;
 import org.junit.jupiter.api.BeforeEach;
 import cse.project.team.server.genI;
@@ -21,11 +22,12 @@ class AppTest {
     String other_details = "Get cake. Get pan. Put cake in pan. Done.";
 
     private static final String SERVER_URL = "http://localhost:8100/";
-    DBHandler handler = new DBHandler();
+    DBHandler REChandler = new DBHandler("Test_CSE110_Proj");
+    accountHandler ACChandler = new accountHandler("Test_CSE110_Proj");
 
     @BeforeEach
     public void clearDatabase() {
-        handler.clear();
+        REChandler.clear();
     }
 
     @Test
@@ -36,7 +38,7 @@ class AppTest {
     // US1: View list of saved recipes
     @Test
     public void testViewEmptyList() throws Exception {
-        String list = handler.getRecList();
+        String list = REChandler.getRecList();
         String expect = "";
         assertEquals(expect, list);
     }
@@ -45,10 +47,9 @@ class AppTest {
     public void testViewFullList() throws Exception {
         //handler.doPost(mock_title, mock_details);
         //handler.doPost(other_title, other_details);
-        String list = handler.getRecList();
+        String list = REChandler.getRecList();
         String expect = mock_title + "*" + other_title;
         assertEquals(expect, list);
-        handler.clear();
     }
 
     // US2: View Details of Recipe
@@ -56,7 +57,7 @@ class AppTest {
     public void testViewDetail() throws Exception {
         String expectedResponse_detail = "Get potatoes. Mash. Done.";
         //handler.doPost(mock_title, mock_details);
-        String detail = handler.getRecDetail(mock_title);
+        String detail = REChandler.getRecDetail(mock_title);
         assertEquals(expectedResponse_detail, detail);
     }
 
@@ -77,7 +78,7 @@ class AppTest {
     }
 
     public void editThen(String editedDetails) {
-        String actualDetails = handler.getRecDetail(other_title);
+        String actualDetails = REChandler.getRecDetail(other_title);
         assertEquals(editedDetails, actualDetails);
     }
 
@@ -85,8 +86,8 @@ class AppTest {
     @Test
     public void testSaveNew() throws Exception {
         //handler.doPost("apple pie", "3 apples, cinnamon, 1 cup brown sugar");
-        String appleDetail = handler.getRecDetail("apple pie");
-        String rhubarbDetail = handler.getRecDetail("rhubarb pie");
+        String appleDetail = REChandler.getRecDetail("apple pie");
+        String rhubarbDetail = REChandler.getRecDetail("rhubarb pie");
         assertEquals(appleDetail, "3 apples, cinnamon, 1 cup brown sugar");
         assertEquals(rhubarbDetail, "Does not exist");
     }
@@ -94,9 +95,9 @@ class AppTest {
     @Test
     public void testSaveEdited() throws Exception {
         //handler.doPost("lemon meringue", "2 lemons, butter, sugar");
-        String outdatedDetail = handler.getRecDetail("lemon meringue");
+        String outdatedDetail = REChandler.getRecDetail("lemon meringue");
         //handler.doPost("lemon meringue", "2 lemons, butter, sugar, vanilla extract");
-        String detail = handler.getRecDetail("lemon meringue");
+        String detail = REChandler.getRecDetail("lemon meringue");
         assertEquals(detail, "2 lemons, butter, sugar, vanilla extract");
         assertNotEquals(detail, "2 lemons, butter, sugar");
         assertNotEquals(detail, outdatedDetail);
@@ -115,11 +116,11 @@ class AppTest {
     }
 
     public void deleteWhen(String title) {
-        handler.doDelete(title);
+        REChandler.doDelete(title);
     }
 
     public void deleteThen(String title, String response) {
-        assertEquals(response, handler.getRecDetail(title));
+        assertEquals(response, REChandler.getRecDetail(title));
     }
 
     /* US6: Return to main page
@@ -167,11 +168,11 @@ class AppTest {
         String title = newGen.split("\n")[0];
         String details = newGen.substring(title.length());
         //handler.doPost(title, details);
-        assertEquals(details, handler.getRecDetail(title));
+        assertEquals(details, REChandler.getRecDetail(title));
         //handler.doPost(title, other_details);
-        assertEquals(other_details, handler.getRecDetail(title));
-        handler.doDelete(title);
-        assertEquals("Does not exist", handler.getRecDetail(mock_title));
+        assertEquals(other_details, REChandler.getRecDetail(title));
+        REChandler.doDelete(title);
+        assertEquals("Does not exist", REChandler.getRecDetail(mock_title));
     }
 
     /*
@@ -182,7 +183,7 @@ class AppTest {
     @Test
     public void testPic()throws IOException, URISyntaxException, Exception {
         Model testModel = new Model();
-        testModel.mockImage("dalleTest");
+        //testModel.mockImage("dalleTest");
         // Assert that the printed message matches the expected output
         String currentDirectory = System.getProperty("user.dir");
         // Specify the file name to search for

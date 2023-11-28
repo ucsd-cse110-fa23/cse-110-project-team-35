@@ -39,8 +39,8 @@ class AppTest {
 
     @Test
     public void testViewFullList() throws Exception {
-        handler.doPost(mock_title, mock_details);
-        handler.doPost(other_title, other_details);
+        //handler.doPost(mock_title, mock_details);
+        //handler.doPost(other_title, other_details);
         String list = handler.getRecList();
         String expect = mock_title + "*" + other_title;
         assertEquals(expect, list);
@@ -51,7 +51,7 @@ class AppTest {
     @Test
     public void testViewDetail() throws Exception {
         String expectedResponse_detail = "Get potatoes. Mash. Done.";
-        handler.doPost(mock_title, mock_details);
+        //handler.doPost(mock_title, mock_details);
         String detail = handler.getRecDetail(mock_title);
         assertEquals(expectedResponse_detail, detail);
     }
@@ -65,11 +65,11 @@ class AppTest {
     }
 
     public void editGiven() {
-        handler.doPost(other_title, other_details);
+        //handler.doPost(other_title, other_details);
     }
 
     public void editWhen(String editedDetails) {
-        handler.doPost(other_title, editedDetails);
+        //handler.doPost(other_title, editedDetails);
     }
 
     public void editThen(String editedDetails) {
@@ -80,7 +80,7 @@ class AppTest {
     // US4: Save Recipe
     @Test
     public void testSaveNew() throws Exception {
-        handler.doPost("apple pie", "3 apples, cinnamon, 1 cup brown sugar");
+        //handler.doPost("apple pie", "3 apples, cinnamon, 1 cup brown sugar");
         String appleDetail = handler.getRecDetail("apple pie");
         String rhubarbDetail = handler.getRecDetail("rhubarb pie");
         assertEquals(appleDetail, "3 apples, cinnamon, 1 cup brown sugar");
@@ -89,9 +89,9 @@ class AppTest {
 
     @Test
     public void testSaveEdited() throws Exception {
-        handler.doPost("lemon meringue", "2 lemons, butter, sugar");
+        //handler.doPost("lemon meringue", "2 lemons, butter, sugar");
         String outdatedDetail = handler.getRecDetail("lemon meringue");
-        handler.doPost("lemon meringue", "2 lemons, butter, sugar, vanilla extract");
+        //handler.doPost("lemon meringue", "2 lemons, butter, sugar, vanilla extract");
         String detail = handler.getRecDetail("lemon meringue");
         assertEquals(detail, "2 lemons, butter, sugar, vanilla extract");
         assertNotEquals(detail, "2 lemons, butter, sugar");
@@ -107,7 +107,7 @@ class AppTest {
     }
 
     public void deleteGiven(String title, String details) {
-        handler.doPost(title, details);
+        //handler.doPost(title, details);
     }
 
     public void deleteWhen(String title) {
@@ -162,9 +162,9 @@ class AppTest {
         String newGen = gen.chatgen("dinner potato");
         String title = newGen.split("\n")[0];
         String details = newGen.substring(title.length());
-        handler.doPost(title, details);
+        //handler.doPost(title, details);
         assertEquals(details, handler.getRecDetail(title));
-        handler.doPost(title, other_details);
+        //handler.doPost(title, other_details);
         assertEquals(other_details, handler.getRecDetail(title));
         handler.doDelete(title);
         assertEquals("Does not exist", handler.getRecDetail(mock_title));

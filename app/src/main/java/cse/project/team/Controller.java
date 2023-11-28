@@ -198,6 +198,7 @@ public class Controller {
                 genView.setRecordingLabel("Make sure you say breakfast, lunch, or dinner!");
                 genView.showRecLabel();
                 genView.enableBackButton();
+                genView.enableStartButton();
             }
         });
 

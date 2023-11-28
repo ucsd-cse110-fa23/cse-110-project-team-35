@@ -15,10 +15,10 @@ public class Controller {
     private LoginView loginView;
     private Model model;
     private Stage stage;
-    private Scene listScene, detailScene, generateScene,loginScene;
+    private Scene listScene, detailScene, generateScene, loginScene;
 
     private Dalle dalle;
-    
+
     final File STYLE = new File("style.css");
     final String STYLESHEET = "file:" + STYLE.getPath();
 
@@ -46,7 +46,7 @@ public class Controller {
         createGenerateScene();
         createLoginScene();
 
-        //setListScene();
+        // setListScene();
         setLoginScene();
 
         this.detView.setBackButton(this::handleBackButton);
@@ -91,8 +91,8 @@ public class Controller {
         detailScene.getStylesheets().add(STYLESHEET);
     }
 
-    private void createLoginScene(){
-        loginScene = new Scene(loginView,WIDTH,HEIGHT);
+    private void createLoginScene() {
+        loginScene = new Scene(loginView, WIDTH, HEIGHT);
         loginScene.getStylesheets().add(STYLESHEET);
     }
 
@@ -113,15 +113,23 @@ public class Controller {
         detView.getTitleTextArea().setEditable(false);
         stage.setScene(detailScene);
     }
-    
-    private void setLoginScene(){
+
+    private void setLoginScene() {
         stage.setScene(loginScene);
     }
 
     private void handleRecipeButtons(ActionEvent event) {
         String recipeTitle = ((Button) event.getSource()).getText();
         String details = model.dBRequest("GET", null, null, recipeTitle);
-        detView.addDetails(recipeTitle, details.trim());
+        try {
+            dalle.generateDalle(recipeTitle);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        String imagePath = new String(recipeTitle + ".jpg");
+        detView.addDetails(recipeTitle, details.trim(), imagePath);
         setDetailScene();
     }
 
@@ -142,7 +150,7 @@ public class Controller {
             ((Button) event.getSource()).setText("Stop");
         } else {
             model.stopRec();
-            detView.addDetails("Magic Happening", "Generating your new recipe! Please wait...",null);
+            detView.addDetails("Magic Happening", "Generating your new recipe! Please wait...", null);
             detView.disableButtons(true);
             Thread t = new Thread(
                     new Runnable() {
@@ -157,8 +165,17 @@ public class Controller {
                                     @Override
                                     public void run() {
                                         String recipe = model.genRequest("GET", audioTxt);
+                                        String[] recipeTitles = recipe.split("\n");
+                                        try {
+                                            dalle.generateDalle(recipeTitles[0]);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        String imagePath = new String(recipeTitles[0] + ".jpg");
                                         detView.addDetails(recipe.split("\n")[0],
-                                                recipe.substring(recipe.split("\n")[0].length()).trim());
+                                                recipe.substring(recipe.split("\n")[0].length()).trim(), imagePath);
                                         detView.disableButtons(false);
                                         setDetailScene();
                                     }
@@ -198,11 +215,11 @@ public class Controller {
         setListScene();
     }
 
-    private void handleCreateButton(ActionEvent event){
+    private void handleCreateButton(ActionEvent event) {
         setListScene();
     }
 
-    private void handleLoginButton(ActionEvent event){
+    private void handleLoginButton(ActionEvent event) {
         setListScene();
     }
 }

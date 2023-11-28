@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import java.io.File;
-import java.io.IOException;
 
 public class Controller {
     private ListView listView;
@@ -16,8 +15,6 @@ public class Controller {
     private Model model;
     private Stage stage;
     private Scene listScene, detailScene, generateScene, loginScene;
-
-    private Dalle dalle;
 
     final File STYLE = new File("style.css");
     final String STYLESHEET = "file:" + STYLE.getPath();
@@ -30,8 +27,7 @@ public class Controller {
             GenerateView genView,
             LoginView loginView,
             Model model,
-            Stage stage,
-            Dalle dalle) {
+            Stage stage) {
 
         this.listView = listView;
         this.detView = detView;
@@ -39,14 +35,11 @@ public class Controller {
         this.loginView = loginView;
         this.model = model;
         this.stage = stage;
-        this.dalle = dalle;
 
         createDetailScene();
         createListScene();
         createGenerateScene();
         createLoginScene();
-
-        // setListScene();
         setLoginScene();
 
         this.detView.setBackButton(this::handleBackButton);
@@ -123,14 +116,9 @@ public class Controller {
     private void handleRecipeButtons(ActionEvent event) {
         String recipeTitle = ((Button) event.getSource()).getText();
         String details = model.dBRequest("GET", null, null, recipeTitle);
-        try {
-            dalle.generateDalle(recipeTitle);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         String imagePath = new String(recipeTitle + ".jpg");
+
+        model.generateImage(recipeTitle);
         detView.addDetails(recipeTitle, details.trim(), imagePath);
         setDetailScene();
     }
@@ -142,62 +130,93 @@ public class Controller {
 
     private void handleGenerateBackButton(ActionEvent event) {
         setListScene();
+        genView.reset();
     }
 
     private void handleGenerateStartButton(ActionEvent event) {
         if (((Button) event.getSource()).getText().equals("Start")) {
-            genView.disableBackButton();
-            model.startRec();
-            genView.toggleRecLabel();
-            ((Button) event.getSource()).setText("Stop");
+            startRecording(event);
         } else {
-            model.stopRec();
-            detView.addDetails("Magic Happening", "Generating your new recipe! Please wait...", null);
-            detView.disableButtons(true);
-            Thread t = new Thread(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            String audio = model.genRequest("POST", null);
-                            System.out.println(audio);
-                            String audioTxt = audio.toLowerCase();
-                            if (audioTxt.contains("breakfast") || audioTxt.contains("lunch")
-                                    || audioTxt.contains("dinner")) {
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        String recipe = model.genRequest("GET", audioTxt);
-                                        String[] recipeTitles = recipe.split("\n");
-                                        try {
-                                            dalle.generateDalle(recipeTitles[0]);
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        String imagePath = new String(recipeTitles[0] + ".jpg");
-                                        detView.addDetails(recipe.split("\n")[0],
-                                                recipe.substring(recipe.split("\n")[0].length()).trim(), imagePath);
-                                        detView.disableButtons(false);
-                                        setDetailScene();
-                                    }
-                                });
+            stopRecording(event);
 
-                            } else {
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        genView.setRecordingLabel("Breakfast received!");
-                                        genView.toggleRecLabel();
-                                    }
-                                });
-                            }
+            // Generate recipe and image
+            Thread t = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        String audioTxt = model.genRequest("POST", null);
+                        System.out.println(audioTxt);
+
+                        // Prompt user to specify meal type if missing
+                        if (audioTxt.equals("Error")) {
+                            missingMealType();
+                        } else {
+                            createRecipeAndImage(audioTxt);
                         }
-                    });
+                    }
+                });
 
             t.start();
-            genView.reset();
         }
+
+    }
+
+    private void startRecording(ActionEvent event) {
+        // Begin recording
+        model.startRec();
+
+        // Change UI to start recording
+        genView.disableBackButton();
+        genView.showRecLabel();
+        ((Button) event.getSource()).setText("Stop");
+    }
+
+    private void stopRecording(ActionEvent event) {
+        // Stop recording
+        model.stopRec();
+
+        // Change UI to stop recording
+        ((Button) event.getSource()).setText("Start");
+        genView.disableStartButton();
+        genView.setRecordingLabel("Generating your new recipe! Please wait...");
+    }
+
+    private void missingMealType() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                genView.setRecordingLabel("Make sure you say breakfast, lunch, or dinner!");
+                genView.showRecLabel();
+                genView.enableBackButton();
+            }
+        });
+
+    }
+
+    private void createRecipeAndImage(String audioTxt) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                // Generate recipe through ChatGPT
+                String recipe = model.genRequest("GET", audioTxt);
+                String[] recipeTitles = recipe.split("\n");
+
+                // Generate image based on recipe title through DALL-E
+                model.generateImage(recipeTitles[0]);
+
+                // Save image on local computer
+                String imagePath = new String(recipeTitles[0] + ".jpg");
+
+                // Show image and recipe details
+                detView.addDetails(recipe.split("\n")[0],
+                        recipe.substring(recipe.split("\n")[0].length()).trim(),
+                        imagePath);
+                detView.disableButtons(false);
+
+                setDetailScene();
+                genView.reset();
+            }
+        });
 
     }
 
@@ -220,24 +239,39 @@ public class Controller {
     private void handleCreateButton(ActionEvent event) {
         String username = loginView.getUsername();
         String new_password = loginView.getPassword();
-        String password = model.accountRequest("GET", username, null, "checkpassword");
-        if (password.equals("Does not exist")){
-            String put_message = model.accountRequest("PUT", username, new_password, null);
-            setListScene();
+        if (username.equals("") || new_password.equals("")) {
+            loginView.setMessageText("Please enter a username and password!");
+        }
+        else {
+            String password = model.accountRequest("GET", username, null, username);
+            if (password.equals("Does not exist")){
+                String put_message = model.accountRequest("PUT", username, new_password, null);
+                setListScene();
+            }
+            else {
+                loginView.setMessageText("This account already exists. Please log in!");
+            }
         }
     }
 
     private void handleLoginButton(ActionEvent event) {
         String username = loginView.getUsername();
         String new_password = loginView.getPassword();
-        String password = model.accountRequest("GET", username, null, username);
-        System.out.println(password);
-        if (password.equals("Does not exist")){
-            System.out.println("account not exist");
-        }else if(password.equals(new_password)){
-            setListScene();
-        }else{
-            System.out.println("password not correct");
+        if (username.equals("") || new_password.equals("")) {
+            loginView.setMessageText("Please enter a username and password!");
+        }
+        else {
+            String password = model.accountRequest("GET", username, null, username);
+            //System.out.println(password);
+            if (password.equals("Does not exist")){
+                loginView.setMessageText("This account does not exist. Please try again.");
+            } 
+            else if(password.equals(new_password)){
+                setListScene();
+            } 
+            else{
+                loginView.setMessageText("Incorrect password. Please try again.");
+            }
         }
     }
 

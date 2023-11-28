@@ -13,7 +13,7 @@ import com.sun.net.httpserver.*;
 public class GenHandler implements HttpHandler {
     private genI generation;
 
-    GenHandler(genI gen){
+    GenHandler(genI gen) {
         this.generation = gen;
     }
 
@@ -48,23 +48,25 @@ public class GenHandler implements HttpHandler {
     private String handlePost(HttpExchange httpExchange) throws IOException, URISyntaxException, Exception {
         InputStream input = httpExchange.getRequestBody();
         String audioTxt = generation.audioGen(input);
-        return audioTxt;
+        audioTxt = audioTxt.toLowerCase();
+        System.out.println("AudioTxt in GenHandler:" + audioTxt);
+
+        return (audioTxt.contains("breakfast") ||
+        audioTxt.contains("lunch") ||
+        audioTxt.contains("dinner")) ? audioTxt : "Error";
     }
 
     private String handleGet(HttpExchange httpExchange) throws UnsupportedEncodingException {
         URI uri = httpExchange.getRequestURI();
         String query = uri.getRawQuery();
         String audioTxt = URLDecoder.decode(query.substring(query.indexOf("=") + 1), "UTF-8");
-    
+
         try {
             return generation.chatgen(audioTxt);
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        } catch (URISyntaxException e1) {
-            e1.printStackTrace();
-        } catch (Exception e1) {
-            e1.printStackTrace();
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            e.printStackTrace();
         }
+
         return "Request Error";
     }
 }

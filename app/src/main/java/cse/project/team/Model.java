@@ -15,9 +15,11 @@ import java.util.stream.Collectors;
 
 public class Model {
     private audioRec audio;
+    private Dalle dalle;
 
     public Model() {
         audio = new audioRec();
+        dalle = new Dalle();
     }
 
     public void startRec() {
@@ -26,6 +28,10 @@ public class Model {
 
     public void stopRec() {
         audio.stopRecording();
+    }
+
+    public void generateImage(String title) {
+        dalle.generateDalle(title);
     }
 
     public String dBRequest(String method, String title, String details, String query) {

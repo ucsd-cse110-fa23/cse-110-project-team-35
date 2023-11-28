@@ -242,7 +242,7 @@ public class Controller {
     private void handleCreateButton(ActionEvent event) {
         String username = loginView.getUsername();
         String new_password = loginView.getPassword();
-        String password = model.accountRequest("GET", username, null, "checkpassword");
+        String password = model.accountRequest("GET", username, null, username);
         if (password.equals("Does not exist")){
             String put_message = model.accountRequest("PUT", username, new_password, null);
             setListScene();

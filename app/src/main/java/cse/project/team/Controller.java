@@ -247,19 +247,22 @@ public class Controller {
             String put_message = model.accountRequest("PUT", username, new_password, null);
             setListScene();
         }
+        else {
+            loginView.setMessageText("This account already exists. Please log in!");
+        }
     }
 
     private void handleLoginButton(ActionEvent event) {
         String username = loginView.getUsername();
         String new_password = loginView.getPassword();
         String password = model.accountRequest("GET", username, null, username);
-        System.out.println(password);
+        //System.out.println(password);
         if (password.equals("Does not exist")){
-            System.out.println("account not exist");
+            loginView.setMessageText("This account does not exist. Please try again.");
         }else if(password.equals(new_password)){
             setListScene();
         }else{
-            System.out.println("password not correct");
+            loginView.setMessageText("Incorrect password. Please try again.");
         }
     }
 

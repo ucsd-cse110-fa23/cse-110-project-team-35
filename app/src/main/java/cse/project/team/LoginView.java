@@ -75,6 +75,10 @@ public class LoginView extends BorderPane {
     public String getPassword(){
         return password.getText();
     }
+
+    public void setMessageText(String text) {
+        messageArea.setText(text);
+    }
 }
 
 class loginFooter extends GridPane {

@@ -34,6 +34,10 @@ public class Model {
         dalle.generateDalle(title);
     }
 
+    public void mockImage(String title){
+        
+    }
+
     public String dBRequest(String method, String title, String details, String query) {
         try {
             String urlString = "http://localhost:8100/db/";

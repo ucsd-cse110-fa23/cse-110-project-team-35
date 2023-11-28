@@ -6,7 +6,11 @@ import org.junit.jupiter.api.BeforeEach;
 import cse.project.team.server.genI;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 
 class AppTest {
@@ -174,5 +178,37 @@ class AppTest {
      * US 11: Generate a picture for the recipe
      */
 
-     // End to End Scnario Test
+    // test generating a picture and using it
+    @Test
+    public void testPic()throws IOException, URISyntaxException, Exception {
+        Model testModel = new Model();
+        testModel.mockImage("dalleTest");
+        // Assert that the printed message matches the expected output
+        String currentDirectory = System.getProperty("user.dir");
+        // Specify the file name to search for
+        String fileName = "dalleTest.jpg";
+        // Assert that the file exists
+        boolean fileFound = searchFile(new File(currentDirectory), fileName);
+        assertTrue(fileFound);
+    }
+
+    private boolean searchFile(File directory, String fileName) {
+        if (directory.exists() && directory.isDirectory()) {
+            File[] files = directory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile() && file.getName().equals(fileName)) {
+                        return true; // File found
+                    }
+                    if (file.isDirectory()) {
+                        if (searchFile(file, fileName)) {
+                            return true; // File found in a subdirectory
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 }

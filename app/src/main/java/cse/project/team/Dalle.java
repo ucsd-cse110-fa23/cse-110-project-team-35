@@ -16,6 +16,9 @@ public class Dalle {
     private static final String DALLE_API_KEY = "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";
     private static final String DALLE_MODEL = "dall-e-2";
 
+    public void mockImage(String input){
+        
+    }
     public void generateDalle(String input) {
         // DALLE starts
         int n = 1;

@@ -84,10 +84,35 @@
     -fx-pref-height: 200px;
 }
 
+.scrollPane .thumb {
+    -fx-background-color: #C8C3B4;
+    -fx-background-radius: 25px;
+}
+
+.scrollPane .increment-button,
+.scrollPane .decrement-button,
+.scrollPane .scroll-bar:vertical {
+    -fx-background-color: #EFEBE3;
+    -fx-pref-width: 13px;
+}
+
+.scrollPane .increment-arrow,
+.scrollPane .decrement-arrow {
+    -fx-background-color: #C8C3B4;
+
+}
+
 .center {
     -fx-spacing: 10px;
     -fx-padding: 22px 30px 30px 30px;
     -fx-background-color: #EFEBE3;
+}
+
+.listCenter {
+    -fx-spacing: 10px;
+    -fx-padding: 22px 30px 30px 30px;
+    -fx-background-color: #EFEBE3;
+    -fx-min-height: 442px;
 }
 
 .textBox {
@@ -118,13 +143,27 @@
     -fx-background-color: white;
 }
 
-.textBox:focused .content {
+.textBox:focused .content,
+.textBox .scroll-bar:vertical {
+    -fx-background-color: white;
+    -fx-pref-width: 10px;
+    -fx-alignment: center;
+}
+
+.textBox .increment-button,
+.textBox .decrement-button {
     -fx-background-color: white;
 }
 
-.textBox .scroll-bar:vertical {
-    -fx-pref-width: 1;
-    -fx-opacity: 0;
+.textBox .thumb {
+    /*-fx-background-color: #8E664A; -- a brown color */
+    -fx-background-color: #E3E3E3;
+}
+
+.textBox .increment-arrow,
+.textBox .decrement-arrow {
+    -fx-background-color: #E3E3E3;
+
 }
 
 .largeBox {

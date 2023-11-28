@@ -57,6 +57,11 @@ class GenerateView extends BorderPane {
         this.setCenter(textBox);
         this.setBottom(footer);
         this.setTop(header);
+        this.getStyleClass().add("BorderPane");
+    }
+
+    public void setRecordingLabel(String input) {
+        recordingLabel.setText(input);
     }
 
     public void setStartButton(EventHandler<ActionEvent> eventHandler) {

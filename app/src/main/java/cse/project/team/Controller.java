@@ -1,5 +1,6 @@
 package cse.project.team;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -55,7 +56,7 @@ public class Controller {
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
 
-        this.genView.setBackButton(this::handleGenerateBackButton);        
+        this.genView.setBackButton(this::handleGenerateBackButton);
         this.genView.setStartButton(this::handleGenerateStartButton);
 
         this.loginView.setCreateButton(this::handleCreateButton);
@@ -64,9 +65,9 @@ public class Controller {
 
     private void loadrecipeList() {
         listView.getRecipeList().getChildren().clear();
-        String[] rlist = model.performRequest("GET",null,null,null).split("\\*");
+        String[] rlist = model.dBRequest("GET", null, null, null).split("\\*");
         for (String i : rlist) {
-            if(i.length() == 0)
+            if (i.length() == 0)
                 continue;
             Recipe recipe = new Recipe(i);
             listView.getRecipeList().getChildren().add(0, recipe);
@@ -119,16 +120,8 @@ public class Controller {
 
     private void handleRecipeButtons(ActionEvent event) {
         String recipeTitle = ((Button) event.getSource()).getText();
-        String details = model.performRequest("GET", null, null, recipeTitle);
-        try {
-            dalle.generateDalle(recipeTitle);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        String imagePath = new String(recipeTitle + ".jpg");
-        detView.addDetails(recipeTitle, details.trim(),imagePath);
+        String details = model.dBRequest("GET", null, null, recipeTitle);
+        detView.addDetails(recipeTitle, details.trim());
         setDetailScene();
     }
 
@@ -151,27 +144,39 @@ public class Controller {
             model.stopRec();
             detView.addDetails("Magic Happening", "Generating your new recipe! Please wait...",null);
             detView.disableButtons(true);
-            setDetailScene();
             Thread t = new Thread(
                     new Runnable() {
                         @Override
                         public void run() {
-                            String recipe = model.performRequest("GET", null, null,"Team35110");
-                            String[] recipeTitles = recipe.split("\n");
-                            try {
-                                dalle.generateDalle(recipeTitles[0]);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                            String audio = model.genRequest("POST", null);
+                            System.out.println(audio);
+                            String audioTxt = audio.toLowerCase();
+                            if (audioTxt.contains("breakfast") || audioTxt.contains("lunch")
+                                    || audioTxt.contains("dinner")) {
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        String recipe = model.genRequest("GET", audioTxt);
+                                        detView.addDetails(recipe.split("\n")[0],
+                                                recipe.substring(recipe.split("\n")[0].length()).trim());
+                                        detView.disableButtons(false);
+                                        setDetailScene();
+                                    }
+                                });
+
+                            } else {
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        genView.setRecordingLabel("Breakfast received!");
+                                        genView.toggleRecLabel();
+                                    }
+                                });
                             }
-                            String imagePath = new String(recipeTitles[0]+".jpg");
-                            detView.addDetails(recipe.split("\n")[0], recipe.substring(recipe.split("\n")[0].length()).trim(),imagePath);
-                            detView.disableButtons(false);
                         }
                     });
 
-            t.start();  
+            t.start();
             genView.reset();
         }
 
@@ -182,13 +187,13 @@ public class Controller {
     }
 
     private void handleSaveButton(ActionEvent event) {
-        model.performRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), null);
+        model.dBRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), null);
         detView.stopTextAnim();
         setListScene();
     }
 
     private void handleDeleteButton(ActionEvent event) {
-        model.performRequest("DELETE",null,null,detView.getCurrTitle());
+        model.dBRequest("DELETE", null, null, detView.getCurrTitle());
         detView.stopTextAnim();
         setListScene();
     }

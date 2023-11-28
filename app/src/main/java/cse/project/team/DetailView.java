@@ -71,6 +71,7 @@ public class DetailView extends BorderPane {
         this.setTop(header);
         this.setCenter(details);
         this.setBottom(footer);
+        this.getStyleClass().add("BorderPane");
 
         editButton.setOnAction(event -> {
             toggleEditMode();

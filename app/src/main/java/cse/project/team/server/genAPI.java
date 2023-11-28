@@ -12,7 +12,6 @@ public class genAPI implements genI {
     private static final String Chat_API_ENDPOINT = "https://api.openai.com/v1/completions";
     private static final String Chat_API_KEY = "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";
     private static final String Chat_MODEL = "text-davinci-003";
-    //private static final String FILE_PATH = "/Users/gaoyiming/Desktop/fall23/lab4/Lab4/test.mp3";
 
     private static void writeParameterToOutputStream(OutputStream outputStream,String parameterName,String parameterValue,String boundary) throws IOException {
         outputStream.write(("--" + boundary + "\r\n").getBytes());

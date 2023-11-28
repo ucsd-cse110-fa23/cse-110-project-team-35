@@ -169,4 +169,10 @@ class AppTest {
         handler.doDelete(title);
         assertEquals("Does not exist", handler.getRecDetail(mock_title));
     }
+
+    /*
+     * US 11: Generate a picture for the recipe
+     */
+
+     // End to End Scnario Test
 }

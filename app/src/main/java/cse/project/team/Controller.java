@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import java.io.File;
-import java.io.IOException;
 
 public class Controller {
     private ListView listView;
@@ -16,8 +15,6 @@ public class Controller {
     private Model model;
     private Stage stage;
     private Scene listScene, detailScene, generateScene, loginScene;
-
-    private Dalle dalle;
 
     final File STYLE = new File("style.css");
     final String STYLESHEET = "file:" + STYLE.getPath();
@@ -30,8 +27,7 @@ public class Controller {
             GenerateView genView,
             LoginView loginView,
             Model model,
-            Stage stage,
-            Dalle dalle) {
+            Stage stage) {
 
         this.listView = listView;
         this.detView = detView;
@@ -39,7 +35,6 @@ public class Controller {
         this.loginView = loginView;
         this.model = model;
         this.stage = stage;
-        this.dalle = dalle;
 
         createDetailScene();
         createListScene();
@@ -123,7 +118,7 @@ public class Controller {
         String details = model.dBRequest("GET", null, null, recipeTitle);
         String imagePath = new String(recipeTitle + ".jpg");
 
-        dalle.generateDalle(recipeTitle);
+        model.generateImage(recipeTitle);
         detView.addDetails(recipeTitle, details.trim(), imagePath);
         setDetailScene();
     }
@@ -151,8 +146,9 @@ public class Controller {
                     public void run() {
                         String audioTxt = model.genRequest("POST", null);
                         System.out.println(audioTxt);
+
                         // Prompt user to specify meal type if missing
-                        if (audioTxt.equals("Error")) {                            
+                        if (audioTxt.equals("Error")) {
                             missingMealType();
                         } else {
                             createRecipeAndImage(audioTxt);
@@ -181,6 +177,7 @@ public class Controller {
 
         // Change UI to stop recording
         ((Button) event.getSource()).setText("Start");
+        genView.disableStartButton();
         genView.setRecordingLabel("Generating your new recipe! Please wait...");
     }
 
@@ -204,8 +201,8 @@ public class Controller {
                 String recipe = model.genRequest("GET", audioTxt);
                 String[] recipeTitles = recipe.split("\n");
 
-                // Generate image based on that recipe through DALL-E
-                dalle.generateDalle(recipeTitles[0]);
+                // Generate image based on recipe title through DALL-E
+                model.generateImage(recipeTitles[0]);
 
                 // Save image on local computer
                 String imagePath = new String(recipeTitles[0] + ".jpg");

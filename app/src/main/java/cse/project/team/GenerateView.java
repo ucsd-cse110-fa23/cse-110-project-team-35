@@ -106,6 +106,7 @@ class GenerateView extends BorderPane {
         recordingLabel.setText("Recording...");
         startButton.setText("Start");
         enableBackButton();
+        enableStartButton();
     }
 
     public void disableBackButton() {
@@ -114,6 +115,14 @@ class GenerateView extends BorderPane {
 
     public void enableBackButton() {
         backButton.setDisable(false);
+    }
+
+    public void disableStartButton() {
+        startButton.setDisable(true);
+    }
+
+    public void enableStartButton() {
+        startButton.setDisable(false);
     }
 }
 

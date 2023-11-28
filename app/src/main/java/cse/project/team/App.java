@@ -16,8 +16,7 @@ public class App extends Application {
         LoginView loginView = new LoginView();
         Model model = new Model();
 
-        Dalle dalle = new Dalle();
-        Controller controller = new Controller(listView, detView, genView,loginView, model, primaryStage,dalle);
+        Controller controller = new Controller(listView, detView, genView,loginView, model, primaryStage);
 
         primaryStage.setTitle("PantryPal");
         primaryStage.show();

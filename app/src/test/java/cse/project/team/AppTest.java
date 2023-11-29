@@ -234,7 +234,6 @@ class AppTest {
         assertEquals("Username taken", ACChandler.doPost(username, password));
     }
 
- 
     /*@Test
     public void testExistingAccount() throws Exception{
         ListView listView = new ListView();

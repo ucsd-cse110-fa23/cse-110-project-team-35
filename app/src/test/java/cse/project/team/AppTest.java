@@ -212,7 +212,7 @@ class AppTest {
     @Test
     public void testCreateAccount() {
         GivenNoACC();
-        WhenCreateACC();
+        WhenCreateACC(username, password, "Added");
         ThenNewACC();
     }
 
@@ -220,8 +220,8 @@ class AppTest {
         // list of account is already empty
     }
 
-    private void WhenCreateACC() {
-        assertEquals("Added", ACChandler.doPost(username, password));
+    private void WhenCreateACC(String user, String pwd, String expectation) {
+        assertEquals(expectation, ACChandler.doPost(user, pwd));
     }
 
     private void ThenNewACC() {
@@ -232,12 +232,22 @@ class AppTest {
     @Test
     public void testCreateAccountUsernameTaken() {
         GivenNoACC();
-        WhenCreateACC();
-        ThenNoNewACC();
+        WhenCreateACC(username, password, "Added");
+        ThenNoNewACC("Username taken", true);
     }
 
-    private void ThenNoNewACC() {
-        assertEquals("Username taken", ACChandler.doPost(username, password));
+    private void ThenNoNewACC(String errorMsg, boolean added) {
+        if (added) {
+            assertEquals(errorMsg, ACChandler.doPost(username, password));
+        }
+    }
+
+    // Tries to create an account, but password field is empty
+    @Test
+    public void testCreateAccountEmptyPassword() {
+        GivenNoACC();
+        WhenCreateACC("bananajoe", "", "Empty input");
+        ThenNoNewACC("Empty input", false);
     }
 
     /*
@@ -341,17 +351,17 @@ class AppTest {
         assertEquals("Login", respones);
     }
 
+    private void ThenLoginFail(String respones) {
+        // how to check if logged in?
+        assertEquals("Wrong info", respones);
+    }
+
     // BDD Scenario 2
     @Test
     public void testLoginFail() {
         GivenExistingACC();
         String respones = WhenUserEntersInfo(username, "fail");
         ThenLoginFail(respones);
-    }
-
-    private void ThenLoginFail(String respones) {
-        // how to check if logged in?
-        assertEquals("Wrong info", respones);
     }
 
     /*

@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
 
 public class Model {
     private audioRec audio;
-    private Dalle dalle;
+    private DalleI dalle;
 
     public Model() {
         audio = new audioRec();
-        dalle = new Dalle();
+        dalle = new DalleMock();
     }
 
     public void startRec() {

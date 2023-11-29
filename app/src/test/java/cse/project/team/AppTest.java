@@ -324,7 +324,7 @@ class AppTest {
     
     private void WhenUserEntersCorrectInto() {
         // check if username and password entered by user exist in the database
-
+        
     }
 
     private void ThenLogin() {

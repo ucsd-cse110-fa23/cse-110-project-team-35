@@ -59,22 +59,19 @@ public class accountHandler implements HttpHandler {
         URI uri = httpExchange.getRequestURI();
         String query = uri.getRawQuery();
 
-        if (query != null) {
-            String title = URLDecoder.decode(query.substring(query.indexOf("=") + 1), "UTF-8");
-            return getRecDetail(title);
-        } else {
-            return getRecList();
-        }
+        String title = URLDecoder.decode(query.substring(query.indexOf("=") + 1), "UTF-8"); // title = username
+        return getRecDetail(title);
     }
 
     private String handlePost(HttpExchange httpExchange) throws IOException {
         InputStream inStream = httpExchange.getRequestBody();
-        Scanner scanner = new Scanner(inStream);
-        String postData = scanner.toString();
+        BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
+        String postData = in.lines().collect(Collectors.joining("\n"));
         String title = postData.substring(
                 0,
                 postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1);
-        scanner.close();
+        in.close();
+
         return doPost(title, details);
     }
 
@@ -86,8 +83,7 @@ public class accountHandler implements HttpHandler {
                 0,
                 postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1);
         in.close();
-
-        return doPost(title, details);
+        return doPut(title, details);
     }
 
     private String handleDelete(HttpExchange httpExchange) throws IOException {
@@ -108,28 +104,30 @@ public class accountHandler implements HttpHandler {
         return (target == null) ? "Does not exist" : target.getString("description");
     }
 
-    public String getRecList() {
-        StringBuilder response = new StringBuilder();
-        List<Document> recipes = accountCollection.find().into(new ArrayList<>());
-        for (Document i : recipes) {
-            response.append("*" + i.getString("title"));
-        }
-        response.delete(0, 1);
-        return response.toString();
-    }
-
     public String doPost(String title, String details) {
         if (title.equals("") || details.equals(""))
             return "Empty input";
-        
+
         if (!getRecDetail(title).equals("Does not exist"))
             return "Username taken";
-    
+
         Bson filter = eq("title", title);
         Bson updateOperation = com.mongodb.client.model.Updates.set("description", details);
         UpdateOptions options = new UpdateOptions().upsert(true);
         accountCollection.updateOne(filter, updateOperation, options);
         return "Added";
+    }
+
+    public String doPut(String title, String details) {
+        if (title.equals("") || details.equals(""))
+            return "Empty input";
+        
+        String pwd = getRecDetail(title);
+        if (pwd.equals("Does not exist") || !pwd.equals(details)) {
+            return "Wrong info";
+        } else {
+            return "Login";
+        }
     }
 
     public void doDelete(String title) {

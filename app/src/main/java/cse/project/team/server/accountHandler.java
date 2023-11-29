@@ -75,9 +75,7 @@ public class accountHandler implements HttpHandler {
                 0,
                 postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1);
         scanner.close();
-        doPost(title, details);
-
-        return "Did Something?";
+        return doPost(title, details);
     }
 
     private String handlePut(HttpExchange httpExchange) throws IOException {
@@ -87,10 +85,9 @@ public class accountHandler implements HttpHandler {
         String title = postData.substring(
                 0,
                 postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1);
-        doPost(title, details);
         in.close();
 
-        return "Did Something";
+        return doPost(title, details);
     }
 
     private String handleDelete(HttpExchange httpExchange) throws IOException {
@@ -105,7 +102,6 @@ public class accountHandler implements HttpHandler {
         }
         return response;
     }
-
 
     public String getRecDetail(String title) {
         Document target = accountCollection.find(eq("title", title)).first();
@@ -122,11 +118,15 @@ public class accountHandler implements HttpHandler {
         return response.toString();
     }
 
-    public void doPost(String title, String details) {
-        Bson filter = eq("title", title);
-        Bson updateOperation = com.mongodb.client.model.Updates.set("description", details);
-        UpdateOptions options = new UpdateOptions().upsert(true);
-        accountCollection.updateOne(filter, updateOperation, options);
+    public String doPost(String title, String details) {
+        if (getRecDetail(title).equals("Does not exist")) {
+            Bson filter = eq("title", title);
+            Bson updateOperation = com.mongodb.client.model.Updates.set("description", details);
+            UpdateOptions options = new UpdateOptions().upsert(true);
+            accountCollection.updateOne(filter, updateOperation, options);
+            return "Added";
+        }
+        return "Username taken";
     }
 
     public void doDelete(String title) {

@@ -25,11 +25,7 @@ public class Controller {
     final File STYLE = new File("style.css");
     final String STYLESHEET = "file:" + STYLE.getPath();
 
-
-
     File autoLogInfile = new File("autoLogIn.txt");
-
-    
 
     final int HEIGHT = 650;
     final int WIDTH = 360;
@@ -73,10 +69,10 @@ public class Controller {
     }
 
     private void loadrecipeList() {
-        
+
         listView.getRecipeList().getChildren().clear();
         String[] rlist = model.dBRequest("GET", null, null, null, null).split("\\*");
-       
+
         for (String i : rlist) {
             if (i.length() == 0)
                 continue;
@@ -86,15 +82,14 @@ public class Controller {
                 break;
             }
 
-            if(info[1].equals(loginView.getUsername()))
-            {
+            if (info[1].equals(loginView.getUsername())) {
                 Recipe recipe = new Recipe(info[0]);
                 listView.getRecipeList().getChildren().add(0, recipe);
 
             }
         }
         listView.setRecipeButtons(this::handleRecipeButtons);
-        
+
     }
 
     private void createListScene() {
@@ -147,8 +142,8 @@ public class Controller {
                 bufferedReader.close();
                 System.out.println(line);
                 String[] parts = line.split(",");
-                loginView.SetUsername(parts[0]);
-                loginView.SetPassword(parts[1]);
+                loginView.setUsername(parts[0]);
+                loginView.setPassword(parts[1]);
                 setListScene();
             } else {
                 stage.setScene(loginScene);
@@ -157,8 +152,7 @@ public class Controller {
             e.printStackTrace();
         }
 
-
-        //stage.setScene(loginScene);
+        // stage.setScene(loginScene);
     }
 
     private void handleRecipeButtons(ActionEvent event) {
@@ -189,20 +183,20 @@ public class Controller {
 
             // Generate recipe and image
             Thread t = new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        String audioTxt = model.genRequest("POST", null);
-                        System.out.println(audioTxt);
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            String audioTxt = model.genRequest("POST", null);
+                            System.out.println(audioTxt);
 
-                        // Prompt user to specify meal type if missing
-                        if (audioTxt.equals("Error")) {
-                            missingMealType();
-                        } else {
-                            createRecipeAndImage(audioTxt);
+                            // Prompt user to specify meal type if missing
+                            if (audioTxt.equals("Error")) {
+                                missingMealType();
+                            } else {
+                                createRecipeAndImage(audioTxt);
+                            }
                         }
-                    }
-                });
+                    });
 
             t.start();
         }
@@ -287,19 +281,14 @@ public class Controller {
 
     public void handleCreateButton(ActionEvent event) {
         String username = loginView.getUsername();
-        String new_password = loginView.getPassword();
-        if (username.equals("") || new_password.equals("")) {
+        String password = loginView.getPassword();
+        String response = model.accountRequest("PUT", username, password, null);
+        
+        if (response.equals("Username taken")) {
             loginView.setMessageText("Please enter a username and password!");
-        }
-        else {
-            String password = model.accountRequest("GET", username, null, username);
-            if (password.equals("Does not exist")){
-                model.accountRequest("PUT", username, new_password, null);
-                setListScene();
-            }
-            else {
-                loginView.setMessageText("This account already exists. Please log in!");
-            }
+        } else {
+            model.accountRequest("PUT", username, password, null);
+            setListScene();
         }
     }
 
@@ -308,72 +297,66 @@ public class Controller {
         String new_password = loginView.getPassword();
         if (username.equals("") || new_password.equals("")) {
             loginView.setMessageText("Please enter a username and password!");
-        }
-        else {
+        } else {
             String password = model.accountRequest("GET", username, null, username);
-            //System.out.println(password);
-            if (password.equals("Does not exist")){
+            // System.out.println(password);
+            if (password.equals("Does not exist")) {
                 loginView.setMessageText("This account does not exist. Please try again.");
-                loginView.SetUsername("");
-                 loginView.SetPassword("");
+                loginView.setUsername("");
+                loginView.setPassword("");
                 try {
-                if (autoLogInfile.exists() && autoLogInfile.length() > 0) {
-                    FileWriter writer = new FileWriter(autoLogInfile);
+                    if (autoLogInfile.exists() && autoLogInfile.length() > 0) {
+                        FileWriter writer = new FileWriter(autoLogInfile);
 
-                    writer.close(); 
-                } else {
+                        writer.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-                
-            } 
-            else if(password.equals(new_password)){
+
+            } else if (password.equals(new_password)) {
                 setListScene();
-            } 
-            else{
+            } else {
                 loginView.setMessageText("Incorrect password. Please try again.");
-                loginView.SetUsername("");
-                 loginView.SetPassword("");
-                    try {
-                if (autoLogInfile.exists() && autoLogInfile.length() > 0) {
-                    FileWriter writer = new FileWriter(autoLogInfile);
+                loginView.setUsername("");
+                loginView.setPassword("");
+                try {
+                    if (autoLogInfile.exists() && autoLogInfile.length() > 0) {
+                        FileWriter writer = new FileWriter(autoLogInfile);
 
-                    writer.close(); 
-                } else {
+                        writer.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             }
         }
     }
 
-    private void handleLogOutButton(ActionEvent event){
+    private void handleLogOutButton(ActionEvent event) {
         try {
             if (autoLogInfile.exists() && autoLogInfile.length() > 0) {
                 FileWriter writer = new FileWriter(autoLogInfile);
 
-                writer.close(); 
+                writer.close();
             } else {
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        loginView.SetUsername("");
-        loginView.SetPassword("");
+        loginView.setUsername("");
+        loginView.setPassword("");
         setLoginScene();
-     }
+    }
 
-     private void handleAutoButton(ActionEvent event){
-
+    private void handleAutoButton(ActionEvent event) {
         try {
-             FileWriter writer = new FileWriter(autoLogInfile);
-                writer.write(loginView.getUsername() + "," + loginView.getPassword());
-                writer.close();
+            FileWriter writer = new FileWriter(autoLogInfile);
+            writer.write(loginView.getUsername() + "," + loginView.getPassword());
+            writer.close();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-     }
+    }
 }

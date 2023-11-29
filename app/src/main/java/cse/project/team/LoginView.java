@@ -82,8 +82,6 @@ public class LoginView extends BorderPane {
         return loginButton;
     }
 
-
-
     public String getUsername(){
         return username.getText();
     }

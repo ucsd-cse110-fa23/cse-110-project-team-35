@@ -201,8 +201,8 @@ class AppTest {
    /*
     * US 9: Create an account
     */
-/* 
-    @Test
+ 
+    /*@Test
     public void testExistingAccount() throws Exception{
         ListView listView = new ListView();
         DetailView detView = new DetailView();
@@ -230,8 +230,8 @@ class AppTest {
         assertEquals(ACChandler.getRecDetail("Jack"), "pineapples101");
         // Correct error message should be displayed
         assertEquals(loginView.getMessageText(), "This account already exists. Please log in!");
-    }
-*/
+    }*/
+
 
    /*
     * US 10: Login and logout
@@ -277,7 +277,7 @@ class AppTest {
 
     //US9: Create an account
     @Test
-    public void CreateAccount(){
+    public void testCreateAccount(){
         GivenNoACC();
         WhenCreateACC();
         ThenNewACC();
@@ -288,11 +288,23 @@ class AppTest {
     }
 
     private void WhenCreateACC() {
-        
+        assertEquals("Added", ACChandler.doPost(username, password));
     }
 
     private void ThenNewACC(){
+        assertEquals(ACChandler.getRecDetail(username), password);
+    }
+    
+    //US9: Create an account fails: account name taken
+    @Test
+    public void testCreateAccountUsernameTaken(){
+        GivenNoACC();
+        WhenCreateACC();
+        ThenNoNewACC();
+    }
 
+    private void ThenNoNewACC(){
+        assertEquals("Username taken", ACChandler.doPost(username, password));
     }
 
 

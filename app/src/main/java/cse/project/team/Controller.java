@@ -310,12 +310,37 @@ public class Controller {
             //System.out.println(password);
             if (password.equals("Does not exist")){
                 loginView.setMessageText("This account does not exist. Please try again.");
+                loginView.SetUsername("");
+                 loginView.SetPassword("");
+                try {
+                if (autoLogInfile.exists() && autoLogInfile.length() > 0) {
+                    FileWriter writer = new FileWriter(autoLogInfile);
+
+                    writer.close(); 
+                } else {
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+                
             } 
             else if(password.equals(new_password)){
                 setListScene();
             } 
             else{
                 loginView.setMessageText("Incorrect password. Please try again.");
+                loginView.SetUsername("");
+                 loginView.SetPassword("");
+                    try {
+                if (autoLogInfile.exists() && autoLogInfile.length() > 0) {
+                    FileWriter writer = new FileWriter(autoLogInfile);
+
+                    writer.close(); 
+                } else {
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             }
         }
     }

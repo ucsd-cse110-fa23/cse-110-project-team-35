@@ -8,10 +8,8 @@ import cse.project.team.server.genI;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.URISyntaxException;
 
 class AppTest {
@@ -21,7 +19,6 @@ class AppTest {
     String other_title = "Pancakes";
     String other_details = "Get cake. Get pan. Put cake in pan. Done.";
 
-    private static final String SERVER_URL = "http://localhost:8100/";
     DBHandler REChandler = new DBHandler("Test_CSE110_Proj");
     accountHandler ACChandler = new accountHandler("Test_CSE110_Proj");
     String username = "test";
@@ -48,17 +45,10 @@ class AppTest {
 
     @Test
     public void testViewFullList() throws Exception {
-<<<<<<< HEAD
         REChandler.doPost(mock_title, mock_details, username);
         REChandler.doPost(other_title, mock_details,username);
         String list = REChandler.getRecList();
         String expect = mock_title + "%" + username + "*" + other_title + "%" + username;
-=======
-        //handler.doPost(mock_title, mock_details);
-        //handler.doPost(other_title, other_details);
-        String list = handler.getRecList();
-        String expect = mock_title + "*" + other_title;
->>>>>>> us10
         assertEquals(expect, list);
     }
 
@@ -66,13 +56,8 @@ class AppTest {
     @Test
     public void testViewDetail() throws Exception {
         String expectedResponse_detail = "Get potatoes. Mash. Done.";
-<<<<<<< HEAD
         REChandler.doPost(mock_title, mock_details, username);
         String detail = REChandler.getRecDetail(mock_title);
-=======
-        //handler.doPost(mock_title, mock_details);
-        String detail = handler.getRecDetail(mock_title);
->>>>>>> us10
         assertEquals(expectedResponse_detail, detail);
     }
 
@@ -85,19 +70,11 @@ class AppTest {
     }
 
     public void editGiven() {
-<<<<<<< HEAD
         REChandler.doPost(other_title, other_details, username);
     }
 
     public void editWhen(String editedDetails) {
         REChandler.doPost(other_title, editedDetails, username);
-=======
-        //handler.doPost(other_title, other_details);
-    }
-
-    public void editWhen(String editedDetails) {
-        //handler.doPost(other_title, editedDetails);
->>>>>>> us10
     }
 
     public void editThen(String editedDetails) {
@@ -108,32 +85,19 @@ class AppTest {
     // US4: Save Recipe
     @Test
     public void testSaveNew() throws Exception {
-<<<<<<< HEAD
         REChandler.doPost("apple pie", "3 apples, cinnamon, 1 cup brown sugar", username);
         String appleDetail = REChandler.getRecDetail("apple pie");
         String rhubarbDetail = REChandler.getRecDetail("rhubarb pie");
-=======
-        //handler.doPost("apple pie", "3 apples, cinnamon, 1 cup brown sugar");
-        String appleDetail = handler.getRecDetail("apple pie");
-        String rhubarbDetail = handler.getRecDetail("rhubarb pie");
->>>>>>> us10
         assertEquals(appleDetail, "3 apples, cinnamon, 1 cup brown sugar");
         assertEquals(rhubarbDetail, "Does not exist");
     }
 
     @Test
     public void testSaveEdited() throws Exception {
-<<<<<<< HEAD
         REChandler.doPost("lemon meringue", "2 lemons, butter, sugar",username);
         String outdatedDetail = REChandler.getRecDetail("lemon meringue");
         REChandler.doPost("lemon meringue", "2 lemons, butter, sugar, vanilla extract",username);
         String detail = REChandler.getRecDetail("lemon meringue");
-=======
-        //handler.doPost("lemon meringue", "2 lemons, butter, sugar");
-        String outdatedDetail = handler.getRecDetail("lemon meringue");
-        //handler.doPost("lemon meringue", "2 lemons, butter, sugar, vanilla extract");
-        String detail = handler.getRecDetail("lemon meringue");
->>>>>>> us10
         assertEquals(detail, "2 lemons, butter, sugar, vanilla extract");
         assertNotEquals(detail, "2 lemons, butter, sugar");
         assertNotEquals(detail, outdatedDetail);

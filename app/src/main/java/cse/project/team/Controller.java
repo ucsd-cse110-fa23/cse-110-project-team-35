@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import java.io.File;
-import java.util.Arrays;
 
 public class Controller {
     private ListView listView;
@@ -256,7 +255,7 @@ public class Controller {
         else {
             String password = model.accountRequest("GET", username, null, username);
             if (password.equals("Does not exist")){
-                String put_message = model.accountRequest("PUT", username, new_password, null);
+                model.accountRequest("PUT", username, new_password, null);
                 setListScene();
             }
             else {

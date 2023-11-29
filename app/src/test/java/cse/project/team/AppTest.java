@@ -30,6 +30,7 @@ class AppTest {
     @BeforeEach
     public void clearDatabase() {
         REChandler.clear();
+        ACChandler.clear();
     }
 
     @Test
@@ -162,7 +163,7 @@ class AppTest {
        Not tested here due to implementation being combined with the previous story
     */
 
-    // End to End Scnario Test
+    // End to End Scnario Test MS1
     @Test
     public void testEndToEnd() throws IOException, URISyntaxException, Exception {
         genI gen = new genMock();
@@ -213,5 +214,27 @@ class AppTest {
         }
         return false;
     }
+
+
+    //US9: Create an account
+    @Test
+    public void CreateAccount(){
+        GivenNoACC();
+        WhenCreateACC();
+        ThenNewACC();
+    }
+
+     private void GivenNoACC() {
+        //list of account is already empty
+    }
+
+    private void WhenCreateACC() {
+        
+    }
+
+    private void ThenNewACC(){
+
+    }
+
 
 }

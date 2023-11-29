@@ -178,9 +178,17 @@ class AppTest {
         assertEquals("Does not exist", REChandler.getRecDetail(mock_title));
     }
 
-    /*
-     * US 11: Generate a picture for the recipe
-     */
+   /*
+    * US 9: Create an account
+    */
+
+   /*
+    * US 10: Login and logout
+    */
+
+   /*
+    * US 11: Display images for generated recipes
+    */
 
     // test generating a picture and using it
     @Test

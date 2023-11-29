@@ -183,7 +183,7 @@ class AppTest {
     @Test
     public void testExistingAccount() {
         ACChandler.doPost("pineapple101", "123456789");
-        ACChandler.doPost("")
+        ACChandler.doPost("", "");
     }
 
    /*

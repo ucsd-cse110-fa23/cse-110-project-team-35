@@ -11,14 +11,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.json.JSONObject;
 
-public class Dalle {
+public class Dalle implements DalleI {
     private static final String DALLE_API_ENDPOINT = "https://api.openai.com/v1/images/generations";
     private static final String DALLE_API_KEY = "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";
     private static final String DALLE_MODEL = "dall-e-2";
 
-    public void mockImage(String input){
-        
-    }
     public void generateDalle(String input) {
         // DALLE starts
         int n = 1;

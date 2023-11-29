@@ -15,17 +15,17 @@ import java.io.PrintStream;
 import java.net.URISyntaxException;
 
 class AppTest {
-    String mock_title = "Mashed potat";
-    String mock_details = "Get potatoes. Mash. Done.";
+    final String mock_title = "Mashed potat";
+    final String mock_details = "Get potatoes. Mash. Done.";
 
-    String other_title = "Pancakes";
-    String other_details = "Get cake. Get pan. Put cake in pan. Done.";
+    final String other_title = "Pancakes";
+    final String other_details = "Get cake. Get pan. Put cake in pan. Done.";
 
     private static final String SERVER_URL = "http://localhost:8100/";
     DBHandler REChandler = new DBHandler("Test_CSE110_Proj");
     accountHandler ACChandler = new accountHandler("Test_CSE110_Proj");
-    String username = "test";
-    String password = "test";
+    final String username = "test";
+    final String password = "test";
 
     @BeforeEach
     public void clearDatabase() {
@@ -130,7 +130,6 @@ class AppTest {
        Not tested here due to being a GUI component
     */
 
-
     /* US7: Generate Recipe Based on Voice Input
      * Given voice input.
      * When the user use the start and stop button to record the voice input,
@@ -181,6 +180,11 @@ class AppTest {
    /*
     * US 9: Create an account
     */
+    @Test
+    public void testExistingAccount() {
+        ACChandler.doPost("pineapple101", "123456789");
+        ACChandler.doPost("")
+    }
 
    /*
     * US 10: Login and logout

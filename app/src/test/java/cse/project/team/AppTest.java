@@ -10,10 +10,8 @@ import cse.project.team.server.genI;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.URISyntaxException;
 
 import javafx.event.ActionEvent;
@@ -158,6 +156,7 @@ class AppTest {
      * When the user use the start and stop button to record the voice input,
      * Then a general recipe will be generated based on the input voice. 
      * */
+
     @Test
     public void testGen() throws Exception {
         genI gen = givenGen();
@@ -183,7 +182,6 @@ class AppTest {
        offering options like "Breakfast," "Lunch," or "Dinner."
 
        Not tested here due to implementation being combined with the previous story
-    */
 
     // End to End Scnario Test MS1
     @Test

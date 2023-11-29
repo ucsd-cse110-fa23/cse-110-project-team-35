@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import org.json.JSONObject;
 
 public class DalleMock implements DalleI {
+    /* Shows a trollface image for every recipe, saved with the correct filename */
     public void generateDalle(String input) {
         String fileName = input + ".jpg";
 

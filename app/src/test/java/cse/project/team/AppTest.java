@@ -41,12 +41,12 @@ class AppTest {
     final String username = "test";
     final String password = "test";
 
-/* 
-    @BeforeAll
-    static void initJfxRuntime() {
-        Platform.startup(() -> {});
-    }
-*/
+    /*
+     * @BeforeAll
+     * static void initJfxRuntime() {
+     * Platform.startup(() -> {});
+     * }
+     */
 
     @BeforeEach
     public void clearDatabase() {
@@ -70,7 +70,7 @@ class AppTest {
     @Test
     public void testViewFullList() throws Exception {
         REChandler.doPost(mock_title, mock_details, username);
-        REChandler.doPost(other_title, mock_details,username);
+        REChandler.doPost(other_title, mock_details, username);
         String list = REChandler.getRecList();
         String expect = mock_title + "%" + username + "*" + other_title + "%" + username;
         assertEquals(expect, list);
@@ -118,9 +118,9 @@ class AppTest {
 
     @Test
     public void testSaveEdited() throws Exception {
-        REChandler.doPost("lemon meringue", "2 lemons, butter, sugar",username);
+        REChandler.doPost("lemon meringue", "2 lemons, butter, sugar", username);
         String outdatedDetail = REChandler.getRecDetail("lemon meringue");
-        REChandler.doPost("lemon meringue", "2 lemons, butter, sugar, vanilla extract",username);
+        REChandler.doPost("lemon meringue", "2 lemons, butter, sugar, vanilla extract", username);
         String detail = REChandler.getRecDetail("lemon meringue");
         assertEquals(detail, "2 lemons, butter, sugar, vanilla extract");
         assertNotEquals(detail, "2 lemons, butter, sugar");
@@ -136,7 +136,7 @@ class AppTest {
     }
 
     public void deleteGiven(String title, String details) {
-        //handler.doPost(title, details);
+        // handler.doPost(title, details);
     }
 
     public void deleteWhen(String title) {
@@ -147,15 +147,17 @@ class AppTest {
         assertEquals(response, REChandler.getRecDetail(title));
     }
 
-    /* US6: Return to main page
-       Not tested here due to being a GUI component
-    */
+    /*
+     * US6: Return to main page
+     * Not tested here due to being a GUI component
+     */
 
-    /* US7: Generate Recipe Based on Voice Input
+    /*
+     * US7: Generate Recipe Based on Voice Input
      * Given voice input.
      * When the user use the start and stop button to record the voice input,
-     * Then a general recipe will be generated based on the input voice. 
-     * */
+     * Then a general recipe will be generated based on the input voice.
+     */
 
     @Test
     public void testGen() throws Exception {
@@ -178,162 +180,186 @@ class AppTest {
         assertEquals("Mashed potats?\n Take potatoe. Mash. Done. :)", newGen);
     }
 
-    /* US8: Prompt users to list ingredients and specify the meal type,
-       offering options like "Breakfast," "Lunch," or "Dinner."
+    /*
+     * US8: Prompt users to list ingredients and specify the meal type,
+     * offering options like "Breakfast," "Lunch," or "Dinner."
+     * 
+     * Not tested here due to implementation being combined with the previous story
+     * 
+     * // End to End Scnario Test MS1
+     * 
+     * @Test
+     * public void testEndToEnd() throws IOException, URISyntaxException, Exception
+     * {
+     * genI gen = new genMock();
+     * String newGen = gen.chatgen("dinner potato");
+     * String title = newGen.split("\n")[0];
+     * String details = newGen.substring(title.length());
+     * REChandler.doPost(title, details, details);
+     * assertEquals(details, REChandler.getRecDetail(title));
+     * REChandler.doPost(title, other_details,username);
+     * assertEquals(other_details, REChandler.getRecDetail(title));
+     * REChandler.doDelete(title);
+     * assertEquals("Does not exist", REChandler.getRecDetail(mock_title));
+     * }
+     */
 
-       Not tested here due to implementation being combined with the previous story
+    /*
+     * US 9: Create an account
+     */
 
-    // End to End Scnario Test MS1
+    // US9: Create an account
     @Test
-    public void testEndToEnd() throws IOException, URISyntaxException, Exception {
-        genI gen = new genMock();
-        String newGen = gen.chatgen("dinner potato");
-        String title = newGen.split("\n")[0];
-        String details = newGen.substring(title.length());
-        REChandler.doPost(title, details, details);
-        assertEquals(details, REChandler.getRecDetail(title));
-        REChandler.doPost(title, other_details,username);
-        assertEquals(other_details, REChandler.getRecDetail(title));
-        REChandler.doDelete(title);
-        assertEquals("Does not exist", REChandler.getRecDetail(mock_title));
-    }*/
-
-   /*
-    * US 9: Create an account
-    */
-
-    //US9: Create an account
-    @Test
-    public void testCreateAccount(){
+    public void testCreateAccount() {
         GivenNoACC();
         WhenCreateACC();
         ThenNewACC();
     }
 
     private void GivenNoACC() {
-        //list of account is already empty
+        // list of account is already empty
     }
 
     private void WhenCreateACC() {
         assertEquals("Added", ACChandler.doPost(username, password));
     }
 
-    private void ThenNewACC(){
+    private void ThenNewACC() {
         assertEquals(ACChandler.getRecDetail(username), password);
     }
-    
-    //US9: Create an account fails: account name taken
+
+    // US9: Create an account fails: account name taken
     @Test
-    public void testCreateAccountUsernameTaken(){
+    public void testCreateAccountUsernameTaken() {
         GivenNoACC();
         WhenCreateACC();
         ThenNoNewACC();
     }
 
-    private void ThenNoNewACC(){
+    private void ThenNoNewACC() {
         assertEquals("Username taken", ACChandler.doPost(username, password));
     }
 
- 
-    /*@Test
-    public void testExistingAccount() throws Exception{
-        ListView listView = new ListView();
-        DetailView detView = new DetailView();
-        GenerateView genView = new GenerateView();
-        LoginView loginView = new LoginView();
-        Model model = new Model();
-
-        Controller controller = new Controller(listView, detView, genView,loginView, model, new Stage());
-       
-        // Account doesn't yet exist
-        assertEquals(ACChandler.getRecDetail("Jack"), "Does not exist");
-
-        loginView.setUsername("Jack");
-        loginView.setPassword("pineapples101");
-        controller.handleCreateButton(new ActionEvent());
-
-        // New username and password should be in daatabase
-        assertEquals(ACChandler.getRecDetail("Jack"), "pineapples101");
-
-        loginView.setUsername("Jack");
-        loginView.setPassword("pineapples102");
-        controller.handleCreateButton(new ActionEvent());
-
-        // Password should not have changed, this account already exists
-        assertEquals(ACChandler.getRecDetail("Jack"), "pineapples101");
-        // Correct error message should be displayed
-        assertEquals(loginView.getMessageText(), "This account already exists. Please log in!");
-    }*/
-
-
-   /*
-    * US 10: Login and logout
-    */
-
-    /* 
-        10. User Story: Login and logout [High, 8 hrs, Iteration 1]
-            Narrative:
-            As a user of the app,
-            I want to be able to log in and out of the app,
-            So that I can access my account details on multiple devices.
-        BDD Scenario 1: Login to an existing account. 
-            Given the user has an existing account and did not select automatic login,
-            When the application starts,
-            Then the create account/login page appears;
-            When the user fills in correct username and password information,
-            And clicks the “Login” button,
-            Then the user is logged into their account, and the recipe list page is shown.
-        BDD Scenario 2: Fail to login to an existing account: incorrect name or password.
-            Given the user is on the create account/login page,
-            When the user enters a username and password combination that does not exist in
-            the database,
-            And clicks the “Login” button,
-            Then the user sees an error message and stays on the create account/login page.
-
-            BDD Scenario 3: User signs up for automatic login.
-            Given the user has an existing account,
-            When the user selects the “Auto Login” checkbox on the create account/login page,
-            Then the user’s login information is saved locally;
-            When the user opens the app the next time on the same device,
-            Then the user goes directly to the recipe list page in their account. 
-        BDD Scenario 4: Logout by clicking the “Logout” button.
-            Given the user is on the recipe list page and is logged into their account,
-            When the “Logout” button is clicked,
-            Then the user is logged out, and the create account/login page is shown.
-
-            BDD Scenario 5: Logout by closing the app.
-            Given the user is logged in on the app,
-            When the application is closed,
-            Then the user is logged out of their account.
+    /*
+     * @Test
+     * public void testExistingAccount() throws Exception{
+     * ListView listView = new ListView();
+     * DetailView detView = new DetailView();
+     * GenerateView genView = new GenerateView();
+     * LoginView loginView = new LoginView();
+     * Model model = new Model();
+     * 
+     * Controller controller = new Controller(listView, detView, genView,loginView,
+     * model, new Stage());
+     * 
+     * // Account doesn't yet exist
+     * assertEquals(ACChandler.getRecDetail("Jack"), "Does not exist");
+     * 
+     * loginView.setUsername("Jack");
+     * loginView.setPassword("pineapples101");
+     * controller.handleCreateButton(new ActionEvent());
+     * 
+     * // New username and password should be in daatabase
+     * assertEquals(ACChandler.getRecDetail("Jack"), "pineapples101");
+     * 
+     * loginView.setUsername("Jack");
+     * loginView.setPassword("pineapples102");
+     * controller.handleCreateButton(new ActionEvent());
+     * 
+     * // Password should not have changed, this account already exists
+     * assertEquals(ACChandler.getRecDetail("Jack"), "pineapples101");
+     * // Correct error message should be displayed
+     * assertEquals(loginView.getMessageText(),
+     * "This account already exists. Please log in!");
+     * }
      */
 
-   /*
-    * US 11: Display images for generated recipes
-    */
+    /*
+     * US 10: Login and logout
+     */
 
+    /*
+     * 10. User Story: Login and logout [High, 8 hrs, Iteration 1]
+     * Narrative:
+     * As a user of the app,
+     * I want to be able to log in and out of the app,
+     * So that I can access my account details on multiple devices.
+     * BDD Scenario 1: Login to an existing account.
+     * Given the user has an existing account and did not select automatic login,
+     * When the application starts,
+     * Then the create account/login page appears;
+     * When the user fills in correct username and password information,
+     * And clicks the “Login” button,
+     * Then the user is logged into their account, and the recipe list page is
+     * shown.
+     * BDD Scenario 2: Fail to login to an existing account: incorrect name or
+     * password.
+     * Given the user is on the create account/login page,
+     * When the user enters a username and password combination that does not exist
+     * in
+     * the database,
+     * And clicks the “Login” button,
+     * Then the user sees an error message and stays on the create account/login
+     * page.
+     * 
+     * BDD Scenario 3: User signs up for automatic login.
+     * Given the user has an existing account,
+     * When the user selects the “Auto Login” checkbox on the create account/login
+     * page,
+     * Then the user’s login information is saved locally;
+     * When the user opens the app the next time on the same device,
+     * Then the user goes directly to the recipe list page in their account.
+     * BDD Scenario 4: Logout by clicking the “Logout” button.
+     * Given the user is on the recipe list page and is logged into their account,
+     * When the “Logout” button is clicked,
+     * Then the user is logged out, and the create account/login page is shown.
+     * 
+     * BDD Scenario 5: Logout by closing the app.
+     * Given the user is logged in on the app,
+     * When the application is closed,
+     * Then the user is logged out of their account.
+     */
+    // BDD Scenario 1
     @Test
     public void testLogin() {
         GivenExistingACC();
-        WhenUserEntersCorrectInto();
-        ThenLogin();
+        String respones = WhenUserEntersInfo(username,password);
+        ThenLogin(respones);
     }
 
     private void GivenExistingACC() {
         assertEquals("Added", ACChandler.doPost(username, password));
     }
-    
-    private void WhenUserEntersCorrectInto() {
+
+    private String WhenUserEntersInfo(String user, String pass) {
         // check if username and password entered by user exist in the database
-        
+        return ACChandler.doPut(user, pass);
     }
 
-    private void ThenLogin() {
+    private void ThenLogin(String respones) {
         // how to check if logged in?
+        assertEquals("Login", respones);
     }
 
+    // BDD Scenario 2
+    @Test
+    public void testLoginFail() {
+        GivenExistingACC();
+        String respones = WhenUserEntersInfo(username, "fail");
+        ThenLoginFail(respones);
+    }
+
+    private void ThenLoginFail(String respones) {
+        // how to check if logged in?
+        assertEquals("Wrong info", respones);
+    }
+
+    /*
+     * US 11: Display images for generated recipes
+     */
     // test generating a picture and using it
     @Test
-    public void testPic()throws IOException, URISyntaxException, Exception {
+    public void testFindImage() throws IOException, URISyntaxException, Exception {
         // Assert that the printed message matches the expected output
         String currentDirectory = System.getProperty("user.dir");
         // Specify the file name to search for

@@ -68,8 +68,7 @@ public class Controller {
         this.loginView.setAutoButton(this::handleAutoButton);
     }
 
-    private void loadrecipeList() {
-
+    private void loadRecipeList() {
         listView.getRecipeList().getChildren().clear();
         String[] rlist = model.dBRequest("GET", null, null, null, null).split("\\*");
 
@@ -85,15 +84,13 @@ public class Controller {
             if (info[1].equals(loginView.getUsername())) {
                 Recipe recipe = new Recipe(info[0]);
                 listView.getRecipeList().getChildren().add(0, recipe);
-
             }
         }
         listView.setRecipeButtons(this::handleRecipeButtons);
-
     }
 
     private void createListScene() {
-        loadrecipeList();
+        loadRecipeList();
         listScene = new Scene(listView, WIDTH, HEIGHT);
         listScene.getStylesheets().add(STYLESHEET);
     }
@@ -114,8 +111,8 @@ public class Controller {
     }
 
     private void setListScene() {
-        listView.getRecipeList().getChildren().clear();
-        loadrecipeList();
+        // listView.getRecipeList().getChildren().clear();
+        loadRecipeList();
         stage.setScene(listScene);
     }
 
@@ -207,7 +204,7 @@ public class Controller {
         // Begin recording
         model.startRec();
 
-        // Change UI to start recording
+        // Change UI to show recording has started
         genView.disableBackButton();
         genView.showRecLabel();
         ((Button) event.getSource()).setText("Stop");
@@ -217,7 +214,7 @@ public class Controller {
         // Stop recording
         model.stopRec();
 
-        // Change UI to stop recording
+        // Change UI to show recording has stopped
         ((Button) event.getSource()).setText("Start");
         genView.disableStartButton();
         genView.setRecordingLabel("Generating your new recipe! Please wait...");
@@ -279,10 +276,10 @@ public class Controller {
         setListScene();
     }
 
-    public void handleCreateButton(ActionEvent event) {
+    public void handleCreateButton(ActionEvent event) { 
         String username = loginView.getUsername();
         String password = loginView.getPassword();
-        String response = model.accountRequest("PUT", username, password, null);
+        String response = model.accountRequest("POST", username, password, null);
 
         switch (response) {
             case "Username taken":
@@ -297,59 +294,45 @@ public class Controller {
         }
     }
 
-    public void handleLoginButton(ActionEvent event) {
-        String username = loginView.getUsername();
-        String new_password = loginView.getPassword();
-
-        if (username.equals("") || new_password.equals("")) {
-            loginView.setMessageText("Please enter a username and password!");
-        } else {
-            String password = model.accountRequest("GET", username, null, username);
-            // System.out.println(password);
-            if (password.equals("Does not exist")) {
-                loginView.setMessageText("This account does not exist. Please try again.");
-                loginView.setUsername("");
-                loginView.setPassword("");
-                try {
-                    if (autoLogInfile.exists() && autoLogInfile.length() > 0) {
-                        FileWriter writer = new FileWriter(autoLogInfile);
-
-                        writer.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            } else if (password.equals(new_password)) {
-                setListScene();
-            } else {
-                loginView.setMessageText("Incorrect password. Please try again.");
-                loginView.setUsername("");
-                loginView.setPassword("");
-                try {
-                    if (autoLogInfile.exists() && autoLogInfile.length() > 0) {
-                        FileWriter writer = new FileWriter(autoLogInfile);
-
-                        writer.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    public void clearUsernamwPwdFields() {
+        loginView.setUsername("");
+        loginView.setPassword("");
     }
 
-    private void handleLogOutButton(ActionEvent event) {
+    public void deleteAutoLogin() {
         try {
-            if (autoLogInfile.exists() && autoLogInfile.length() > 0) {
+            if (autoLogInfile.exists() && autoLogInfile.length() > 0) { // deletes from autoLogin
                 FileWriter writer = new FileWriter(autoLogInfile);
-
                 writer.close();
-            } else {
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void handleLoginButton(ActionEvent event) {
+        String username = loginView.getUsername();
+        String password = loginView.getPassword();
+        String response = model.accountRequest("PUT", username, password, null);
+
+        System.out.println(response);
+        switch (response) {
+            case "Empty input":
+                loginView.setMessageText("Please enter a username and password!");
+                break;
+            case "Wrong info":
+                loginView.setMessageText("Incorrect username or password. Please try again!");
+                clearUsernamwPwdFields();
+                deleteAutoLogin();
+                break;
+            case "Login":
+                setListScene();
+                break;
+        }
+    }
+
+    private void handleLogOutButton(ActionEvent event) {
+        deleteAutoLogin();
         loginView.setUsername("");
         loginView.setPassword("");
         setLoginScene();
@@ -360,7 +343,6 @@ public class Controller {
             FileWriter writer = new FileWriter(autoLogInfile);
             writer.write(loginView.getUsername() + "," + loginView.getPassword());
             writer.close();
-
         } catch (IOException e) {
             e.printStackTrace();
         }

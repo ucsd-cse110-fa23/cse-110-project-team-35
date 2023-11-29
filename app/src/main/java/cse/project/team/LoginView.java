@@ -40,7 +40,7 @@ public class LoginView extends BorderPane {
         messageArea.setEditable(false);
         messageArea.getStyleClass().addAll("textBox", "extraPadding");
 
-        messageArea.setText("Welcome to PantryPal, or it is an error message");
+        messageArea.setText("Welcome to PantryPal!");
 
         username = new TextField();
         username.getStyleClass().addAll("textBox");

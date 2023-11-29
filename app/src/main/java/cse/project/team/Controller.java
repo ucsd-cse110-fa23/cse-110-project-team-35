@@ -65,10 +65,14 @@ public class Controller {
         String[] rlist = model.dBRequest("GET", null, null, null, null).split("\\*");
        
         for (String i : rlist) {
-
             if (i.length() == 0)
                 continue;
             String[] info = i.split("\\%");
+
+            if (info.length == 1) {
+                break;
+            }
+
             if(info[1].equals(loginView.getUsername()))
             {
                 Recipe recipe = new Recipe(info[0]);
@@ -247,7 +251,7 @@ public class Controller {
         setListScene();
     }
 
-    private void handleCreateButton(ActionEvent event) {
+    public void handleCreateButton(ActionEvent event) {
         String username = loginView.getUsername();
         String new_password = loginView.getPassword();
         if (username.equals("") || new_password.equals("")) {
@@ -265,7 +269,7 @@ public class Controller {
         }
     }
 
-    private void handleLoginButton(ActionEvent event) {
+    public void handleLoginButton(ActionEvent event) {
         String username = loginView.getUsername();
         String new_password = loginView.getPassword();
         if (username.equals("") || new_password.equals("")) {
@@ -288,5 +292,5 @@ public class Controller {
 
     private void handleLogOutButton(ActionEvent event){
         setLoginScene();
-     }
+    }
 }

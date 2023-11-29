@@ -76,6 +76,18 @@ public class LoginView extends BorderPane {
         return password.getText();
     }
 
+    public String getMessageText() {
+        return messageArea.getText();
+    }
+
+    public void setUsername(String user){
+        username.setText(user);
+    }
+
+    public void setPassword(String pwd){
+        password.setText(pwd);
+    }
+
     public void setMessageText(String text) {
         messageArea.setText(text);
     }

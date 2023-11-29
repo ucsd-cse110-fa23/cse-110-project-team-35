@@ -3,6 +3,8 @@ package cse.project.team;
 import cse.project.team.server.DBHandler;
 import cse.project.team.server.accountHandler;
 import cse.project.team.server.genMock;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import cse.project.team.server.genI;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,18 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.*;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+import javafx.scene.text.*;
+import javafx.application.Application;
+import javafx.application.Platform;
+
 class AppTest {
     final String mock_title = "Mashed potat";
     final String mock_details = "Get potatoes. Mash. Done.";
@@ -22,10 +36,19 @@ class AppTest {
     final String other_details = "Get cake. Get pan. Put cake in pan. Done.";
 
     private static final String SERVER_URL = "http://localhost:8100/";
+
     DBHandler REChandler = new DBHandler("Test_CSE110_Proj");
     accountHandler ACChandler = new accountHandler("Test_CSE110_Proj");
+
     final String username = "test";
     final String password = "test";
+
+/* 
+    @BeforeAll
+    static void initJfxRuntime() {
+        Platform.startup(() -> {});
+    }
+*/
 
     @BeforeEach
     public void clearDatabase() {
@@ -180,11 +203,37 @@ class AppTest {
    /*
     * US 9: Create an account
     */
+/* 
     @Test
-    public void testExistingAccount() {
-        ACChandler.doPost("pineapple101", "123456789");
-        ACChandler.doPost("", "");
+    public void testExistingAccount() throws Exception{
+        ListView listView = new ListView();
+        DetailView detView = new DetailView();
+        GenerateView genView = new GenerateView();
+        LoginView loginView = new LoginView();
+        Model model = new Model();
+
+        Controller controller = new Controller(listView, detView, genView,loginView, model, new Stage());
+       
+        // Account doesn't yet exist
+        assertEquals(ACChandler.getRecDetail("Jack"), "Does not exist");
+
+        loginView.setUsername("Jack");
+        loginView.setPassword("pineapples101");
+        controller.handleCreateButton(new ActionEvent());
+
+        // New username and password should be in daatabase
+        assertEquals(ACChandler.getRecDetail("Jack"), "pineapples101");
+
+        loginView.setUsername("Jack");
+        loginView.setPassword("pineapples102");
+        controller.handleCreateButton(new ActionEvent());
+
+        // Password should not have changed, this account already exists
+        assertEquals(ACChandler.getRecDetail("Jack"), "pineapples101");
+        // Correct error message should be displayed
+        assertEquals(loginView.getMessageText(), "This account already exists. Please log in!");
     }
+*/
 
    /*
     * US 10: Login and logout

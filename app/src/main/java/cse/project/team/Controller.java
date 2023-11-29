@@ -276,7 +276,7 @@ public class Controller {
         setListScene();
     }
 
-    public void handleCreateButton(ActionEvent event) {
+    public void handleCreateButton(ActionEvent event) { 
         String username = loginView.getUsername();
         String password = loginView.getPassword();
         String response = model.accountRequest("POST", username, password, null);

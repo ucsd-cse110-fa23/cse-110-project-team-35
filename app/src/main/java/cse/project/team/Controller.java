@@ -283,18 +283,24 @@ public class Controller {
         String username = loginView.getUsername();
         String password = loginView.getPassword();
         String response = model.accountRequest("PUT", username, password, null);
-        
-        if (response.equals("Username taken")) {
-            loginView.setMessageText("Please enter a username and password!");
-        } else {
-            model.accountRequest("PUT", username, password, null);
-            setListScene();
+
+        switch (response) {
+            case "Username taken":
+                loginView.setMessageText("This username is already taken!");
+                break;
+            case "Empty input":
+                loginView.setMessageText("Please enter a username and password!");
+                break;
+            case "Added":
+                setListScene();
+                break;
         }
     }
 
     public void handleLoginButton(ActionEvent event) {
         String username = loginView.getUsername();
         String new_password = loginView.getPassword();
+
         if (username.equals("") || new_password.equals("")) {
             loginView.setMessageText("Please enter a username and password!");
         } else {

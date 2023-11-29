@@ -119,14 +119,17 @@ public class accountHandler implements HttpHandler {
     }
 
     public String doPost(String title, String details) {
-        if (getRecDetail(title).equals("Does not exist")) {
-            Bson filter = eq("title", title);
-            Bson updateOperation = com.mongodb.client.model.Updates.set("description", details);
-            UpdateOptions options = new UpdateOptions().upsert(true);
-            accountCollection.updateOne(filter, updateOperation, options);
-            return "Added";
-        }
-        return "Username taken";
+        if (title.equals("") || details.equals(""))
+            return "Empty input";
+        
+        if (!getRecDetail(title).equals("Does not exist"))
+            return "Username taken";
+    
+        Bson filter = eq("title", title);
+        Bson updateOperation = com.mongodb.client.model.Updates.set("description", details);
+        UpdateOptions options = new UpdateOptions().upsert(true);
+        accountCollection.updateOne(filter, updateOperation, options);
+        return "Added";
     }
 
     public void doDelete(String title) {

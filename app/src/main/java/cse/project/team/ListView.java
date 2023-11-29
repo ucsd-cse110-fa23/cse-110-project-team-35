@@ -16,6 +16,7 @@ public class ListView extends BorderPane {
     private Footer footer;
     private ScrollPane scrollPane;
     private Button generateButton;
+    private Button logOutButton;
 
     public ListView() {
         header = new Header();
@@ -23,18 +24,19 @@ public class ListView extends BorderPane {
         recipeList = new RecipeList();
 
         scrollPane = new ScrollPane(recipeList);
-        scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
         scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
         scrollPane.getStyleClass().add("scrollPane");
 
         this.setCenter(recipeList);
         this.setTop(header);
         this.setCenter(scrollPane);
         this.setBottom(footer);
+        this.getStyleClass().add("BorderPane");
 
         generateButton = footer.getGenerateButton();
+        logOutButton = footer.getLogOutButton();
     }
 
     public RecipeList getRecipeList() {
@@ -52,6 +54,10 @@ public class ListView extends BorderPane {
     public void setGenerateButton(EventHandler<ActionEvent> eventHandler) {
         generateButton.setOnAction(eventHandler);
     }
+
+    public void SetLogOutButton(EventHandler<ActionEvent> eventHandler) {
+        logOutButton.setOnAction(eventHandler);
+    }
 }
 
 class Recipe extends Button {
@@ -67,23 +73,34 @@ class Recipe extends Button {
 
 class RecipeList extends VBox {
     RecipeList() {
-        this.getStyleClass().add("center");
+        this.getStyleClass().add("listCenter");
     }
 }
 
 class Footer extends HBox {
     private Button generateButton;
+    private Button logOutButton;
+
 
     Footer() {
         generateButton = new Button("Generate a Recipe!");
         generateButton.getStyleClass().add("footerButton");
-        this.getChildren().addAll(generateButton);
+
+        logOutButton = new Button("Log Out");
+        logOutButton.getStyleClass().add("footerButton");
+
+        this.getChildren().addAll(generateButton, logOutButton);
         this.getStyleClass().add("footer");
     }
 
     public Button getGenerateButton() {
         return generateButton;
     }
+
+    public Button getLogOutButton() {
+        return logOutButton;
+    }
+
 
 }
 

@@ -16,15 +16,13 @@ import java.util.stream.Collectors;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-public class RequestHandler implements HttpHandler {
+public class DBHandler implements HttpHandler {
     private MongoCollection<Document> recipeCollection;
-    private genI generation;
 
-    public RequestHandler(genI generation) {
-        this.generation = generation;
+    public DBHandler(String dataBase) {
         MongoClient mongoClient = MongoClients
                 .create("mongodb://yig017:Gym201919@ac-lzsqbrn-shard-00-00.cfigpzh.mongodb.net:27017,ac-lzsqbrn-shard-00-01.cfigpzh.mongodb.net:27017,ac-lzsqbrn-shard-00-02.cfigpzh.mongodb.net:27017/?ssl=true&replicaSet=atlas-9thc6y-shard-0&authSource=admin&retryWrites=true&w=majority");
-        MongoDatabase db = mongoClient.getDatabase("cse110_project");
+        MongoDatabase db = mongoClient.getDatabase(dataBase);
         this.recipeCollection = db.getCollection("recipes");
     }
 
@@ -75,9 +73,10 @@ public class RequestHandler implements HttpHandler {
         String postData = scanner.toString();
         String title = postData.substring(
                 0,
-                postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1);
+                postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1),
+                username = postData.substring(postData.indexOf(",") + 1);
         scanner.close();
-        doPost(title, details);
+        doPost(title, details, username);
 
         return "Did Something?";
     }
@@ -85,11 +84,24 @@ public class RequestHandler implements HttpHandler {
     private String handlePut(HttpExchange httpExchange) throws IOException {
         InputStream inStream = httpExchange.getRequestBody();
         BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
+        
         String postData = in.lines().collect(Collectors.joining("\n"));
+        /* 
         String title = postData.substring(
                 0,
-                postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1);
-        doPost(title, details);
+                postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1), 
+                username  = postData.substring(postData.indexOf(",") + 1);*/
+
+
+        String title = postData.substring(0, postData.indexOf("#"));
+
+        int firstCommaIndex = postData.indexOf("#") + 1;
+        int secondCommaIndex = postData.indexOf("#", firstCommaIndex);
+                
+        String details = postData.substring(firstCommaIndex, secondCommaIndex);
+        String username = postData.substring(secondCommaIndex + 1);
+
+        doPost(title, details, username);
         in.close();
 
         return "Did Something";
@@ -108,44 +120,46 @@ public class RequestHandler implements HttpHandler {
         return response;
     }
 
-    private String genRecipe() {
-        try {
-            return generation.generate();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        } catch (URISyntaxException e1) {
-            e1.printStackTrace();
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
-        return null;
-    }
 
     public String getRecDetail(String title) {
-        if (title.equals("Team35110")) {
-            String genResponse = genRecipe();
-            return genResponse;
-        } else {
-            Document target = recipeCollection.find(eq("title", title)).first();
-            return (target == null) ? "Does not exist" : target.getString("description");
-        }
+        Document target = recipeCollection.find(eq("title", title)).first();
+        return (target == null) ? "Does not exist" : target.getString("description");
     }
+
+
 
     public String getRecList() {
         StringBuilder response = new StringBuilder();
         List<Document> recipes = recipeCollection.find().into(new ArrayList<>());
         for (Document i : recipes) {
-            response.append("*" + i.getString("title"));
+            response.append("*" + i.getString("title") + "%" + i.getString("username"));
         }
         response.delete(0, 1);
         return response.toString();
     }
 
-    public void doPost(String title, String details) {
+    public void doPost(String title, String details, String username) {
+        /* 
         Bson filter = eq("title", title);
-        Bson updateOperation = com.mongodb.client.model.Updates.set("description", details);
+        Bson updateDescription = com.mongodb.client.model.Updates.set("description", details);
+       
         UpdateOptions options = new UpdateOptions().upsert(true);
+        recipeCollection.updateOne(filter, updateDescription, options);
+        Bson updateUsername = com.mongodb.client.model.Updates.set("username", username);
+         recipeCollection.updateOne(filter, updateUsername, options);
+         */
+
+         Bson filter = eq("title", title);
+
+        Bson updateDescription = com.mongodb.client.model.Updates.set("description", details);
+        Bson updateUsername = com.mongodb.client.model.Updates.set("username", username);
+
+        Bson updateOperation = com.mongodb.client.model.Updates.combine(updateDescription, updateUsername);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
         recipeCollection.updateOne(filter, updateOperation, options);
+
     }
 
     public void doDelete(String title) {

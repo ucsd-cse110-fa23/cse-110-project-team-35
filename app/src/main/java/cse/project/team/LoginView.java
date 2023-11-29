@@ -18,6 +18,7 @@ public class LoginView extends BorderPane {
 
     private TextArea messageArea;
     private TextField username,password;
+    public Object setLoginButton;
 
     public LoginView() {
         login_header = new loginHeader();
@@ -68,6 +69,21 @@ public class LoginView extends BorderPane {
         loginButton.setOnAction(eventHandler);
     }
 
+    public void setAutoButton(EventHandler<ActionEvent> eventHandler) {
+        autoButton.setOnAction(eventHandler);
+    }
+
+    public void autoLoginButton(){
+        loginButton.fire();
+        
+    }
+
+    public Button getlogInButton(){
+        return loginButton;
+    }
+
+
+
     public String getUsername(){
         return username.getText();
     }
@@ -76,9 +92,20 @@ public class LoginView extends BorderPane {
         return password.getText();
     }
 
+
+     public void SetUsername(String u){
+         username.setText(u);
+    }
+
+    public void SetPassword(String p){
+         password.setText(p);
+    }
+
+
     public void setMessageText(String text) {
         messageArea.setText(text);
     }
+
 }
 
 class loginFooter extends GridPane {

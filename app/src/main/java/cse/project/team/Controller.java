@@ -5,7 +5,13 @@ import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
 
 public class Controller {
     private ListView listView;
@@ -18,6 +24,12 @@ public class Controller {
 
     final File STYLE = new File("style.css");
     final String STYLESHEET = "file:" + STYLE.getPath();
+
+
+
+    File autoLogInfile = new File("autoLogIn.txt");
+
+    
 
     final int HEIGHT = 650;
     final int WIDTH = 360;
@@ -56,6 +68,8 @@ public class Controller {
         this.loginView.setLoginButton(this::handleLoginButton);
 
         this.listView.SetLogOutButton(this::handleLogOutButton);
+
+        this.loginView.setAutoButton(this::handleAutoButton);
     }
 
     private void loadrecipeList() {
@@ -119,7 +133,28 @@ public class Controller {
     }
 
     private void setLoginScene() {
-        stage.setScene(loginScene);
+
+        try {
+            // Check if the file is empty
+            if (autoLogInfile.length() != 0) {
+                FileReader fileReader = new FileReader(autoLogInfile);
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+                String line = bufferedReader.readLine();
+                bufferedReader.close();
+                System.out.println(line);
+                String[] parts = line.split(",");
+                loginView.SetUsername(parts[0]);
+                loginView.SetPassword(parts[1]);
+                setListScene();
+            } else {
+                stage.setScene(loginScene);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        //stage.setScene(loginScene);
     }
 
     private void handleRecipeButtons(ActionEvent event) {
@@ -275,17 +310,66 @@ public class Controller {
             //System.out.println(password);
             if (password.equals("Does not exist")){
                 loginView.setMessageText("This account does not exist. Please try again.");
+                loginView.SetUsername("");
+                 loginView.SetPassword("");
+                try {
+                if (autoLogInfile.exists() && autoLogInfile.length() > 0) {
+                    FileWriter writer = new FileWriter(autoLogInfile);
+
+                    writer.close(); 
+                } else {
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+                
             } 
             else if(password.equals(new_password)){
                 setListScene();
             } 
             else{
                 loginView.setMessageText("Incorrect password. Please try again.");
+                loginView.SetUsername("");
+                 loginView.SetPassword("");
+                    try {
+                if (autoLogInfile.exists() && autoLogInfile.length() > 0) {
+                    FileWriter writer = new FileWriter(autoLogInfile);
+
+                    writer.close(); 
+                } else {
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             }
         }
     }
 
     private void handleLogOutButton(ActionEvent event){
+        try {
+            if (autoLogInfile.exists() && autoLogInfile.length() > 0) {
+                FileWriter writer = new FileWriter(autoLogInfile);
+
+                writer.close(); 
+            } else {
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        loginView.SetUsername("");
+        loginView.SetPassword("");
         setLoginScene();
+     }
+
+     private void handleAutoButton(ActionEvent event){
+
+        try {
+             FileWriter writer = new FileWriter(autoLogInfile);
+                writer.write(loginView.getUsername() + "," + loginView.getPassword());
+                writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
      }
 }

@@ -185,24 +185,24 @@ class AppTest {
      * offering options like "Breakfast," "Lunch," or "Dinner."
      * 
      * Not tested here due to implementation being combined with the previous story
-     * 
-     * // End to End Scnario Test MS1
-     * 
-     * @Test
-     * public void testEndToEnd() throws IOException, URISyntaxException, Exception
-     * {
-     * genI gen = new genMock();
-     * String newGen = gen.chatgen("dinner potato");
-     * String title = newGen.split("\n")[0];
-     * String details = newGen.substring(title.length());
-     * REChandler.doPost(title, details, details);
-     * assertEquals(details, REChandler.getRecDetail(title));
-     * REChandler.doPost(title, other_details,username);
-     * assertEquals(other_details, REChandler.getRecDetail(title));
-     * REChandler.doDelete(title);
-     * assertEquals("Does not exist", REChandler.getRecDetail(mock_title));
-     * }
-     */
+     */ 
+      // End to End Scnario Test MS1
+      
+      @Test
+      public void testEndToEnd() throws IOException, URISyntaxException, Exception
+      {
+      genI gen = new genMock();
+      String newGen = gen.chatgen("dinner potato");
+      String title = newGen.split("\n")[0];
+      String details = newGen.substring(title.length());
+      REChandler.doPost(title, details, details);
+      assertEquals(details, REChandler.getRecDetail(title));
+      REChandler.doPost(title, other_details,username);
+      assertEquals(other_details, REChandler.getRecDetail(title));
+      REChandler.doDelete(title);
+      assertEquals("Does not exist", REChandler.getRecDetail(mock_title));
+      }
+     
 
     /*
      * US 9: Create an account

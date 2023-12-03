@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
@@ -28,7 +29,7 @@ public class Controller {
     File autoLogInfile = new File("autoLogIn.txt");
 
     final int HEIGHT = 650;
-    final int WIDTH = 360;
+    final int WIDTH = 500;
 
     public Controller(ListView listView,
             DetailView detView,
@@ -66,6 +67,8 @@ public class Controller {
         this.listView.SetLogOutButton(this::handleLogOutButton);
 
         this.loginView.setAutoButton(this::handleAutoButton);
+
+        this.detView.setShareButton(this::handleShareButton);
     }
 
     private void loadRecipeList() {
@@ -346,5 +349,12 @@ public class Controller {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void handleShareButton(ActionEvent event){
+        String title = detView.getCurrTitle();
+        String detail = detView.getDetailText();
+        System.out.println("getText: "+detail);
+        String response = model.shareRequest("POST", title, detail, null);
     }
 }

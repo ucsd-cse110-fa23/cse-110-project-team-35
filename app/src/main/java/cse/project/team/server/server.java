@@ -4,12 +4,14 @@ import com.sun.net.httpserver.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.*;
+import java.util.Map;
+import java.util.HashMap;
 
 public class server {
     private static final int SERVER_PORT = 8100;
     private static final String SERVER_HOSTNAME = "localhost";
     static HttpServer server;
-
+    
     public server() throws IOException{
         init();
     }
@@ -33,10 +35,12 @@ public class server {
                      * HTTP requests and route them to the appropriate
                      * handlers.
                      */
-
+        Map<String, String> data = new HashMap<>();
         server.createContext("/db/", new DBHandler("Main_CSE110_Proj"));
         server.createContext("/account/",new accountHandler("Main_CSE110_Proj"));
         server.createContext("/gen/", new GenHandler(new genAPI()));
+
+        server.createContext("/share/",new shareHandler(data));
         server.setExecutor(threadPoolExecutor);
         server.start();
 

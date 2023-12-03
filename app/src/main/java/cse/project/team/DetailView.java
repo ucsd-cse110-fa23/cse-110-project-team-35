@@ -6,11 +6,14 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Path;
 import javafx.scene.text.*;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.*;
+
+import com.google.common.io.Files;
 
 public class DetailView extends BorderPane {
     private detailHeader header;
@@ -20,6 +23,7 @@ public class DetailView extends BorderPane {
     private Button editButton;
     private Button saveButton;
     private Button deleteButton;
+    private Button shareButton;
 
     private TextArea titleText, detailText;
 
@@ -40,6 +44,9 @@ public class DetailView extends BorderPane {
         saveButton = new Button("Save Recipe");
         deleteButton = new Button("Delete Recipe");
 
+        shareButton = new Button("Share");
+        shareButton.getStyleClass().add("footerButton");
+
         back.getStyleClass().add("footerButton");
         saveButton.getStyleClass().add("footerButton");
         editButton.getStyleClass().add("footerButton");
@@ -49,6 +56,7 @@ public class DetailView extends BorderPane {
         footer.add(saveButton, 0, 1);
         footer.add(back, 1, 1);
         footer.add(deleteButton, 1, 0);
+        footer.add(shareButton, 2, 0);
 
         titleText = new TextArea();
         titleText.setWrapText(true);
@@ -130,6 +138,10 @@ public class DetailView extends BorderPane {
 
     public void setDeleteButton(EventHandler<ActionEvent> eventHandler) {
         deleteButton.setOnAction(eventHandler);
+    }
+
+    public void setShareButton(EventHandler<ActionEvent> eventHandler){
+        shareButton.setOnAction(eventHandler);
     }
 
     public void toggleEditMode() {

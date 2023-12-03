@@ -155,21 +155,23 @@ public class Controller {
     }
 
     private void handleRecipeButtons(ActionEvent event) {
+        String recipeTitle = ((Button) event.getSource()).getText();
+        String details = model.dBRequest("GET", null, null, null, recipeTitle);
+        String imagePath = new String(recipeTitle + ".jpg");
+        setDetailScene();
+        detView.addDetails(recipeTitle, details.trim());
+
+        //generate detail view image and set it
+        //needed for smooth transition and not freezing
         Thread t = new Thread(
                 new Runnable() {
                     @Override
                     public void run() {
-                        String recipeTitle = ((Button) event.getSource()).getText();
-                        String details = model.dBRequest("GET", null, null, null, recipeTitle);
-                        String imagePath = new String(recipeTitle + ".jpg");
-
                         model.generateImage(recipeTitle);
-
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                detView.addDetails(recipeTitle, details.trim(), imagePath);
-                                setDetailScene();
+                                detView.setImage(imagePath);
                             }
                         });
                     }
@@ -180,8 +182,7 @@ public class Controller {
     }
 
     private void handleBackButton(ActionEvent event) {
-        detView.stopTextAnim();
-        detView.hideRefreshButton();
+        detView.reset();
         setListScene();
     }
 
@@ -268,9 +269,9 @@ public class Controller {
             public void run() {
                 // Show image and recipe details
                 detView.addDetails(recipe.split("\n")[0],
-                        recipe.substring(recipe.split("\n")[0].length()).trim(),
-                        imagePath);
+                        recipe.substring(recipe.split("\n")[0].length()).trim());
                 detView.disableButtons(false);
+                detView.setImage(imagePath);
 
                 setDetailScene();
                 detView.showRefreshButton();
@@ -286,14 +287,13 @@ public class Controller {
 
     private void handleSaveButton(ActionEvent event) {
         model.dBRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), loginView.getUsername(), null);
-        detView.stopTextAnim();
-        detView.hideRefreshButton();
+        detView.reset();
         setListScene();
     }
 
     private void handleDeleteButton(ActionEvent event) {
         model.dBRequest("DELETE", null, null, loginView.getUsername(), detView.getCurrTitle());
-        detView.stopTextAnim();
+        detView.reset();
         setListScene();
     }
 

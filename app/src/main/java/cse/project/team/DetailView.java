@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.*;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
@@ -71,8 +72,23 @@ public class DetailView extends BorderPane {
         recipeImage.setPreserveRatio(true);
 
         VBox details = new VBox();
-        details.getChildren().addAll(titleText, detailText,recipeImage);
+        details.getChildren().addAll(titleText, detailText);
         details.getStyleClass().add("center");
+
+        header.getChildren().add(recipeImage);
+        // Set the size of the ImageView
+        recipeImage.setFitWidth(100);
+        recipeImage.setFitHeight(100);
+        recipeImage.setPreserveRatio(true);
+
+        // Create a Circle to use as a mask
+        Circle circle = new Circle();
+        circle.setRadius(50); // Set the radius to half of the desired width/height
+        circle.setCenterX(50); // Set the center X coordinate
+        circle.setCenterY(50); // Set the center Y coordinate
+
+        // Set the clip on the ImageView
+        recipeImage.setClip(circle);
 
         this.setTop(header);
         this.setCenter(details);
@@ -113,16 +129,20 @@ public class DetailView extends BorderPane {
         return detailText.getText();
     }
 
-    public void addDetails(String title, String recipeDetails, String imagePath) {
+    public void addDetails(String title, String recipeDetails) {
         this.currTitle = title;
         titleText.setText(title);
-        setAnimation(recipeDetails);
+        detailText.setText(recipeDetails);
 
+    }
+
+    public void setImage(String imagePath){
         // Load and set the image
         if (imagePath != null && !imagePath.isEmpty()) {
             File selectedFile = new File(imagePath);
             Image image = new Image(selectedFile.toURI().toString());
             recipeImage.setImage(image);
+            showImage();
         }
     }
 
@@ -200,6 +220,19 @@ public class DetailView extends BorderPane {
 
     public void hideRefreshButton() {
         this.refreshButton.setVisible(false);
+    }
+
+    public void hideImage() {
+        recipeImage.setVisible(false);
+    }
+
+    public void showImage(){
+        recipeImage.setVisible(true);
+    }
+
+    public void reset() {
+        hideRefreshButton();
+        hideImage();
     }
 
 }

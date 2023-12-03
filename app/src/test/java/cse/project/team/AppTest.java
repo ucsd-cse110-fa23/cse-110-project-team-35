@@ -185,24 +185,22 @@ class AppTest {
      * offering options like "Breakfast," "Lunch," or "Dinner."
      * 
      * Not tested here due to implementation being combined with the previous story
-     */ 
-      // End to End Scnario Test MS1
-      
-      @Test
-      public void testEndToEnd() throws IOException, URISyntaxException, Exception
-      {
-      genI gen = new genMock();
-      String newGen = gen.chatgen("dinner potato");
-      String title = newGen.split("\n")[0];
-      String details = newGen.substring(title.length());
-      REChandler.doPost(title, details, details);
-      assertEquals(details, REChandler.getRecDetail(title));
-      REChandler.doPost(title, other_details,username);
-      assertEquals(other_details, REChandler.getRecDetail(title));
-      REChandler.doDelete(title);
-      assertEquals("Does not exist", REChandler.getRecDetail(mock_title));
-      }
-     
+     */
+    // End to End Scnario Test MS1
+
+    @Test
+    public void testEndToEnd() throws IOException, URISyntaxException, Exception {
+        genI gen = new genMock();
+        String newGen = gen.chatgen("dinner potato");
+        String title = newGen.split("\n")[0];
+        String details = newGen.substring(title.length());
+        REChandler.doPost(title, details, details);
+        assertEquals(details, REChandler.getRecDetail(title));
+        REChandler.doPost(title, other_details, username);
+        assertEquals(other_details, REChandler.getRecDetail(title));
+        REChandler.doDelete(title);
+        assertEquals("Does not exist", REChandler.getRecDetail(mock_title));
+    }
 
     /*
      * US 9: Create an account
@@ -333,7 +331,7 @@ class AppTest {
     @Test
     public void testLogin() {
         GivenExistingACC();
-        String respones = WhenUserEntersInfo(username,password);
+        String respones = WhenUserEntersInfo(username, password);
         ThenLogin(respones);
     }
 
@@ -397,5 +395,27 @@ class AppTest {
         }
         return false;
     }
+
+    /*
+     * US12:
+     * BDD Scenario 1: The user clicks “Refresh” on an unsaved recipe.
+     * Given the user has generated a new recipe that has not yet been saved,
+     * And the user is on the recipe details page,
+     * When the user clicks the “Refresh” button,
+     * Then a new recipe is generated based on the same voice input as the previous;
+     * When the new recipe is done generating,
+     * Then the new recipe details are shown on the recipe details page.
+     */
+
+     @Test
+     public void testRefresh() throws IOException, URISyntaxException, Exception{
+        genI gen = givenGen();
+        String result = whenGen(gen);
+        thenGen(result);
+        result = whenGen(gen);
+        thenGen(result);
+     }
+
+
 
 }

@@ -20,6 +20,7 @@ public class DetailView extends BorderPane {
     private Button editButton;
     private Button saveButton;
     private Button deleteButton;
+    private Button refreshButton;
 
     private TextArea titleText, detailText;
 
@@ -39,16 +40,21 @@ public class DetailView extends BorderPane {
         editButton = new Button("Edit Mode");
         saveButton = new Button("Save Recipe");
         deleteButton = new Button("Delete Recipe");
+        refreshButton = new Button("Refresh Recipe");
+
+        refreshButton.setVisible(false);
 
         back.getStyleClass().add("footerButton");
         saveButton.getStyleClass().add("footerButton");
         editButton.getStyleClass().add("footerButton");
         deleteButton.getStyleClass().add("footerButton");
+        refreshButton.getStyleClass().add("footerButton");
 
         footer.add(editButton, 0, 0);
         footer.add(saveButton, 0, 1);
         footer.add(back, 1, 1);
         footer.add(deleteButton, 1, 0);
+        footer.add(refreshButton, 0,2);
 
         titleText = new TextArea();
         titleText.setWrapText(true);
@@ -132,6 +138,10 @@ public class DetailView extends BorderPane {
         deleteButton.setOnAction(eventHandler);
     }
 
+    public void setRefreshButton(EventHandler<ActionEvent> eventHandler) {
+        refreshButton.setOnAction(eventHandler);
+    }
+
     public void toggleEditMode() {
         if ("Edit Mode".equals(editButton.getText())) {
             setEditButtonTextToView();
@@ -177,6 +187,19 @@ public class DetailView extends BorderPane {
         editButton.setDisable(value);
         saveButton.setDisable(value);
         deleteButton.setDisable(value);
+    }
+
+    public void setRefreshText(){
+        this.titleText.setText("Cooking up Something new...");
+        this.detailText.setText("Talking to the chefGPT. Please wait....");
+    }
+
+    public void showRefreshButton() {
+        this.refreshButton.setVisible(true);
+    }
+
+    public void hideRefreshButton() {
+        this.refreshButton.setVisible(false);
     }
 
 }

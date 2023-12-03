@@ -1,8 +1,10 @@
 package cse.project.team;
 
 import cse.project.team.server.DBHandler;
+import cse.project.team.server.MockDalle;
 import cse.project.team.server.accountHandler;
 import cse.project.team.server.genMock;
+import cse.project.team.server.shareHandler;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 
 import javafx.event.ActionEvent;
@@ -423,18 +426,73 @@ class AppTest {
         String response = whenNoServer(model);
         thenNoServer(response);
     }
-    
-    public Model givenNoServer(){
+
+    public Model givenNoServer() {
         return new Model();
     }
 
-    public String whenNoServer(Model model){
+    public String whenNoServer(Model model) {
         return model.accountRequest("PUT", "", "", null);
 
     }
 
-    public void thenNoServer(String response){
+    public void thenNoServer(String response) {
         assertNotEquals("Login", response);
+    }
+
+    /*
+     * US17: 
+     * BDD Scenario 1: An existing recipe was shared.
+     * Given a saved recipe that exists in the database,
+     * When the user clicks the “Share” button on the recipe details page,
+     * Then a web URL linking to the recipe’s details will be generated;
+     * When the URL is pasted in a web browser,
+     * Then the recipe details will be displayed in a web browser.
+     * BDD Scenario 2: A deleted recipe was shared.
+     * Given the share URL of a recipe has already been generated,
+     * When the recipe is deleted,
+     * And the share URL is clicked,
+     * Then a web page displaying a “Recipe not found, sorry!” error is opened.
+     */
+    //Scenario 1
+    @Test
+    public void testSharedRecipe() {
+        shareHandler share = givenSharedRecipe();
+        whenSharedRecipe(share);
+        thenSharedRecipe(share);
+    }
+    //Scenario 2
+    @Test
+    public void testSharedRecipeDeleted() throws UnsupportedEncodingException {
+        shareHandler share = givenSharedRecipe();
+        givenSharedRecipe(share);
+        whenSharedRecipeDeleted(share);
+        thenSharedRecipeDeleted(share);
+    }
+
+    private void thenSharedRecipeDeleted(shareHandler share) {
+        assertEquals("Not found", share.doGet(mock_title));
+    }
+
+    private void whenSharedRecipeDeleted(shareHandler share) throws UnsupportedEncodingException {
+        share.doDelete(mock_title);
+    }
+
+    private void givenSharedRecipe(shareHandler share) {
+        share.doPost(mock_title + "\n" + mock_details);
+    }
+
+    private void thenSharedRecipe(shareHandler share) {
+        assertNotEquals("Not found", share.doGet(mock_title));
+    }
+
+    private void whenSharedRecipe(shareHandler share) {
+        share.doPost(mock_title + "\n" + mock_details);
+    }
+
+    private shareHandler givenSharedRecipe() {
+        shareHandler share = new shareHandler(new MockDalle());
+        return share;
     }
 
 }

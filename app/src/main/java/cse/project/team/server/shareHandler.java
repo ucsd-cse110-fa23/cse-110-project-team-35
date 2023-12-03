@@ -8,10 +8,11 @@ import com.sun.net.httpserver.*;
 public class shareHandler implements HttpHandler {
 
     private final Map<String, String> data;
-    DalleOnline dalle = new DalleOnline();
+    IDalle dalle;
 
-    public shareHandler(Map<String, String> data) {
-        this.data = data;
+    public shareHandler(IDalle dalle) {
+        this.data = new HashMap<>();
+        this.dalle = dalle;
     }
 
     @Override
@@ -40,19 +41,23 @@ public class shareHandler implements HttpHandler {
     }
 
     private String handleGet(HttpExchange httpExchange) throws IOException {
-        String response = "Invalid GET request";
         URI uri = httpExchange.getRequestURI();
         String query = uri.getRawQuery();
-        response = query;
+        return doGet(query);
+    }
+
+    public String doGet(String query){
+        String response = query;
         if (query != null) {
             String value = query.substring(query.indexOf("=") + 1);
+            value = value.replaceAll("\\s", "");
             String year = data.get(value); // Retrieve data from hashmap
 
             if (year != null) {
                 response = year;
                 // System.out.println("Queried for " + value + " and found " + year);
             } else {
-                response = "Recipe: " + value + " not found.";
+                response = "Not found";
             }
         }
         return response;
@@ -69,6 +74,12 @@ public class shareHandler implements HttpHandler {
             postData += scanner.nextLine() + '\n';
         }
         scanner.close();
+
+        return doPost(postData);
+        
+    }
+
+    public String doPost(String postData){
         String response = postData;
         int indexOfNewLine = response.indexOf('\n');
         // Check if newline character exists
@@ -78,14 +89,14 @@ public class shareHandler implements HttpHandler {
             title = response.substring(0, indexOfNewLine);
             title = title.replaceAll("\\s", "");
         }
-        System.out.println("key:" + title);
 
         String imagePath = dalle.generateDalle(title);
         String htmlRecipe = generateHtmlRecipe(response, imagePath);
 
         data.put(title, htmlRecipe);
-        System.out.println(htmlRecipe);
-        return htmlRecipe;
+
+        return title;
+
     }
 
     private static String generateHtmlRecipe(String recipeText, String imagePath) {
@@ -144,6 +155,10 @@ public class shareHandler implements HttpHandler {
     private String handleDelete(HttpExchange httpExchange) throws IOException {
         URI uri = httpExchange.getRequestURI();
         String query = uri.getRawQuery();
+        return doDelete(query);
+    }
+
+    public String doDelete(String query) throws UnsupportedEncodingException{
         String title = URLDecoder.decode(query.substring(query.indexOf("=") + 1), "UTF-8");
         title = title.replaceAll("\\s", "");
         String response;

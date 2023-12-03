@@ -35,12 +35,11 @@ public class server {
                      * HTTP requests and route them to the appropriate
                      * handlers.
                      */
-        Map<String, String> data = new HashMap<>();
         server.createContext("/db/", new DBHandler("Main_CSE110_Proj"));
         server.createContext("/account/",new accountHandler("Main_CSE110_Proj"));
         server.createContext("/gen/", new GenHandler(new genAPI()));
 
-        server.createContext("/share/",new shareHandler(data));
+        server.createContext("/share/",new shareHandler(new DalleOnline()));
         server.setExecutor(threadPoolExecutor);
         server.start();
 

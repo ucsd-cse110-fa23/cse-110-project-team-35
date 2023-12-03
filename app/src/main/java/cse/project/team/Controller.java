@@ -4,10 +4,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-import static com.mongodb.client.model.Filters.in;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -147,7 +147,14 @@ public class Controller {
                 String password = parts[1];
                 loginView.setUsername(username);
                 loginView.setPassword(password);
-                setListScene();
+                String response = model.accountRequest("PUT", username, password, null);
+                if (response.equals("Login")) {
+                    setListScene();
+                } else {
+                    stage.setScene(loginScene);
+                    loginView.setMessageText(
+                            "Looks like the pantry is locked from our end... \nPlease try again later!");
+                }
             } else {
                 stage.setScene(loginScene);
             }
@@ -333,7 +340,7 @@ public class Controller {
                 break;
             default:
                 loginView.setMessageText(
-                        "Looks like the pantry is locked from our end... \nPlease try again later!     :)");
+                        "Looks like the pantry is locked from our end... \nPlease try again later!");
         }
     }
 
@@ -373,7 +380,7 @@ public class Controller {
                 break;
             default:
                 loginView.setMessageText(
-                        "Looks like the pantry is locked from our end... \nPlease try again later!     :)");
+                        "Looks like the pantry is locked from our end... \nPlease try again later!");
         }
     }
 

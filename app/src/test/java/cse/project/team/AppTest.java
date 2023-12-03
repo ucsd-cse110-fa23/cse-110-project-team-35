@@ -407,15 +407,44 @@ class AppTest {
      * Then the new recipe details are shown on the recipe details page.
      */
 
-     @Test
-     public void testRefresh() throws IOException, URISyntaxException, Exception{
+    @Test
+    public void testRefresh() throws IOException, URISyntaxException, Exception {
         genI gen = givenGen();
         String result = whenGen(gen);
         thenGen(result);
         result = whenGen(gen);
         thenGen(result);
-     }
+    }
 
+    /*
+     * US13:
+     * BDD Scenario 1: Server is down.
+     * Given the server is not running,
+     * When the app is launched,
+     * Then the create account/login page is shown,
+     * And an error message saying “Sorry, the server is down!” is displayed;
+     * When the user enters their information and clicks the “Login” or “Create
+     * Account” button,
+     * Then nothing changes.
+     */
+    @Test
+    public void testServerNotRunning() {
+        Model model = givenNoServer();
+        String response = whenNoServer(model);
+        thenNoServer(response);
+    }
+    
+    public Model givenNoServer(){
+        return new Model();
+    }
 
+    public String whenNoServer(Model model){
+        return model.accountRequest("PUT", "", "", null);
+
+    }
+
+    public void thenNoServer(String response){
+        assertNotEquals("Login", response);
+    }
 
 }

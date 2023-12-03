@@ -64,7 +64,8 @@ public class ListView extends BorderPane {
         }
     }
 
-
+    //https://stackoverflow.com/questions/73442672/java-sorting-using-lambda-with-streams
+    //https://stackoverflow.com/questions/45177184/map-to-list-after-filtering-on-maps-key-using-java8-stream
     public void sortButtonsAZ() {
         // Extract buttons and sort them
         List<Button> sortedButtons = recipeList.getChildren().stream()

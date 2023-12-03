@@ -57,7 +57,10 @@ public class Controller {
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
         this.listView.SetSortA_ZButton(this::handleSetSortA_ZButtonn);
-         this.listView.SetSortZ_AButton(this::handleSetSortZ_AButtonn);
+        this.listView.SetSortZ_AButton(this::handleSetSortZ_AButtonn);
+
+        this.listView.SetSortE_LButton(this::handleSetSortE_LButtonn);
+        this.listView.SetSortL_EButton(this::handleSetSortL_EButtonn);
 
 
         this.genView.setBackButton(this::handleGenerateBackButton);
@@ -382,5 +385,16 @@ public class Controller {
 
     private void handleSetSortZ_AButtonn(ActionEvent event) {
         listView.sortButtonsZA();
+    }
+
+     private void handleSetSortE_LButtonn(ActionEvent event) {
+        listView.emptyList();
+        loadRecipeList();
+        listView.sortButtonsEL();
+    }
+
+    private void handleSetSortL_EButtonn(ActionEvent event) {
+        listView.emptyList();
+        loadRecipeList();
     }
 }

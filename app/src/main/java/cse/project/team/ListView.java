@@ -12,6 +12,7 @@ import javafx.scene.text.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 public class ListView extends BorderPane {
     private RecipeList recipeList;
@@ -22,6 +23,8 @@ public class ListView extends BorderPane {
     private Button logOutButton;
     private Button SortA_ZButton;
     private Button SortZ_AButton;
+    private Button SortE_LButton;
+    private Button SortL_EButton;
 
     public ListView() {
         header = new Header();
@@ -44,6 +47,8 @@ public class ListView extends BorderPane {
         logOutButton = footer.getLogOutButton();
         SortA_ZButton = footer.getSortA_ZButton();
         SortZ_AButton = footer.getSortZ_AButton();
+        SortE_LButton = footer.getSortE_LButton();
+        SortL_EButton = footer.getSortL_EButton();
     }
 
     public RecipeList getRecipeList() {
@@ -61,7 +66,6 @@ public class ListView extends BorderPane {
 
 
     public void sortButtonsAZ() {
-
         // Extract buttons and sort them
         List<Button> sortedButtons = recipeList.getChildren().stream()
             .filter(node -> node instanceof Button)
@@ -72,6 +76,7 @@ public class ListView extends BorderPane {
         // Clear the list and re-add sorted buttons
         recipeList.getChildren().clear();
         recipeList.getChildren().addAll(sortedButtons);
+        
     }
 
 
@@ -89,6 +94,29 @@ public class ListView extends BorderPane {
     
     }
 
+    public void sortButtonsEL() {
+        List<Button> buttons = recipeList.getChildren().stream()
+        .filter(node -> node instanceof Button)
+        .map(node -> (Button) node)
+        .collect(Collectors.toList());
+
+        Collections.reverse(buttons);
+        // Clear the list and re-add buttons in their original order
+        recipeList.getChildren().clear();
+        recipeList.getChildren().addAll(buttons);
+                
+    
+    }
+
+    public void emptyList() {
+        
+        recipeList.getChildren().clear();
+                
+    
+    }
+
+
+
     public void setGenerateButton(EventHandler<ActionEvent> eventHandler) {
         generateButton.setOnAction(eventHandler);
     }
@@ -103,6 +131,14 @@ public class ListView extends BorderPane {
 
     public void SetSortZ_AButton(EventHandler<ActionEvent> eventHandler) {
         SortZ_AButton.setOnAction(eventHandler);
+    }
+
+    public void SetSortE_LButton(EventHandler<ActionEvent> eventHandler) {
+        SortE_LButton.setOnAction(eventHandler);
+    }
+
+    public void SetSortL_EButton(EventHandler<ActionEvent> eventHandler) {
+        SortL_EButton.setOnAction(eventHandler);
     }
 
 }
@@ -129,6 +165,8 @@ class Footer extends HBox {
     private Button logOutButton;
     private Button SortA_ZButton;
     private Button SortZ_AButton;
+    private Button SortE_LButton;
+    private Button SortL_EButton;
 
 
     Footer() {
@@ -144,15 +182,26 @@ class Footer extends HBox {
         SortZ_AButton = new Button("Sort Z - A");
         SortZ_AButton.getStyleClass().add("footerButton");
 
+        SortE_LButton = new Button("Sort E - L");
+        SortE_LButton.getStyleClass().add("footerButton");
+
+        SortL_EButton = new Button("Sort L - E");
+        SortL_EButton.getStyleClass().add("footerButton");
+
+
+
+
         HBox row1 = new HBox(generateButton, logOutButton);
         HBox row2 = new HBox(SortA_ZButton, SortZ_AButton);
+        HBox row3 = new HBox(SortE_LButton, SortL_EButton);
 
         // Optionally, set spacing and alignment for HBoxes
         row1.setSpacing(10); // adjust spacing as needed
         row2.setSpacing(10); // adjust spacing as needed
+        row3.setSpacing(10); // adjust spacing as needed
 
         // Create a VBox and add the two HBoxes to it
-        VBox layout = new VBox(row1, row2);
+        VBox layout = new VBox(row1, row2, row3);
         layout.setSpacing(5); // adjust spacing between rows as needed
 
         // Add the VBox to the footer
@@ -174,6 +223,14 @@ class Footer extends HBox {
 
     public Button getSortZ_AButton() {
         return SortZ_AButton;
+    }
+
+    public Button getSortE_LButton() {
+        return SortE_LButton;
+    }
+
+    public Button getSortL_EButton() {
+        return SortL_EButton;
     }
 
 

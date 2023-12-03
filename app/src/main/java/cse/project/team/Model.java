@@ -19,7 +19,7 @@ public class Model {
 
     public Model() {
         audio = new audioRec();
-        dalle = new DalleMock();
+        dalle = new Dalle();
     }
 
     public void startRec() {

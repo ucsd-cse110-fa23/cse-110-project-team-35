@@ -191,7 +191,7 @@ public class DetailView extends BorderPane {
 
     public void setRefreshText(){
         this.titleText.setText("Cooking up Something new...");
-        this.detailText.setText("Talking to the chefGPT. Please wait....");
+        this.detailText.setText("Talking to the chefGPT.  Please wait....");
     }
 
     public void showRefreshButton() {

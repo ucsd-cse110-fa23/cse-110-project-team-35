@@ -155,13 +155,28 @@ public class Controller {
     }
 
     private void handleRecipeButtons(ActionEvent event) {
-        String recipeTitle = ((Button) event.getSource()).getText();
-        String details = model.dBRequest("GET", null, null, null, recipeTitle);
-        String imagePath = new String(recipeTitle + ".jpg");
+        Thread t = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        String recipeTitle = ((Button) event.getSource()).getText();
+                        String details = model.dBRequest("GET", null, null, null, recipeTitle);
+                        String imagePath = new String(recipeTitle + ".jpg");
 
-        model.generateImage(recipeTitle);
-        detView.addDetails(recipeTitle, details.trim(), imagePath);
-        setDetailScene();
+                        model.generateImage(recipeTitle);
+
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                detView.addDetails(recipeTitle, details.trim(), imagePath);
+                                setDetailScene();
+                            }
+                        });
+                    }
+                });
+
+        t.start();
+
     }
 
     private void handleBackButton(ActionEvent event) {
@@ -247,7 +262,7 @@ public class Controller {
 
         // Save image on local computer
         String imagePath = new String(recipeTitles[0] + ".jpg");
-        
+
         Platform.runLater(new Runnable() {
             @Override
             public void run() {

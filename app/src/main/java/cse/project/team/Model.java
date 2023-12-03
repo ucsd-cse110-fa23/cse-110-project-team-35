@@ -34,7 +34,7 @@ public class Model {
         dalle.generateDalle(title);
     }
 
-    public String dBRequest(String method, String title, String details, String username, String query) {
+    public String dBRequest(String method, String title, String details, String username, String mealType, String query) {
         try {
             String urlString = "http://localhost:8100/db/";
             if (query != null) {
@@ -48,7 +48,7 @@ public class Model {
 
             if (method.equals("POST") || method.equals("PUT")) {
                 OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-                out.write(title + "#" + details + "#" + username);
+                out.write(title + "#" + details + "#" + username + "#" + mealType);
                 out.flush();
                 out.close();
             }

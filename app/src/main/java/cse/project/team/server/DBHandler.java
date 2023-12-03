@@ -71,12 +71,12 @@ public class DBHandler implements HttpHandler {
         InputStream inStream = httpExchange.getRequestBody();
         Scanner scanner = new Scanner(inStream);
         String postData = scanner.toString();
-        String title = postData.substring(
-                0,
-                postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1),
-                username = postData.substring(postData.indexOf(",") + 1);
+        String title = postData.substring(0,postData.indexOf(","));
+        String details = postData.substring(postData.indexOf(",") + 1);
+        String username = postData.substring(postData.indexOf(",") + 1); 
+        String mealType = postData.substring(postData.indexOf(",") + 1);
         scanner.close();
-        doPost(title, details, username);
+        doPost(title, details, username, mealType);
 
         return "Did Something?";
     }
@@ -92,16 +92,31 @@ public class DBHandler implements HttpHandler {
                 postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1), 
                 username  = postData.substring(postData.indexOf(",") + 1);*/
 
+        String[] fieldsSplit = postData.split("#");
 
+        /*
         String title = postData.substring(0, postData.indexOf("#"));
 
         int firstCommaIndex = postData.indexOf("#") + 1;
         int secondCommaIndex = postData.indexOf("#", firstCommaIndex);
+        int thirdCommaIndex = postData.indexOf("#", secondCommaIndex);
                 
         String details = postData.substring(firstCommaIndex, secondCommaIndex);
-        String username = postData.substring(secondCommaIndex + 1);
+        String username = postData.substring(secondCommaIndex + 1, thirdCommaIndex);
+        String mealType = postData.substring(thirdCommaIndex + 1);
+        */
 
-        doPost(title, details, username);
+        String title = fieldsSplit[0];
+        String details = fieldsSplit[1];
+        String username = fieldsSplit[2];
+        String mealType = fieldsSplit[3];
+
+        System.out.println("0: " + fieldsSplit[0]);
+        System.out.println("1: " + fieldsSplit[1]);
+        System.out.println("2: " + fieldsSplit[2]);
+        System.out.println("3: " + fieldsSplit[3]);
+
+        doPost(title, details, username, mealType);
         in.close();
 
         return "Did Something";
@@ -138,7 +153,7 @@ public class DBHandler implements HttpHandler {
         return response.toString();
     }
 
-    public void doPost(String title, String details, String username) {
+    public void doPost(String title, String details, String username, String mealType) {
         /* 
         Bson filter = eq("title", title);
         Bson updateDescription = com.mongodb.client.model.Updates.set("description", details);
@@ -149,17 +164,19 @@ public class DBHandler implements HttpHandler {
          recipeCollection.updateOne(filter, updateUsername, options);
          */
 
-         Bson filter = eq("title", title);
+        Bson filter = eq("title", title);
+
+        System.out.println("Mealtype: ");
 
         Bson updateDescription = com.mongodb.client.model.Updates.set("description", details);
         Bson updateUsername = com.mongodb.client.model.Updates.set("username", username);
+        Bson updateMealType = com.mongodb.client.model.Updates.set("mealType", mealType);
 
-        Bson updateOperation = com.mongodb.client.model.Updates.combine(updateDescription, updateUsername);
+        Bson updateOperation = com.mongodb.client.model.Updates.combine(updateDescription, updateUsername, updateMealType);
 
         UpdateOptions options = new UpdateOptions().upsert(true);
 
         recipeCollection.updateOne(filter, updateOperation, options);
-
     }
 
     public void doDelete(String title) {

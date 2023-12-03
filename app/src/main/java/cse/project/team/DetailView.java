@@ -21,7 +21,8 @@ public class DetailView extends BorderPane {
     private Button saveButton;
     private Button deleteButton;
 
-    private TextArea titleText, detailText;
+    private TextArea titleText, detailText, mealTypeText;
+    private HBox title;
 
     private String currTitle;
     private Boolean newRec;
@@ -55,6 +56,14 @@ public class DetailView extends BorderPane {
         titleText.setEditable(false);
         titleText.getStyleClass().addAll("textBox", "extraPadding");
 
+        mealTypeText = new TextArea();
+        mealTypeText.setEditable(false);
+        mealTypeText.getStyleClass().addAll("textBox", "extraPadding");
+
+        title = new HBox(0);
+        title.getChildren().add(titleText);
+        title.getChildren().add(mealTypeText);
+
         detailText = new TextArea();
         detailText.setWrapText(true);
         detailText.setEditable(false);
@@ -65,7 +74,7 @@ public class DetailView extends BorderPane {
         recipeImage.setPreserveRatio(true);
 
         VBox details = new VBox();
-        details.getChildren().addAll(titleText, detailText,recipeImage);
+        details.getChildren().addAll(title, detailText, recipeImage);
         details.getStyleClass().add("center");
 
         this.setTop(header);
@@ -107,9 +116,15 @@ public class DetailView extends BorderPane {
         return detailText.getText();
     }
 
-    public void addDetails(String title, String recipeDetails, String imagePath) {
+    public String getMealTypeText() {
+        return mealTypeText.getText();
+    }
+
+    public void addDetails(String title, String recipeDetails, String imagePath, String mealType) {
         this.currTitle = title;
         titleText.setText(title);
+        mealTypeText.setText(mealType);
+        mealTypeText.setStyle("-fx-background-color: " + selectColor(mealType));
         setAnimation(recipeDetails);
 
         // Load and set the image
@@ -177,6 +192,18 @@ public class DetailView extends BorderPane {
         editButton.setDisable(value);
         saveButton.setDisable(value);
         deleteButton.setDisable(value);
+    }
+
+    public String selectColor(String mealType) {
+        if (mealType.equals("Breakfast")) {
+            return "blue";
+        }
+        else if (mealType.equals("Lunch")) {
+            return "yellow";
+        }
+        else {
+            return "red";
+        }
     }
 
 }

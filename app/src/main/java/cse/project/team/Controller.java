@@ -70,7 +70,7 @@ public class Controller {
 
     private void loadRecipeList() {
         listView.getRecipeList().getChildren().clear();
-        String[] rlist = model.dBRequest("GET", null, null, null, null).split("\\*");
+        String[] rlist = model.dBRequest("GET", null, null, null, null, null).split("\\*");
 
         for (String i : rlist) {
             if (i.length() == 0)
@@ -132,7 +132,7 @@ public class Controller {
 
         try {
             // Check if the file is empty
-            if (autoLogInfile.length() != 0) {
+            if (autoLogInfile.length() > 1) {
                 FileReader fileReader = new FileReader(autoLogInfile);
                 BufferedReader bufferedReader = new BufferedReader(fileReader);
                 String line = bufferedReader.readLine();
@@ -154,11 +154,12 @@ public class Controller {
 
     private void handleRecipeButtons(ActionEvent event) {
         String recipeTitle = ((Button) event.getSource()).getText();
-        String details = model.dBRequest("GET", null, null, null, recipeTitle);
+        String details = model.dBRequest("GET", null, null, null, null, recipeTitle);
         String imagePath = new String(recipeTitle + ".jpg");
+        String mealType = extractMealType(details);
 
         model.generateImage(recipeTitle);
-        detView.addDetails(recipeTitle, details.trim(), imagePath);
+        detView.addDetails(recipeTitle, details.trim(), imagePath, mealType);
         setDetailScene();
     }
 
@@ -189,7 +190,8 @@ public class Controller {
                             // Prompt user to specify meal type if missing
                             if (audioTxt.equals("Error")) {
                                 missingMealType();
-                            } else {
+                            } 
+                            else {
                                 createRecipeAndImage(audioTxt);
                             }
                         }
@@ -233,12 +235,30 @@ public class Controller {
 
     }
 
+    // if more than one mealtype mentioned, returns in order of Brk, Lun, Din
+    private String extractMealType(String audioText) {
+        audioText = audioText.toLowerCase();
+        if (audioText.contains("breakfast")) {
+            return "Breakfast";
+        }
+        else if (audioText.contains("lunch")) {
+            return "Lunch";
+        }
+        else if (audioText.contains("dinner")) {
+            return "Dinner";
+        }
+        else {
+            return "N/A";
+        }
+    }
+
     private void createRecipeAndImage(String audioTxt) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 // Generate recipe through ChatGPT
                 String recipe = model.genRequest("GET", audioTxt);
+                String mealType = extractMealType(audioTxt);
                 String[] recipeTitles = recipe.split("\n");
 
                 // Generate image based on recipe title through DALL-E
@@ -250,7 +270,8 @@ public class Controller {
                 // Show image and recipe details
                 detView.addDetails(recipe.split("\n")[0],
                         recipe.substring(recipe.split("\n")[0].length()).trim(),
-                        imagePath);
+                        imagePath,
+                        mealType);
                 detView.disableButtons(false);
 
                 setDetailScene();
@@ -265,13 +286,15 @@ public class Controller {
     }
 
     private void handleSaveButton(ActionEvent event) {
-        model.dBRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), loginView.getUsername(), null);
+        System.out.println(detView.getMealTypeText());
+        model.dBRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), loginView.getUsername(), detView.getMealTypeText(), null);
+        System.out.println("Trying to save");
         detView.stopTextAnim();
         setListScene();
     }
 
     private void handleDeleteButton(ActionEvent event) {
-        model.dBRequest("DELETE", null, null, loginView.getUsername(), detView.getCurrTitle());
+        model.dBRequest("DELETE", null, null, loginView.getUsername(), null, detView.getCurrTitle());
         detView.stopTextAnim();
         setListScene();
     }

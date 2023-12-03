@@ -4,7 +4,9 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
 import com.sun.net.httpserver.*;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -138,7 +140,7 @@ public class DBHandler implements HttpHandler {
 
     public String getRecDetail(String title) {
         Document target = recipeCollection.find(eq("title", title)).first();
-        return (target == null) ? "Does not exist" : target.getString("description");
+        return (target == null) ? "Does not exist" : target.getString("description") + "\n" + target.getString("mealType") ;
     }
 
 
@@ -163,7 +165,7 @@ public class DBHandler implements HttpHandler {
         Bson updateUsername = com.mongodb.client.model.Updates.set("username", username);
          recipeCollection.updateOne(filter, updateUsername, options);
          */
-
+        /* 
         Bson filter = eq("title", title);
 
         System.out.println("Mealtype: ");
@@ -177,6 +179,23 @@ public class DBHandler implements HttpHandler {
         UpdateOptions options = new UpdateOptions().upsert(true);
 
         recipeCollection.updateOne(filter, updateOperation, options);
+
+        */
+
+        Bson filter = Filters.eq("title", title);
+
+        // Define update operations
+        Bson updateDescription = Updates.set("description", details);
+        Bson updateUsername = Updates.set("username", username);
+        Bson updateMealType = Updates.set("mealType", mealType);
+
+        Bson updateOperation = Updates.combine(updateDescription, updateUsername, updateMealType);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        recipeCollection.updateOne(filter, updateOperation, options);
+
+
     }
 
     public void doDelete(String title) {

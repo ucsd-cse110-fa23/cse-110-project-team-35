@@ -140,7 +140,7 @@ public class DBHandler implements HttpHandler {
 
     public String getRecDetail(String title) {
         Document target = recipeCollection.find(eq("title", title)).first();
-        return (target == null) ? "Does not exist" : target.getString("description") + "\n" + target.getString("mealType") ;
+        return (target == null) ? "Does not exist" : target.getString("description") + "%" + target.getString("mealType") ;
     }
 
 

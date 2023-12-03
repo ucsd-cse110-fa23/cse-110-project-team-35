@@ -82,7 +82,8 @@ class AppTest {
         String expectedResponse_detail = "Get potatoes. Mash. Done.";
         REChandler.doPost(mock_title, mock_details, username, "Breakfast");
         String detail = REChandler.getRecDetail(mock_title);
-        assertEquals(expectedResponse_detail, detail);
+         String detail_1 = detail.split("%")[0];
+        assertEquals(expectedResponse_detail, detail_1);
     }
 
     // US3: Edit Recipe
@@ -103,7 +104,8 @@ class AppTest {
 
     public void editThen(String editedDetails) {
         String actualDetails = REChandler.getRecDetail(other_title);
-        assertEquals(editedDetails, actualDetails);
+        String actual_Details = actualDetails.split("%")[0];
+        assertEquals(editedDetails, actual_Details);
     }
 
     // US4: Save Recipe
@@ -112,19 +114,23 @@ class AppTest {
         REChandler.doPost("apple pie", "3 apples, cinnamon, 1 cup brown sugar", username, "Dinner");
         String appleDetail = REChandler.getRecDetail("apple pie");
         String rhubarbDetail = REChandler.getRecDetail("rhubarb pie");
-        assertEquals(appleDetail, "3 apples, cinnamon, 1 cup brown sugar");
-        assertEquals(rhubarbDetail, "Does not exist");
+        String apple_Detail = appleDetail.split("%")[0];
+        String rhubarb_Detail = rhubarbDetail.split("%")[0];
+        assertEquals(apple_Detail, "3 apples, cinnamon, 1 cup brown sugar");
+        assertEquals(rhubarb_Detail, "Does not exist");
     }
 
     @Test
     public void testSaveEdited() throws Exception {
         REChandler.doPost("lemon meringue", "2 lemons, butter, sugar", username, "Dinner");
         String outdatedDetail = REChandler.getRecDetail("lemon meringue");
+        String outdated_Detail = outdatedDetail.split("%")[0];
         REChandler.doPost("lemon meringue", "2 lemons, butter, sugar, vanilla extract", username, "Dinner");
         String detail = REChandler.getRecDetail("lemon meringue");
-        assertEquals(detail, "2 lemons, butter, sugar, vanilla extract");
-        assertNotEquals(detail, "2 lemons, butter, sugar");
-        assertNotEquals(detail, outdatedDetail);
+        String detail_1 = detail.split("%")[0];
+        assertEquals(detail_1, "2 lemons, butter, sugar, vanilla extract");
+        assertNotEquals(detail_1, "2 lemons, butter, sugar");
+        assertNotEquals(detail_1, outdated_Detail);
     }
 
     // US5: Delete Recipe
@@ -196,9 +202,13 @@ class AppTest {
       String title = newGen.split("\n")[0];
       String details = newGen.substring(title.length());
       REChandler.doPost(title, details, details, "Dinner");
-      assertEquals(details, REChandler.getRecDetail(title));
+      String detail1 = REChandler.getRecDetail(title);
+      String detail_1= detail1.split("%")[0];
+      assertEquals(details, detail_1);
       REChandler.doPost(title, other_details,username, "Dinner");
-      assertEquals(other_details, REChandler.getRecDetail(title));
+      String detail2 = REChandler.getRecDetail(title);
+      String detail_2 = detail2.split("%")[0];
+      assertEquals(other_details, detail_2);
       REChandler.doDelete(title);
       assertEquals("Does not exist", REChandler.getRecDetail(mock_title));
       }

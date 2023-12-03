@@ -75,7 +75,7 @@ public class Controller {
         for (String i : rlist) {
             if (i.length() == 0)
                 continue;
-            String[] info = i.split("\\%");
+            String[] info = i.split("%");
 
             if (info.length == 1) {
                 break;

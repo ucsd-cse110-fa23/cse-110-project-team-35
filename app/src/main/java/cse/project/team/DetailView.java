@@ -30,7 +30,6 @@ public class DetailView extends BorderPane {
     private TextArea titleText, detailText,linkText;
 
     private String currTitle;
-    private String link;
     private Boolean newRec;
     private int currentIndex;
     private Timeline timeline;
@@ -80,6 +79,7 @@ public class DetailView extends BorderPane {
         linkText.setWrapText(true);
         linkText.setEditable(false);
         linkText.getStyleClass().addAll("textBox", "extraPadding");
+        linkText.setText("Press share to send to a friend.");
 
         recipeImage = new ImageView();
         recipeImage.setFitWidth(128); 
@@ -148,7 +148,6 @@ public class DetailView extends BorderPane {
     }
 
     public void setLinkText(String input){
-        this.link = input;
         linkText.setText(input);
     }
 
@@ -261,6 +260,7 @@ public class DetailView extends BorderPane {
     public void reset() {
         hideRefreshButton();
         hideImage();
+        setLinkText("Press share to send to a friend.");
     }
 
 }

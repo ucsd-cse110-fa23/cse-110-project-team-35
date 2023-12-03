@@ -406,6 +406,7 @@ public class Controller {
     }
 
     public void handleShareButton(ActionEvent event) {
+        detView.setLinkText("Sharing is caring. Please wait....");
         Thread t = new Thread(
                 new Runnable() {
                     @Override

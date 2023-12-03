@@ -9,6 +9,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ListView extends BorderPane {
     private RecipeList recipeList;
@@ -17,6 +20,8 @@ public class ListView extends BorderPane {
     private ScrollPane scrollPane;
     private Button generateButton;
     private Button logOutButton;
+    private Button SortA_ZButton;
+    private Button SortZ_AButton;
 
     public ListView() {
         header = new Header();
@@ -37,11 +42,14 @@ public class ListView extends BorderPane {
 
         generateButton = footer.getGenerateButton();
         logOutButton = footer.getLogOutButton();
+        SortA_ZButton = footer.getSortA_ZButton();
+        SortZ_AButton = footer.getSortZ_AButton();
     }
 
     public RecipeList getRecipeList() {
         return recipeList;
     }
+
 
     public void setRecipeButtons(EventHandler<ActionEvent> eventHandler) {
         for (int i = 0; i < recipeList.getChildren().size(); i++) {
@@ -51,6 +59,36 @@ public class ListView extends BorderPane {
         }
     }
 
+
+    public void sortButtonsAZ() {
+
+        // Extract buttons and sort them
+        List<Button> sortedButtons = recipeList.getChildren().stream()
+            .filter(node -> node instanceof Button)
+            .map(node -> (Button) node)
+            .sorted(Comparator.comparing(Button::getText))
+            .collect(Collectors.toList());
+
+        // Clear the list and re-add sorted buttons
+        recipeList.getChildren().clear();
+        recipeList.getChildren().addAll(sortedButtons);
+    }
+
+
+    public void sortButtonsZA() {
+        // Extract buttons and sort them in descending order
+        List<Button> sortedButtons = recipeList.getChildren().stream()
+                .filter(node -> node instanceof Button)
+                .map(node -> (Button) node)
+                .sorted(Comparator.comparing(Button::getText).reversed())
+                .collect(Collectors.toList());
+    
+        // Clear the current children and add the sorted buttons back
+        recipeList.getChildren().clear();
+        recipeList.getChildren().addAll(sortedButtons);
+    
+    }
+
     public void setGenerateButton(EventHandler<ActionEvent> eventHandler) {
         generateButton.setOnAction(eventHandler);
     }
@@ -58,6 +96,15 @@ public class ListView extends BorderPane {
     public void SetLogOutButton(EventHandler<ActionEvent> eventHandler) {
         logOutButton.setOnAction(eventHandler);
     }
+
+    public void SetSortA_ZButton(EventHandler<ActionEvent> eventHandler) {
+        SortA_ZButton.setOnAction(eventHandler);
+    }
+
+    public void SetSortZ_AButton(EventHandler<ActionEvent> eventHandler) {
+        SortZ_AButton.setOnAction(eventHandler);
+    }
+
 }
 
 class Recipe extends Button {
@@ -80,6 +127,8 @@ class RecipeList extends VBox {
 class Footer extends HBox {
     private Button generateButton;
     private Button logOutButton;
+    private Button SortA_ZButton;
+    private Button SortZ_AButton;
 
 
     Footer() {
@@ -89,8 +138,27 @@ class Footer extends HBox {
         logOutButton = new Button("Log Out");
         logOutButton.getStyleClass().add("footerButton");
 
-        this.getChildren().addAll(generateButton, logOutButton);
+        SortA_ZButton = new Button("Sort A - Z");
+        SortA_ZButton.getStyleClass().add("footerButton");
+
+        SortZ_AButton = new Button("Sort Z - A");
+        SortZ_AButton.getStyleClass().add("footerButton");
+
+        HBox row1 = new HBox(generateButton, logOutButton);
+        HBox row2 = new HBox(SortA_ZButton, SortZ_AButton);
+
+        // Optionally, set spacing and alignment for HBoxes
+        row1.setSpacing(10); // adjust spacing as needed
+        row2.setSpacing(10); // adjust spacing as needed
+
+        // Create a VBox and add the two HBoxes to it
+        VBox layout = new VBox(row1, row2);
+        layout.setSpacing(5); // adjust spacing between rows as needed
+
+        // Add the VBox to the footer
+        this.getChildren().add(layout);
         this.getStyleClass().add("footer");
+
     }
 
     public Button getGenerateButton() {
@@ -99,6 +167,13 @@ class Footer extends HBox {
 
     public Button getLogOutButton() {
         return logOutButton;
+    }
+    public Button getSortA_ZButton() {
+        return SortA_ZButton;
+    }
+
+    public Button getSortZ_AButton() {
+        return SortZ_AButton;
     }
 
 

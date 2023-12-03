@@ -56,6 +56,9 @@ public class Controller {
 
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
+        this.listView.SetSortA_ZButton(this::handleSetSortA_ZButtonn);
+         this.listView.SetSortZ_AButton(this::handleSetSortZ_AButtonn);
+
 
         this.genView.setBackButton(this::handleGenerateBackButton);
         this.genView.setStartButton(this::handleGenerateStartButton);
@@ -66,6 +69,7 @@ public class Controller {
         this.listView.SetLogOutButton(this::handleLogOutButton);
 
         this.loginView.setAutoButton(this::handleAutoButton);
+        
     }
 
     private void loadRecipeList() {
@@ -369,5 +373,14 @@ public class Controller {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    private void handleSetSortA_ZButtonn(ActionEvent event) {
+        listView.sortButtonsAZ();
+    }
+
+    private void handleSetSortZ_AButtonn(ActionEvent event) {
+        listView.sortButtonsZA();
     }
 }

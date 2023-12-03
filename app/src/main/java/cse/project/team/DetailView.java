@@ -25,9 +25,10 @@ public class DetailView extends BorderPane {
     private Button deleteButton;
     private Button shareButton;
 
-    private TextArea titleText, detailText;
+    private TextArea titleText, detailText,linkText;
 
     private String currTitle;
+    private String link;
     private Boolean newRec;
     private int currentIndex;
     private Timeline timeline;
@@ -68,12 +69,17 @@ public class DetailView extends BorderPane {
         detailText.setEditable(false);
         detailText.getStyleClass().addAll("textBox", "largeBox");
 
+        linkText = new TextArea();
+        linkText.setWrapText(true);
+        linkText.setEditable(false);
+        linkText.getStyleClass().addAll("textBox", "extraPadding");
+
         recipeImage = new ImageView();
         recipeImage.setFitWidth(128); 
         recipeImage.setPreserveRatio(true);
 
         VBox details = new VBox();
-        details.getChildren().addAll(titleText, detailText,recipeImage);
+        details.getChildren().addAll(titleText, detailText,linkText,recipeImage);
         details.getStyleClass().add("center");
 
         this.setTop(header);
@@ -113,6 +119,15 @@ public class DetailView extends BorderPane {
 
     public String getDetailText() {
         return detailText.getText();
+    }
+
+    public String getLinkText(){
+        return linkText.getText();
+    }
+
+    public void setLinkText(String input){
+        this.link = input;
+        linkText.setText(input);
     }
 
     public void addDetails(String title, String recipeDetails, String imagePath) {

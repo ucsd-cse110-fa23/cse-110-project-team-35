@@ -354,7 +354,8 @@ public class Controller {
     public void handleShareButton(ActionEvent event){
         String title = detView.getCurrTitle();
         String detail = detView.getDetailText();
-        System.out.println("getText: "+detail);
         String response = model.shareRequest("POST", title, detail, null);
+        String trim_title = title.replaceAll("\\s", "");
+        detView.setLinkText("http://localhost:8100/share/?key="+trim_title);
     }
 }

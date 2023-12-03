@@ -30,8 +30,8 @@ public class Controller {
 
     File autoLogInfile = new File("autoLogIn.txt");
 
-    final int HEIGHT = 650;
-    final int WIDTH = 500;
+    final int HEIGHT = 750;
+    final int WIDTH = 360;
 
     public Controller(ListView listView,
             DetailView detView,
@@ -308,6 +308,7 @@ public class Controller {
 
     private void handleDeleteButton(ActionEvent event) {
         model.dBRequest("DELETE", null, null, loginView.getUsername(), detView.getCurrTitle());
+        model.shareRequest("DELETE", null, null, detView.getCurrTitle());
         detView.reset();
         setListScene();
     }
@@ -404,11 +405,24 @@ public class Controller {
         }
     }
 
-    public void handleShareButton(ActionEvent event){
-        String title = detView.getCurrTitle();
-        String detail = detView.getDetailText();
-        String response = model.shareRequest("POST", title, detail, null);
-        String trim_title = title.replaceAll("\\s", "");
-        detView.setLinkText("http://localhost:8100/share/?key="+trim_title);
+    public void handleShareButton(ActionEvent event) {
+        Thread t = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        String title = detView.getCurrTitle();
+                        String detail = detView.getDetailText();
+                        String response = model.shareRequest("POST", title, detail, null);
+                        String trim_title = title.replaceAll("\\s", "");
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                detView.setLinkText("http://localhost:8100/share/?key=" + trim_title);
+                            }
+                        });
+                    }
+                });
+
+        t.start();
     }
 }

@@ -86,7 +86,7 @@ public class DetailView extends BorderPane {
         recipeImage.setPreserveRatio(true);
 
         VBox details = new VBox();
-        details.getChildren().addAll(titleText, detailText);
+        details.getChildren().addAll(titleText, detailText, linkText);
         details.getStyleClass().add("center");
 
         header.getChildren().add(recipeImage);

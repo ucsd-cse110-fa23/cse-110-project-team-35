@@ -71,6 +71,7 @@ public class Model {
         try {
             String urlString = "http://localhost:8100/share/";
             if (query != null) {
+                query = query.replaceAll("\\s", "");
                 urlString += "?=" + query;
             }
             URL url = new URI(urlString).toURL();

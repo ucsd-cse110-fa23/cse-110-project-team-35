@@ -1,19 +1,9 @@
 package cse.project.team.server;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.stream.Collectors;
-import org.bson.Document;
 
-import com.google.common.io.Files;
-import com.sun.net.httpserver.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.nio.file.FileSystems;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import com.sun.net.httpserver.*;
 
 public class shareHandler implements HttpHandler {
 
@@ -21,9 +11,8 @@ public class shareHandler implements HttpHandler {
     DalleOnline dalle = new DalleOnline();
 
     public shareHandler(Map<String, String> data) {
-    this.data = data;
+        this.data = data;
     }
-
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
@@ -34,8 +23,6 @@ public class shareHandler implements HttpHandler {
                 response = handleGet(httpExchange);
             } else if (method.equals("POST")) {
                 response = handlePost(httpExchange);
-            } else if (method.equals("PUT")) {
-                response = handlePut(httpExchange);
             } else if (method.equals("DELETE")) {
                 response = handleDelete(httpExchange);
             } else {
@@ -58,22 +45,22 @@ public class shareHandler implements HttpHandler {
         String query = uri.getRawQuery();
         response = query;
         if (query != null) {
-        String value = query.substring(query.indexOf("=") + 1);
-        String year = data.get(value); // Retrieve data from hashmap
-        
-        if (year != null) {
-            response = year;
-            //System.out.println("Queried for " + value + " and found " + year);
-        } else {
-            response = "No data found for " + value;
-        }
+            String value = query.substring(query.indexOf("=") + 1);
+            String year = data.get(value); // Retrieve data from hashmap
+
+            if (year != null) {
+                response = year;
+                // System.out.println("Queried for " + value + " and found " + year);
+            } else {
+                response = "Recipe: " + value + " not found.";
+            }
         }
         return response;
     }
 
     private String handlePost(HttpExchange httpExchange) throws IOException {
         Headers headers = httpExchange.getResponseHeaders();
-        headers.set("Content-Type", "text/html"); 
+        headers.set("Content-Type", "text/html");
 
         InputStream inStream = httpExchange.getRequestBody();
         Scanner scanner = new Scanner(inStream);
@@ -91,17 +78,17 @@ public class shareHandler implements HttpHandler {
             title = response.substring(0, indexOfNewLine);
             title = title.replaceAll("\\s", "");
         }
-        System.out.println("key:"+title);
+        System.out.println("key:" + title);
 
         String imagePath = dalle.generateDalle(title);
-        String htmlRecipe = generateHtmlRecipe(response,imagePath);
+        String htmlRecipe = generateHtmlRecipe(response, imagePath);
 
         data.put(title, htmlRecipe);
         System.out.println(htmlRecipe);
         return htmlRecipe;
-        }
+    }
 
-    private static String generateHtmlRecipe(String recipeText,String imagePath) {
+    private static String generateHtmlRecipe(String recipeText, String imagePath) {
         StringBuilder htmlBuilder = new StringBuilder();
 
         htmlBuilder.append("<html>\n<head>\n<title>Recipe</title>\n<style>\n");
@@ -154,33 +141,20 @@ public class shareHandler implements HttpHandler {
         return htmlBuilder.toString();
     }
 
-
-  private String handlePut(HttpExchange httpExchange) throws IOException {
-    InputStream inStream = httpExchange.getRequestBody();
-    Scanner scanner = new Scanner(inStream);
-    String putData = scanner.nextLine();
-    System.out.println(putData);
-    String response;
-    response = "test: " + putData;
-    System.out.println(response);
-    scanner.close();
-
-    return response;
-}
-
     private String handleDelete(HttpExchange httpExchange) throws IOException {
         URI uri = httpExchange.getRequestURI();
         String query = uri.getRawQuery();
+        String title = URLDecoder.decode(query.substring(query.indexOf("=") + 1), "UTF-8");
+        title = title.replaceAll("\\s", "");
         String response;
 
         if (query != null) {
-            String language = query.substring(query.indexOf("=") + 1);
-            String year = data.remove(language);
+            String details = data.remove(title);
 
-            if (year != null) {
-                response = "Deleted entry {" + language + ", " + year + "}";
+            if (details != null) {
+                response = "Deleted entry {" + title + ", " + details + "}";
             } else {
-                response = "No data found for " + language;
+                response = "No data found for " + title;
             }
         } else {
             response = "Invalid DELETE request";

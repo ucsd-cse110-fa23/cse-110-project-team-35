@@ -176,7 +176,7 @@ public class Controller {
         String imagePath = new String(recipeTitle + ".jpg");
 
         setDetailScene();
-        detView.addDetails(recipeTitle, details.trim());
+        detView.addDetails(recipeTitle, details.trim(), mealType);
 
         // generate detail view image and set it
         // needed for smooth transition and not freezing
@@ -189,7 +189,6 @@ public class Controller {
                             @Override
                             public void run() {
                                 detView.setImage(imagePath);
-                                detView.addDetails(recipeTitle, details.trim(), mealType);
                             }
                         });
                     }

@@ -13,6 +13,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.stream.Collectors;
 
+import com.sun.glass.ui.SystemClipboard;
+
 public class Model {
     private audioRec audio;
     private Dalle dalle;

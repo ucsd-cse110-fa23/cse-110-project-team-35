@@ -13,6 +13,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.*;
 
+import com.google.common.io.Files;
+
 public class DetailView extends BorderPane {
     private detailHeader header;
     private detailFooter footer;

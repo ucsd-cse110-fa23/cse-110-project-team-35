@@ -6,8 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
-import static com.mongodb.client.model.Filters.in;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -29,7 +27,7 @@ public class Controller {
 
     File autoLogInfile = new File("autoLogIn.txt");
 
-    final int HEIGHT = 650;
+    final int HEIGHT = 750;
     final int WIDTH = 360;
 
     public Controller(ListView listView,
@@ -70,6 +68,8 @@ public class Controller {
         this.listView.SetLogOutButton(this::handleLogOutButton);
 
         this.loginView.setAutoButton(this::handleAutoButton);
+
+        this.detView.setShareButton(this::handleShareButton);
     }
 
     private void loadRecipeList() {
@@ -305,6 +305,7 @@ public class Controller {
 
     private void handleDeleteButton(ActionEvent event) {
         model.dBRequest("DELETE", null, null, loginView.getUsername(), detView.getCurrTitle());
+        model.shareRequest("DELETE", null, null, detView.getCurrTitle());
         detView.reset();
         setListScene();
     }
@@ -399,5 +400,27 @@ public class Controller {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void handleShareButton(ActionEvent event) {
+        detView.setLinkText("Sharing is caring. Please wait....");
+        Thread t = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        String title = detView.getCurrTitle();
+                        String detail = detView.getDetailText();
+                        String response = model.shareRequest("POST", title, detail, null);
+                        String trim_title = title.replaceAll("\\s", "");
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                detView.setLinkText("http://localhost:8100/share/?key=" + trim_title);
+                            }
+                        });
+                    }
+                });
+
+        t.start();
     }
 }

@@ -6,12 +6,15 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.*;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.*;
+
+import com.google.common.io.Files;
 
 public class DetailView extends BorderPane {
     private detailHeader header;
@@ -21,9 +24,10 @@ public class DetailView extends BorderPane {
     private Button editButton;
     private Button saveButton;
     private Button deleteButton;
+    private Button shareButton;
     private Button refreshButton;
 
-    private TextArea titleText, detailText;
+    private TextArea titleText, detailText,linkText;
 
     private String currTitle;
     private Boolean newRec;
@@ -45,6 +49,9 @@ public class DetailView extends BorderPane {
 
         refreshButton.setVisible(false);
 
+        shareButton = new Button("Share");
+        shareButton.getStyleClass().add("footerButton");
+
         back.getStyleClass().add("footerButton");
         saveButton.getStyleClass().add("footerButton");
         editButton.getStyleClass().add("footerButton");
@@ -55,6 +62,7 @@ public class DetailView extends BorderPane {
         footer.add(saveButton, 0, 1);
         footer.add(back, 1, 1);
         footer.add(deleteButton, 1, 0);
+        footer.add(shareButton, 1, 2);
         footer.add(refreshButton, 0,2);
 
         titleText = new TextArea();
@@ -67,12 +75,18 @@ public class DetailView extends BorderPane {
         detailText.setEditable(false);
         detailText.getStyleClass().addAll("textBox", "largeBox");
 
+        linkText = new TextArea();
+        linkText.setWrapText(true);
+        linkText.setEditable(false);
+        linkText.getStyleClass().addAll("textBox", "extraPadding");
+        linkText.setText("Press share to send to a friend.");
+
         recipeImage = new ImageView();
         recipeImage.setFitWidth(128); 
         recipeImage.setPreserveRatio(true);
 
         VBox details = new VBox();
-        details.getChildren().addAll(titleText, detailText);
+        details.getChildren().addAll(titleText, detailText, linkText);
         details.getStyleClass().add("center");
 
         header.getChildren().add(recipeImage);
@@ -129,6 +143,14 @@ public class DetailView extends BorderPane {
         return detailText.getText();
     }
 
+    public String getLinkText(){
+        return linkText.getText();
+    }
+
+    public void setLinkText(String input){
+        linkText.setText(input);
+    }
+
     public void addDetails(String title, String recipeDetails) {
         this.currTitle = title;
         titleText.setText(title);
@@ -158,6 +180,11 @@ public class DetailView extends BorderPane {
         deleteButton.setOnAction(eventHandler);
     }
 
+    public void setShareButton(EventHandler<ActionEvent> eventHandler){
+        shareButton.setOnAction(eventHandler);
+
+    }
+    
     public void setRefreshButton(EventHandler<ActionEvent> eventHandler) {
         refreshButton.setOnAction(eventHandler);
     }
@@ -233,6 +260,7 @@ public class DetailView extends BorderPane {
     public void reset() {
         hideRefreshButton();
         hideImage();
+        setLinkText("Press share to send to a friend.");
     }
 
 }

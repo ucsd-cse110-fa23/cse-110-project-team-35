@@ -13,6 +13,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.stream.Collectors;
 
+import com.sun.glass.ui.SystemClipboard;
+
 public class Model {
     private audioRec audio;
     private Dalle dalle;
@@ -63,6 +65,37 @@ public class Model {
         }
     }
 
+    public String shareRequest(String method, String language, String year, String query) {
+        // Implement your HTTP request logic here and return the response
+        //System.out.println("Input:"+year);
+        try {
+            String urlString = "http://localhost:8100/share/";
+            if (query != null) {
+                query = query.replaceAll("\\s", "");
+                urlString += "?=" + query;
+            }
+            URL url = new URI(urlString).toURL();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod(method);
+            conn.setDoOutput(true);
+
+            if (method.equals("POST") || method.equals("PUT")) {
+                OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+                out.write(language + "\n" + year);
+                //System.out.println(language+","+year);
+                out.flush();
+                out.close();
+            }
+            
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String response = in.readLine();
+            in.close();
+            return response;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "Error: " + ex.getMessage();
+        }
+    }
 
     public String accountRequest(String method, String title, String details, String query) {
         try {

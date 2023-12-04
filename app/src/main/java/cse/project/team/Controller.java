@@ -194,10 +194,16 @@ public class Controller {
                             String audioTxt = model.genRequest("POST", null);
                             System.out.println(audioTxt);
 
+                            String[] words = audioTxt.split("\\s+");
+                            int wordCount = words.length;
+
                             // Prompt user to specify meal type if missing
                             if (audioTxt.equals("Error")) {
                                 missingMealType();
                             } 
+                            else if( wordCount == 1) {
+                                missingingredient();
+                            }
                             else {
                                 createRecipeAndImage(audioTxt);
                             }
@@ -241,6 +247,20 @@ public class Controller {
         });
 
     }
+
+     private void missingingredient() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                genView.setRecordingLabel("Make sure you say ingredient");
+                genView.showRecLabel();
+                genView.enableBackButton();
+                genView.enableStartButton();
+            }
+        });
+
+    }
+
 
     // if more than one mealtype mentioned, returns in order of Brk, Lun, Din
     private String extractMealType(String audioText) {

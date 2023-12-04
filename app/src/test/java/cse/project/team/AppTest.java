@@ -153,7 +153,7 @@ class AppTest {
     }
 
     public void deleteThen(String title, String response) {
-        assertEquals(response, REChandler.getRecDetail(title));
+        assertEquals(response, REChandler.getRecDetail(title).get(0));
     }
 
     /*
@@ -213,7 +213,7 @@ class AppTest {
       String detail_2 = detail2.split("%")[0];
       assertEquals(other_details, detail_2);
       REChandler.doDelete(title);
-      assertEquals("Does not exist", REChandler.getRecDetail(mock_title));
+      assertEquals("Does not exist", REChandler.getRecDetail(mock_title).get(0));
       }
      
 

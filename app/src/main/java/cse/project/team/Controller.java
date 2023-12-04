@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
@@ -21,6 +22,7 @@ public class Controller {
     private Model model;
     private Stage stage;
     private Scene listScene, detailScene, generateScene, loginScene;
+    private SortingStrategy sortingStrat;
 
     final File STYLE = new File("style.css");
     final String STYLESHEET = "file:" + STYLE.getPath();
@@ -58,15 +60,17 @@ public class Controller {
 
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
+        this.listView.SetSortA_ZButton(this::handleSetSortA_ZButtonn);
+        this.listView.SetSortZ_AButton(this::handleSetSortZ_AButtonn);
+        this.listView.SetSortE_LButton(this::handleSetSortE_LButtonn);
+        this.listView.SetSortL_EButton(this::handleSetSortL_EButtonn);
+        this.listView.SetLogOutButton(this::handleLogOutButton);
 
         this.genView.setBackButton(this::handleGenerateBackButton);
         this.genView.setStartButton(this::handleGenerateStartButton);
 
         this.loginView.setCreateButton(this::handleCreateButton);
         this.loginView.setLoginButton(this::handleLoginButton);
-
-        this.listView.SetLogOutButton(this::handleLogOutButton);
-
         this.loginView.setAutoButton(this::handleAutoButton);
 
         this.detView.setShareButton(this::handleShareButton);
@@ -74,19 +78,19 @@ public class Controller {
 
     private void loadRecipeList() {
         listView.getRecipeList().getChildren().clear();
-        String[] rlist = model.dBRequest("GET", null, null, null, null).split("\\*");
+        String[] rlist = model.dBRequest("GET", null, null, null, null, null).split("xF9j");
 
         for (String i : rlist) {
             if (i.length() == 0)
                 continue;
-            String[] info = i.split("\\%");
+            String[] info = i.split("yL8z42");
 
-            if (info.length == 1) {
+            if (info.length == 1)
                 break;
-            }
 
             if (info[1].equals(loginView.getUsername())) {
-                Recipe recipe = new Recipe(info[0]);
+                String[] recDets = model.dBRequest("GET", null, null, null, null, info[0]).split("xF9j");
+                Recipe recipe = new Recipe(info[0], recDets[1]);
                 listView.getRecipeList().getChildren().add(0, recipe);
             }
         }
@@ -115,7 +119,6 @@ public class Controller {
     }
 
     private void setListScene() {
-        // listView.getRecipeList().getChildren().clear();
         loadRecipeList();
         stage.setScene(listScene);
     }
@@ -133,10 +136,9 @@ public class Controller {
     }
 
     private void setLoginScene() {
-
         try {
             // Check if the file is empty
-            if (autoLogInfile.length() != 0) {
+            if (autoLogInfile.length() > 1) {
                 FileReader fileReader = new FileReader(autoLogInfile);
                 BufferedReader bufferedReader = new BufferedReader(fileReader);
                 String line = bufferedReader.readLine();
@@ -166,12 +168,15 @@ public class Controller {
         // stage.setScene(loginScene);
     }
 
-    private void handleRecipeButtons(ActionEvent event) {
-        String recipeTitle = ((Button) event.getSource()).getText();
-        String details = model.dBRequest("GET", null, null, null, recipeTitle);
+    private void handleRecipeButtons(MouseEvent event) {
+        String recipeTitle = ((Recipe) event.getSource()).getTitle();
+        String[] recInfo = model.dBRequest("GET", null, null, null, null, recipeTitle).split("xF9j");
+        String details = recInfo[0];
+        String mealType = recInfo[1];
         String imagePath = new String(recipeTitle + ".jpg");
+
         setDetailScene();
-        detView.addDetails(recipeTitle, details.trim());
+        detView.addDetails(recipeTitle, details.trim(), mealType);
 
         // generate detail view image and set it
         // needed for smooth transition and not freezing
@@ -217,9 +222,14 @@ public class Controller {
                             String audioTxt = model.genRequest("POST", null);
                             System.out.println(audioTxt);
 
+                            String[] words = audioTxt.split("\\s+");
+                            int wordCount = words.length;
+
                             // Prompt user to specify meal type if missing
                             if (audioTxt.equals("Error")) {
                                 missingMealType();
+                            } else if (wordCount == 1) {
+                                missingingredient();
                             } else {
                                 createRecipeAndImage(audioTxt);
                             }
@@ -264,7 +274,36 @@ public class Controller {
 
     }
 
+    private void missingingredient() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                genView.setRecordingLabel("Make sure you say ingredient");
+                genView.showRecLabel();
+                genView.enableBackButton();
+                genView.enableStartButton();
+            }
+        });
+
+    }
+
+    // if more than one mealtype mentioned, returns in order of Brk, Lun, Din
+    private String extractMealType(String audioText) {
+        audioText = audioText.toLowerCase();
+        if (audioText.contains("breakfast")) {
+            return "Breakfast";
+        } else if (audioText.contains("lunch")) {
+            return "Lunch";
+        } else if (audioText.contains("dinner")) {
+            return "Dinner";
+        } else {
+            return "N/A";
+        }
+    }
+
     private void createRecipeAndImage(String audioTxt) {
+
+        String mealType = extractMealType(audioTxt);
         this.whisper = audioTxt;
         // Generate recipe through ChatGPT
         String recipe = model.genRequest("GET", audioTxt);
@@ -281,8 +320,9 @@ public class Controller {
             @Override
             public void run() {
                 // Show image and recipe details
-                detView.addDetails(title,
-                        recipe.substring(recipe.split("\n")[0].length()).trim());
+                detView.addDetails(recipe.split("\n")[0],
+                        recipe.substring(recipe.split("\n")[0].length()).trim(),
+                        mealType);
                 detView.disableButtons(false);
                 detView.setImage(imagePath);
 
@@ -299,13 +339,18 @@ public class Controller {
     }
 
     private void handleSaveButton(ActionEvent event) {
-        model.dBRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), loginView.getUsername(), null);
+        System.out.println(detView.getMealTypeText());
+        model.dBRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), loginView.getUsername(),
+                detView.getMealTypeText(), null);
+        System.out.println("Trying to save");
+        // detView.stopTextAnim();
         detView.reset();
         setListScene();
     }
 
     private void handleDeleteButton(ActionEvent event) {
-        model.dBRequest("DELETE", null, null, loginView.getUsername(), detView.getCurrTitle());
+        model.dBRequest("DELETE", null, null, loginView.getUsername(), null, detView.getCurrTitle());
+        // detView.stopTextAnim();
         model.shareRequest("DELETE", null, null, detView.getCurrTitle());
         detView.reset();
         setListScene();
@@ -401,6 +446,32 @@ public class Controller {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void handleSetSortA_ZButtonn(ActionEvent event) {
+        sortingStrat = new SortButtonsAZ();
+        RecipeList recList = listView.getRecipeList();
+        sortingStrat.sort(recList);
+    }
+
+    private void handleSetSortZ_AButtonn(ActionEvent event) {
+        sortingStrat = new SortButtonsZA();
+        RecipeList recList = listView.getRecipeList();
+        sortingStrat.sort(recList);
+    }
+
+    private void handleSetSortE_LButtonn(ActionEvent event) {
+        listView.emptyList();
+        loadRecipeList();
+
+        sortingStrat = new SortButtonsEL();
+        RecipeList recList = listView.getRecipeList();
+        sortingStrat.sort(recList);
+    }
+
+    private void handleSetSortL_EButtonn(ActionEvent event) {
+        listView.emptyList();
+        loadRecipeList();
     }
 
     public void handleShareButton(ActionEvent event) {

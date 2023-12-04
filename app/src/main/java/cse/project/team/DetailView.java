@@ -6,7 +6,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Path;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.*;
 import javafx.util.Duration;
@@ -27,7 +26,8 @@ public class DetailView extends BorderPane {
     private Button shareButton;
     private Button refreshButton;
 
-    private TextArea titleText, detailText,linkText;
+    private TextArea titleText, detailText, mealTypeText,linkText;
+    private HBox title;
 
     private String currTitle;
     private Boolean newRec;
@@ -70,6 +70,14 @@ public class DetailView extends BorderPane {
         titleText.setEditable(false);
         titleText.getStyleClass().addAll("textBox", "extraPadding");
 
+        mealTypeText = new TextArea();
+        mealTypeText.setEditable(false);
+        mealTypeText.getStyleClass().addAll("textBox", "extraPadding");
+
+        title = new HBox(0);
+        title.getChildren().add(titleText);
+        title.getChildren().add(mealTypeText);
+
         detailText = new TextArea();
         detailText.setWrapText(true);
         detailText.setEditable(false);
@@ -86,7 +94,7 @@ public class DetailView extends BorderPane {
         recipeImage.setPreserveRatio(true);
 
         VBox details = new VBox();
-        details.getChildren().addAll(titleText, detailText, linkText);
+        details.getChildren().addAll(title, detailText, recipeImage, linkText);
         details.getStyleClass().add("center");
 
         header.getChildren().add(recipeImage);
@@ -141,6 +149,28 @@ public class DetailView extends BorderPane {
 
     public String getDetailText() {
         return detailText.getText();
+    }
+
+    public String getMealTypeText() {
+        return mealTypeText.getText();
+    }
+
+    public void addDetails(String title, String recipeDetails, String mealType) {
+        this.currTitle = title;
+        titleText.setText(title);
+        mealTypeText.setText(mealType);
+        mealTypeText.setStyle("-fx-background-color: " + selectColor(mealType));
+
+        int indexOfBackslash = recipeDetails.indexOf('%');
+        
+        if (indexOfBackslash != -1) {
+            String substringBeforeBackslash = recipeDetails.substring(0, indexOfBackslash);
+            detailText.setText(substringBeforeBackslash);
+            //setAnimation(substringBeforeBackslash);
+        }else{
+            //setAnimation(recipeDetails);
+            detailText.setText(recipeDetails);
+        }
     }
 
     public String getLinkText(){
@@ -234,6 +264,18 @@ public class DetailView extends BorderPane {
         editButton.setDisable(value);
         saveButton.setDisable(value);
         deleteButton.setDisable(value);
+    }
+
+    public String selectColor(String mealType) {
+        if (mealType.equals("Breakfast")) {
+            return "blue";
+        }
+        else if (mealType.equals("Lunch")) {
+            return "yellow";
+        }
+        else {
+            return "red";
+        }
     }
 
     public void setRefreshText(){

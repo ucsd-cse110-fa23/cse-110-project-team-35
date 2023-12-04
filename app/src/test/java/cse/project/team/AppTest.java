@@ -29,6 +29,8 @@ import javafx.scene.text.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 
+import java.util.*;
+
 class AppTest {
     final String mock_title = "Mashed potat";
     final String mock_details = "Get potatoes. Mash. Done.";
@@ -65,27 +67,27 @@ class AppTest {
     // US1: View list of saved recipes
     @Test
     public void testViewEmptyList() throws Exception {
-        String list = REChandler.getRecList();
-        String expect = "";
-        assertEquals(expect, list);
+        ArrayList<String> list = REChandler.getRecList();
+        assertEquals(list.size(), 0);
     }
 
     @Test
     public void testViewFullList() throws Exception {
-        REChandler.doPost(mock_title, mock_details, username);
-        REChandler.doPost(other_title, mock_details, username);
-        String list = REChandler.getRecList();
-        String expect = mock_title + "%" + username + "*" + other_title + "%" + username;
-        assertEquals(expect, list);
+        REChandler.doPost(mock_title, mock_details, username, "Breakfast");
+        REChandler.doPost(other_title, mock_details, "Lea", "Lunch");
+        ArrayList<String> list = REChandler.getRecList();
+        assertEquals(mock_title + "yL8z42" + username, list.get(0));
+        assertEquals(other_title + "yL8z42" + "Lea", list.get(1));
     }
 
     // US2: View Details of Recipe
     @Test
     public void testViewDetail() throws Exception {
         String expectedResponse_detail = "Get potatoes. Mash. Done.";
-        REChandler.doPost(mock_title, mock_details, username);
-        String detail = REChandler.getRecDetail(mock_title);
-        assertEquals(expectedResponse_detail, detail);
+        REChandler.doPost(mock_title, mock_details, username, "Breakfast");
+        String detail = REChandler.getRecDetail(mock_title).get(0);
+         String detail_1 = detail.split("%")[0];
+        assertEquals(expectedResponse_detail, detail_1);
     }
 
     // US3: Edit Recipe
@@ -97,37 +99,42 @@ class AppTest {
     }
 
     public void editGiven() {
-        REChandler.doPost(other_title, other_details, username);
+        REChandler.doPost(other_title, other_details, username, "Lunch");
     }
 
     public void editWhen(String editedDetails) {
-        REChandler.doPost(other_title, editedDetails, username);
+        REChandler.doPost(other_title, editedDetails, username, "Lunch");
     }
 
     public void editThen(String editedDetails) {
-        String actualDetails = REChandler.getRecDetail(other_title);
-        assertEquals(editedDetails, actualDetails);
+        String actualDetails = REChandler.getRecDetail(other_title).get(0);
+        String actual_Details = actualDetails.split("%")[0];
+        assertEquals(editedDetails, actual_Details);
     }
 
     // US4: Save Recipe
     @Test
     public void testSaveNew() throws Exception {
-        REChandler.doPost("apple pie", "3 apples, cinnamon, 1 cup brown sugar", username);
-        String appleDetail = REChandler.getRecDetail("apple pie");
-        String rhubarbDetail = REChandler.getRecDetail("rhubarb pie");
-        assertEquals(appleDetail, "3 apples, cinnamon, 1 cup brown sugar");
-        assertEquals(rhubarbDetail, "Does not exist");
+        REChandler.doPost("apple pie", "3 apples, cinnamon, 1 cup brown sugar", username, "Dinner");
+        String appleDetail = REChandler.getRecDetail("apple pie").get(0);
+        String rhubarbDetail = REChandler.getRecDetail("rhubarb pie").get(0);
+        String apple_Detail = appleDetail.split("%")[0];
+        String rhubarb_Detail = rhubarbDetail.split("%")[0];
+        assertEquals(apple_Detail, "3 apples, cinnamon, 1 cup brown sugar");
+        assertEquals(rhubarb_Detail, "Does not exist");
     }
 
     @Test
     public void testSaveEdited() throws Exception {
-        REChandler.doPost("lemon meringue", "2 lemons, butter, sugar", username);
-        String outdatedDetail = REChandler.getRecDetail("lemon meringue");
-        REChandler.doPost("lemon meringue", "2 lemons, butter, sugar, vanilla extract", username);
-        String detail = REChandler.getRecDetail("lemon meringue");
-        assertEquals(detail, "2 lemons, butter, sugar, vanilla extract");
-        assertNotEquals(detail, "2 lemons, butter, sugar");
-        assertNotEquals(detail, outdatedDetail);
+        REChandler.doPost("lemon meringue", "2 lemons, butter, sugar", username, "Dinner");
+        String outdatedDetail = REChandler.getRecDetail("lemon meringue").get(0);
+        String outdated_Detail = outdatedDetail.split("%")[0];
+        REChandler.doPost("lemon meringue", "2 lemons, butter, sugar, vanilla extract", username, "Dinner");
+        String detail = REChandler.getRecDetail("lemon meringue").get(0);
+        String detail_1 = detail.split("%")[0];
+        assertEquals(detail_1, "2 lemons, butter, sugar, vanilla extract");
+        assertNotEquals(detail_1, "2 lemons, butter, sugar");
+        assertNotEquals(detail_1, outdated_Detail);
     }
 
     // US5: Delete Recipe
@@ -147,7 +154,7 @@ class AppTest {
     }
 
     public void deleteThen(String title, String response) {
-        assertEquals(response, REChandler.getRecDetail(title));
+        assertEquals(response, REChandler.getRecDetail(title).get(0));
     }
 
     /*
@@ -188,22 +195,28 @@ class AppTest {
      * offering options like "Breakfast," "Lunch," or "Dinner."
      * 
      * Not tested here due to implementation being combined with the previous story
-     */
-    // End to End Scnario Test MS1
-
-    @Test
-    public void testEndToEnd() throws IOException, URISyntaxException, Exception {
-        genI gen = new genMock();
-        String newGen = gen.chatgen("dinner potato");
-        String title = newGen.split("\n")[0];
-        String details = newGen.substring(title.length());
-        REChandler.doPost(title, details, details);
-        assertEquals(details, REChandler.getRecDetail(title));
-        REChandler.doPost(title, other_details, username);
-        assertEquals(other_details, REChandler.getRecDetail(title));
-        REChandler.doDelete(title);
-        assertEquals("Does not exist", REChandler.getRecDetail(mock_title));
-    }
+     */ 
+      // End to End Scnario Test MS1
+      
+      @Test
+      public void testEndToEnd() throws IOException, URISyntaxException, Exception
+      {
+      genI gen = new genMock();
+      String newGen = gen.chatgen("dinner potato");
+      String title = newGen.split("\n")[0];
+      String details = newGen.substring(title.length());
+      REChandler.doPost(title, details, details, "Dinner");
+      String detail1 = REChandler.getRecDetail(title).get(0);
+      String detail_1= detail1.split("%")[0];
+      assertEquals(details, detail_1);
+      REChandler.doPost(title, other_details,username, "Dinner");
+      String detail2 = REChandler.getRecDetail(title).get(0);
+      String detail_2 = detail2.split("%")[0];
+      assertEquals(other_details, detail_2);
+      REChandler.doDelete(title);
+      assertEquals("Does not exist", REChandler.getRecDetail(mock_title).get(0));
+      }
+     
 
     /*
      * US 9: Create an account

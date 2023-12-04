@@ -4,7 +4,9 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
 import com.sun.net.httpserver.*;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -32,7 +34,7 @@ public class DBHandler implements HttpHandler {
 
         try {
             if (method.equals("GET")) {
-                response = handleGet(httpExchange);
+                response = String.join("xF9j", handleGet(httpExchange));
             } else if (method.equals("POST")) {
                 response = handlePost(httpExchange);
             } else if (method.equals("DELETE")) {
@@ -55,7 +57,7 @@ public class DBHandler implements HttpHandler {
         outStream.close();
     }
 
-    private String handleGet(HttpExchange httpExchange) throws IOException {
+    private ArrayList<String> handleGet(HttpExchange httpExchange) throws IOException {
         URI uri = httpExchange.getRequestURI();
         String query = uri.getRawQuery();
 
@@ -71,13 +73,12 @@ public class DBHandler implements HttpHandler {
         InputStream inStream = httpExchange.getRequestBody();
         Scanner scanner = new Scanner(inStream);
         String postData = scanner.toString();
-        System.out.println("Post: " + postData);
-        String title = postData.substring(
-                0,
-                postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1),
-                username = postData.substring(postData.indexOf(",") + 1);
+        String title = postData.substring(0,postData.indexOf(","));
+        String details = postData.substring(postData.indexOf(",") + 1);
+        String username = postData.substring(postData.indexOf(",") + 1); 
+        String mealType = postData.substring(postData.indexOf(",") + 1);
         scanner.close();
-        doPost(title, details, username);
+        doPost(title, details, username, mealType);
 
         return "Did Something?";
     }
@@ -93,16 +94,31 @@ public class DBHandler implements HttpHandler {
                 postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1), 
                 username  = postData.substring(postData.indexOf(",") + 1);*/
 
+        String[] fieldsSplit = postData.split("#");
 
+        /*
         String title = postData.substring(0, postData.indexOf("#"));
 
         int firstCommaIndex = postData.indexOf("#") + 1;
         int secondCommaIndex = postData.indexOf("#", firstCommaIndex);
+        int thirdCommaIndex = postData.indexOf("#", secondCommaIndex);
                 
         String details = postData.substring(firstCommaIndex, secondCommaIndex);
-        String username = postData.substring(secondCommaIndex + 1);
+        String username = postData.substring(secondCommaIndex + 1, thirdCommaIndex);
+        String mealType = postData.substring(thirdCommaIndex + 1);
+        */
 
-        doPost(title, details, username);
+        String title = fieldsSplit[0];
+        String details = fieldsSplit[1];
+        String username = fieldsSplit[2];
+        String mealType = fieldsSplit[3];
+
+        System.out.println("0: " + fieldsSplit[0]);
+        System.out.println("1: " + fieldsSplit[1]);
+        System.out.println("2: " + fieldsSplit[2]);
+        System.out.println("3: " + fieldsSplit[3]);
+
+        doPost(title, details, username, mealType);
         in.close();
 
         return "Did Something";
@@ -121,25 +137,34 @@ public class DBHandler implements HttpHandler {
         return response;
     }
 
-
-    public String getRecDetail(String title) {
+    public ArrayList<String> getRecDetail(String title) {
         Document target = recipeCollection.find(eq("title", title)).first();
-        return (target == null) ? "Does not exist" : target.getString("description");
+        ArrayList<String> recInfo = new ArrayList<String>();
+        if (target == null) {
+            recInfo.add("Does not exist");
+        }
+        else {
+            // description will be recInfo[0]
+            recInfo.add(target.getString("description"));
+            // description will be recInfo[1]
+            recInfo.add(target.getString("mealType"));
+        }
+        return recInfo;
     }
 
-
-
-    public String getRecList() {
+    public ArrayList<String> getRecList() {
+        ArrayList<String> recList = new ArrayList<String>();
         StringBuilder response = new StringBuilder();
         List<Document> recipes = recipeCollection.find().into(new ArrayList<>());
         for (Document i : recipes) {
-            response.append("*" + i.getString("title") + "%" + i.getString("username"));
+            response.append(i.getString("title") + "yL8z42" + i.getString("username"));
+            recList.add(response.toString());
+            response.setLength(0);
         }
-        response.delete(0, 1);
-        return response.toString();
+        return recList;
     }
 
-    public void doPost(String title, String details, String username) {
+    public void doPost(String title, String details, String username, String mealType) {
         /* 
         Bson filter = eq("title", title);
         Bson updateDescription = com.mongodb.client.model.Updates.set("description", details);
@@ -149,17 +174,34 @@ public class DBHandler implements HttpHandler {
         Bson updateUsername = com.mongodb.client.model.Updates.set("username", username);
          recipeCollection.updateOne(filter, updateUsername, options);
          */
-
-         Bson filter = eq("title", title);
+        /* 
+        Bson filter = eq("title", title);
 
         Bson updateDescription = com.mongodb.client.model.Updates.set("description", details);
         Bson updateUsername = com.mongodb.client.model.Updates.set("username", username);
+        Bson updateMealType = com.mongodb.client.model.Updates.set("mealType", mealType);
 
-        Bson updateOperation = com.mongodb.client.model.Updates.combine(updateDescription, updateUsername);
+        Bson updateOperation = com.mongodb.client.model.Updates.combine(updateDescription, updateUsername, updateMealType);
 
         UpdateOptions options = new UpdateOptions().upsert(true);
 
         recipeCollection.updateOne(filter, updateOperation, options);
+
+        */
+
+        Bson filter = Filters.eq("title", title);
+
+        // Define update operations
+        Bson updateDescription = Updates.set("description", details);
+        Bson updateUsername = Updates.set("username", username);
+        Bson updateMealType = Updates.set("mealType", mealType);
+
+        Bson updateOperation = Updates.combine(updateDescription, updateUsername, updateMealType);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        recipeCollection.updateOne(filter, updateOperation, options);
+
 
     }
 

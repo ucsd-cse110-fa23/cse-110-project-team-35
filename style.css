@@ -132,7 +132,7 @@
     -fx-pref-height: 50px;
     -fx-effect: dropshadow(gaussian, black, 1, 1, 1, 1);
     -fx-alignment: center-left;
-    -fx-padding: 0 0 0 10px;
+    -fx-padding: 0 10px 0 10px;
 
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
@@ -175,4 +175,15 @@
 
 .extraPadding {
     -fx-padding: 10px 0 0 0;
+}
+
+.mealType {
+    -fx-background-color: green;
+    -fx-min-width: 70px;
+    -fx-max-width: 70px;
+
+    -fx-min-height: 30px;
+    -fx-max-height: 30px;
+
+    -fx-background-radius: 10px;
 }

@@ -1,6 +1,11 @@
 package cse.project.team;
 
 import java.util.Random;
+
+import com.sun.javafx.geom.Rectangle;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
@@ -54,14 +59,14 @@ public class ListView extends BorderPane {
 
     public void setRecipeButtons(EventHandler<MouseEvent> eventHandler) {
         for (int i = 0; i < recipeList.getChildren().size(); i++) {
-            if (recipeList.getChildren().get(i) instanceof Recipe ) {
+            if (recipeList.getChildren().get(i) instanceof Recipe) {
                 recipeList.getChildren().get(i).setOnMouseClicked(eventHandler);
             }
         }
     }
 
-    //https://stackoverflow.com/questions/73442672/java-sorting-using-lambda-with-streams
-    //https://stackoverflow.com/questions/45177184/map-to-list-after-filtering-on-maps-key-using-java8-stream
+    // https://stackoverflow.com/questions/73442672/java-sorting-using-lambda-with-streams
+    // https://stackoverflow.com/questions/45177184/map-to-list-after-filtering-on-maps-key-using-java8-stream
 
     public void emptyList() {
         recipeList.getChildren().clear();
@@ -91,6 +96,14 @@ public class ListView extends BorderPane {
         SortL_EButton.setOnAction(eventHandler);
     }
 
+    public String getFilterValue() {
+        return footer.getDropdown().getValue();
+    }
+
+    public void setFilter(EventHandler<ActionEvent> eventHandler) {
+        footer.getDropdown().setOnAction(eventHandler);
+    }
+
 }
 
 class Recipe extends HBox {
@@ -102,7 +115,7 @@ class Recipe extends HBox {
     Recipe(String name, String mt) {
         title = new Text(name);
         type = new Text(mt);
-        
+
         spaceFiller = new Region();
         mealType = new StackPane(type);
         mealType.getStyleClass().add("mealType");
@@ -111,7 +124,7 @@ class Recipe extends HBox {
         HBox.setHgrow(spaceFiller, javafx.scene.layout.Priority.ALWAYS);        
         String[] colors = { "#F26B86", "#FFDFB6", "#05AEEF", "#0BBDA9", "#C1B7EE", "#89AFE8", "#F5EBC4" };
         int randomNumber = new Random().nextInt(7);
-        
+
         this.setOnMouseEntered(e -> this.setStyle("-fx-background-color: " + colors[randomNumber]));
         this.setOnMouseExited(e -> this.setStyle("-fx-background-color: white;"));
         this.getStyleClass().add("textBox");
@@ -142,8 +155,18 @@ class Footer extends HBox {
     private Button SortZ_AButton;
     private Button SortE_LButton;
     private Button SortL_EButton;
+    private ObservableList<String> options; 
+    private ComboBox<String> comboBox;
 
     Footer() {
+        options = FXCollections.observableArrayList(
+                "Breakfast",
+                "Lunch",
+                "Dinner",
+                "All");
+        comboBox = new ComboBox<>(options);
+        comboBox.getSelectionModel().select(3);
+
         generateButton = new Button("Generate a Recipe!");
         generateButton.getStyleClass().add("footerButton");
 
@@ -162,23 +185,28 @@ class Footer extends HBox {
         SortL_EButton = new Button("Sort L - E");
         SortL_EButton.getStyleClass().add("footerButton");
 
-        HBox row1 = new HBox(generateButton, logOutButton);
-        HBox row2 = new HBox(SortA_ZButton, SortZ_AButton);
-        HBox row3 = new HBox(SortE_LButton, SortL_EButton);
+        // HBox row1 = new HBox(generateButton, logOutButton);
+        // HBox row2 = new HBox(SortA_ZButton, SortZ_AButton);
+        // HBox row3 = new HBox(SortE_LButton, SortL_EButton);
 
         // Optionally, set spacing and alignment for HBoxes
-        row1.setSpacing(10); // adjust spacing as needed
-        row2.setSpacing(10); // adjust spacing as needed
-        row3.setSpacing(10); // adjust spacing as needed
+        // row1.setSpacing(10); // adjust spacing as needed
+        // row2.setSpacing(10); // adjust spacing as needed
+        // row3.setSpacing(10); // adjust spacing as needed
 
         // Create a VBox and add the two HBoxes to it
-        VBox layout = new VBox(row1, row2, row3);
-        layout.setSpacing(5); // adjust spacing between rows as needed
+        // VBox layout = new VBox(row1, row2, row3);
+        // layout.setSpacing(5); // adjust spacing between rows as needed
 
         // Add the VBox to the footer
-        this.getChildren().add(layout);
+        this.getChildren().addAll(comboBox, generateButton, logOutButton, SortA_ZButton, SortE_LButton, SortL_EButton,
+                SortZ_AButton);
         this.getStyleClass().add("footer");
 
+    }
+
+    public ComboBox<String> getDropdown() {
+        return comboBox;
     }
 
     public Button getGenerateButton() {
@@ -188,6 +216,7 @@ class Footer extends HBox {
     public Button getLogOutButton() {
         return logOutButton;
     }
+
     public Button getSortA_ZButton() {
         return SortA_ZButton;
     }

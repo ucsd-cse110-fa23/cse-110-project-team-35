@@ -13,6 +13,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.Comparator;
+
 public class Controller {
     private ListView listView;
     private DetailView detView;
@@ -65,6 +70,7 @@ public class Controller {
         this.listView.SetSortE_LButton(this::handleSetSortE_LButtonn);
         this.listView.SetSortL_EButton(this::handleSetSortL_EButtonn);
         this.listView.SetLogOutButton(this::handleLogOutButton);
+        this.listView.setFilter(this::handleFilterSelection);
 
         this.genView.setBackButton(this::handleGenerateBackButton);
         this.genView.setStartButton(this::handleGenerateStartButton);
@@ -494,5 +500,23 @@ public class Controller {
                 });
 
         t.start();
+    }
+
+    public void handleFilterSelection(ActionEvent event) {
+        loadRecipeList();
+        String selection = listView.getFilterValue();
+        if (selection != "All") {
+            RecipeList recipeList = listView.getRecipeList();
+            
+            List<Recipe> filterRecipes = recipeList.getChildren().stream()
+                    .filter(node -> node instanceof Recipe)
+                    .map(node -> (Recipe) node)
+                    .filter(Recipe -> Recipe.getMealType().equalsIgnoreCase(selection))
+                    .collect(Collectors.toList());
+
+            
+            recipeList.getChildren().clear();
+            recipeList.getChildren().addAll(filterRecipes);
+        }
     }
 }

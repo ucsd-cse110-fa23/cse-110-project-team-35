@@ -125,7 +125,15 @@ public class DetailView extends BorderPane {
         titleText.setText(title);
         mealTypeText.setText(mealType);
         mealTypeText.setStyle("-fx-background-color: " + selectColor(mealType));
-        setAnimation(recipeDetails);
+
+        int indexOfBackslash = recipeDetails.indexOf('%');
+        
+        if (indexOfBackslash != -1) {
+            String substringBeforeBackslash = recipeDetails.substring(0, indexOfBackslash);
+            setAnimation(substringBeforeBackslash);
+        }else{
+            setAnimation(recipeDetails);
+        }
 
         // Load and set the image
         if (imagePath != null && !imagePath.isEmpty()) {

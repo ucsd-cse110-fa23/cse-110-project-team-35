@@ -269,18 +269,19 @@ public class Controller {
         // Generate recipe through ChatGPT
         String recipe = model.genRequest("GET", audioTxt);
         String[] recipeTitles = recipe.split("\n");
+        String title = recipeTitles[0].replaceAll("[^a-zA-Z0-9\\s]", "");
 
         // Generate image based on recipe title through DALL-E
-        model.generateImage(recipeTitles[0]);
+        model.generateImage(title);
 
         // Save image on local computer
-        String imagePath = new String(recipeTitles[0] + ".jpg");
+        String imagePath = new String(title + ".jpg");
 
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 // Show image and recipe details
-                detView.addDetails(recipe.split("\n")[0],
+                detView.addDetails(title,
                         recipe.substring(recipe.split("\n")[0].length()).trim());
                 detView.disableButtons(false);
                 detView.setImage(imagePath);

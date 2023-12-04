@@ -60,6 +60,7 @@ public class shareHandler implements HttpHandler {
                 response = "Not found";
             }
         }
+        System.out.println(response);
         return response;
     }
 
@@ -92,6 +93,7 @@ public class shareHandler implements HttpHandler {
 
         String imagePath = dalle.generateDalle(title);
         String htmlRecipe = generateHtmlRecipe(response, imagePath);
+        System.out.println(title + ":   " +htmlRecipe);
 
         data.put(title, htmlRecipe);
 

@@ -175,7 +175,7 @@ public class Controller {
 
     private void handleRecipeButtons(ActionEvent event) {
         String recipeTitle = ((Button) event.getSource()).getText();
-        String[] recInfo = model.dBRequest("GET", null, null, null, null, recipeTitle).split(";&*$");
+        String[] recInfo = model.dBRequest("GET", null, null, null, null, recipeTitle).split("xF9j");
         String details = recInfo[0];
         String imagePath = new String(recipeTitle + ".jpg");
         String mealType = recInfo[1];

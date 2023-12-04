@@ -29,6 +29,8 @@ import javafx.scene.text.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 
+import java.util.*;
+
 class AppTest {
     final String mock_title = "Mashed potat";
     final String mock_details = "Get potatoes. Mash. Done.";
@@ -65,18 +67,17 @@ class AppTest {
     // US1: View list of saved recipes
     @Test
     public void testViewEmptyList() throws Exception {
-        String list = REChandler.getRecList();
-        String expect = "";
-        assertEquals(expect, list);
+        ArrayList<String> list = REChandler.getRecList();
+        assertEquals(list.size(), 0);
     }
 
     @Test
     public void testViewFullList() throws Exception {
         REChandler.doPost(mock_title, mock_details, username, "Breakfast");
-        REChandler.doPost(other_title, mock_details, username, "Lunch");
-        String list = REChandler.getRecList();
-        String expect = mock_title + "%" + username + "*" + other_title + "%" + username;
-        assertEquals(expect, list);
+        REChandler.doPost(other_title, mock_details, "Lea", "Lunch");
+        ArrayList<String> list = REChandler.getRecList();
+        assertEquals(mock_title + "yL8z42" + username, list.get(0));
+        assertEquals(other_title + "yL8z42" + "Lea", list.get(1));
     }
 
     // US2: View Details of Recipe

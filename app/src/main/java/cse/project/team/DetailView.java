@@ -7,78 +7,62 @@ import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.*;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.*;
 
-import com.google.common.io.Files;
-
 public class DetailView extends BorderPane {
     private detailHeader header;
     private detailFooter footer;
+    private Button back, editButton, saveButton,
+            deleteButton, shareButton, refreshButton;
 
-    private Button back;
-    private Button editButton;
-    private Button saveButton;
-    private Button deleteButton;
-    private Button shareButton;
-    private Button refreshButton;
-
-    private TextArea titleText, detailText, mealTypeText,linkText;
-    private HBox title;
-
+    private TextArea detailText, linkText;
+    private VBox details;
     private String currTitle;
     private Boolean newRec;
     private int currentIndex;
     private Timeline timeline;
-
     private ImageView recipeImage;
-
-    private ColorPicker colorPicker = new ColorPicker();
+    private RecipeTitle recipeTitle;
+    private Region spacing;
+    private Label titleText;
 
     public DetailView() {
         newRec = false;
         header = new detailHeader();
         footer = new detailFooter();
 
-        back = new Button("Back");
+        back = new Button("← Back");
         editButton = new Button("Edit Mode");
-        saveButton = new Button("Save Recipe");
-        deleteButton = new Button("Delete Recipe");
-        refreshButton = new Button("Refresh Recipe");
-
-        refreshButton.setVisible(false);
-
+        saveButton = new Button("Save");
         shareButton = new Button("Share");
-        shareButton.getStyleClass().add("footerButton");
+        deleteButton = new Button("Delete");
+        refreshButton = new Button("\t↻ Refresh this recipe!");
 
-        back.getStyleClass().add("footerButton");
+        back.getStyleClass().add("logoutButton");
         saveButton.getStyleClass().add("footerButton");
         editButton.getStyleClass().add("footerButton");
+        shareButton.getStyleClass().add("footerButton");
         deleteButton.getStyleClass().add("footerButton");
-        refreshButton.getStyleClass().add("footerButton");
+        refreshButton.getStyleClass().addAll("logoutButton");
 
-        footer.add(editButton, 0, 0);
-        footer.add(saveButton, 0, 1);
-        footer.add(back, 1, 1);
-        footer.add(deleteButton, 1, 0);
-        footer.add(shareButton, 1, 2);
-        footer.add(refreshButton, 0,2);
+        HBox footerRow1 = new HBox(editButton, saveButton);
+        footerRow1.setStyle("-fx-padding: 0 20 0 20; -fx-spacing: 8;");
+        footer.getChildren().add(footerRow1);
 
-        titleText = new TextArea();
-        titleText.setWrapText(true);
-        titleText.setEditable(false);
-        titleText.getStyleClass().addAll("textBox", "extraPadding");
+        HBox footerRow2 = new HBox(deleteButton, shareButton);
+        footerRow2.setStyle("-fx-padding: 0 20 0 20; -fx-spacing: 8;");
+        footer.getChildren().add(footerRow2);
 
-        mealTypeText = new TextArea();
-        mealTypeText.setEditable(false);
-        mealTypeText.getStyleClass().addAll("textBox", "extraPadding");
+        HBox.setHgrow(spacing = new Region(), javafx.scene.layout.Priority.ALWAYS);
+        footer.getChildren().add(new HBox(back, spacing, refreshButton));
+        refreshButton.setVisible(false);
 
-        title = new HBox(0);
-        title.getChildren().add(titleText);
-        title.getChildren().add(mealTypeText);
+        recipeTitle = new RecipeTitle("", "");
+        recipeTitle.setMinHeight(50);
+        recipeTitle.setOnMouseEntered(e -> this.setStyle("-fx-cursor: default;"));
 
         detailText = new TextArea();
         detailText.setWrapText(true);
@@ -88,22 +72,25 @@ public class DetailView extends BorderPane {
         linkText = new TextArea();
         linkText.setWrapText(true);
         linkText.setEditable(false);
-        linkText.getStyleClass().addAll("textBox", "extraPadding");
-        linkText.setText("Press share to send to a friend.");
+        linkText.getStyleClass().add("textBox");
+        linkText.setStyle("-fx-min-height: 50px; -fx-padding: 10 0 0;");
+        linkText.setVisible(false);
 
-        recipeImage = new ImageView();
-        recipeImage.setFitWidth(128); 
-        recipeImage.setPreserveRatio(true);
-
-        VBox details = new VBox();
-        details.getChildren().addAll(title, detailText, recipeImage, linkText);
-        details.getStyleClass().add("center");
-
-        header.getChildren().add(recipeImage);
         // Set the size of the ImageView
+        recipeImage = new ImageView();
         recipeImage.setFitWidth(100);
         recipeImage.setFitHeight(100);
         recipeImage.setPreserveRatio(true);
+
+        titleText = new Label("Recipe deets");
+        titleText.getStyleClass().add("titleText");
+        
+        VBox.setVgrow(spacing = new Region(), javafx.scene.layout.Priority.ALWAYS);
+        header.getChildren().addAll(new VBox(spacing, titleText), recipeImage);
+
+        details = new VBox();
+        details.getChildren().addAll(recipeTitle, detailText, linkText);
+        details.getStyleClass().add("center");
 
         // Create a Circle to use as a mask
         Circle circle = new Circle();
@@ -154,43 +141,32 @@ public class DetailView extends BorderPane {
     }
 
     public String getMealTypeText() {
-        return mealTypeText.getText();
+        return this.recipeTitle.getMealType();
     }
 
     public void addDetails(String title, String recipeDetails, String mealType) {
         this.currTitle = title;
-        titleText.setText(title);
-        mealTypeText.setText(mealType);
-        mealTypeText.setStyle("-fx-background-color: " + colorPicker.selectColor(mealType));
+        this.recipeTitle.setTitle(title);
+        this.recipeTitle.setType(mealType);
 
         int indexOfBackslash = recipeDetails.indexOf('%');
-        
+
         if (indexOfBackslash != -1) {
             String substringBeforeBackslash = recipeDetails.substring(0, indexOfBackslash);
             detailText.setText(substringBeforeBackslash);
-            //setAnimation(substringBeforeBackslash);
-        }else{
-            //setAnimation(recipeDetails);
+            // setAnimation(substringBeforeBackslash);
+        } else {
+            // setAnimation(recipeDetails);
             detailText.setText(recipeDetails);
         }
     }
 
-    public String getLinkText(){
-        return linkText.getText();
-    }
-
-    public void setLinkText(String input){
+    public void setLinkText(String input) {
         linkText.setText(input);
+        linkText.setVisible(true);
     }
 
-    public void addDetails(String title, String recipeDetails) {
-        this.currTitle = title;
-        titleText.setText(title);
-        detailText.setText(recipeDetails);
-
-    }
-
-    public void setImage(String imagePath){
+    public void setImage(String imagePath) {
         // Load and set the image
         if (imagePath != null && !imagePath.isEmpty()) {
             File selectedFile = new File(imagePath);
@@ -198,6 +174,11 @@ public class DetailView extends BorderPane {
             recipeImage.setImage(image);
             showImage();
         }
+    }
+
+    public void resetLinkText() {
+        linkText.setText("Sharing is caring. Please wait...");
+        linkText.setVisible(false);
     }
 
     public void setBackButton(EventHandler<ActionEvent> eventHandler) {
@@ -212,11 +193,11 @@ public class DetailView extends BorderPane {
         deleteButton.setOnAction(eventHandler);
     }
 
-    public void setShareButton(EventHandler<ActionEvent> eventHandler){
+    public void setShareButton(EventHandler<ActionEvent> eventHandler) {
         shareButton.setOnAction(eventHandler);
 
     }
-    
+
     public void setRefreshButton(EventHandler<ActionEvent> eventHandler) {
         refreshButton.setOnAction(eventHandler);
     }
@@ -224,11 +205,11 @@ public class DetailView extends BorderPane {
     public void toggleEditMode() {
         if ("Edit Mode".equals(editButton.getText())) {
             setEditButtonTextToView();
-            titleText.setEditable(true);
+            // titleText.setEditable(true);
             detailText.setEditable(true);
         } else {
             setEditButtonTextToEdit();
-            titleText.setEditable(false);
+            // titleText.setEditable(false);
             detailText.setEditable(false);
         }
     }
@@ -249,10 +230,6 @@ public class DetailView extends BorderPane {
         return detailText;
     }
 
-    public TextArea getTitleTextArea() {
-        return titleText;
-    }
-
     public boolean getNewRec() {
         return newRec;
     }
@@ -268,9 +245,14 @@ public class DetailView extends BorderPane {
         deleteButton.setDisable(value);
     }
 
-    public void setRefreshText(){
-        this.titleText.setText("Cooking up Something new...");
-        this.detailText.setText("Talking to the chefGPT.  Please wait....");
+    public void disableBackButton(Boolean value) {
+        back.setDisable(value);
+    }
+
+    public void setRefreshText() {
+        this.recipeTitle.setTitle("Cooking up Something new...");
+        this.recipeTitle.setType("");
+        this.detailText.setText("Talking to the chefGPT.  Please wait :)");
     }
 
     public void showRefreshButton() {
@@ -285,7 +267,7 @@ public class DetailView extends BorderPane {
         recipeImage.setVisible(false);
     }
 
-    public void showImage(){
+    public void showImage() {
         recipeImage.setVisible(true);
     }
 
@@ -297,18 +279,16 @@ public class DetailView extends BorderPane {
 
 }
 
-class detailFooter extends GridPane {
+class detailFooter extends VBox {
     detailFooter() {
         this.getStyleClass().add("footer");
+        this.setStyle("-fx-padding: 30 8 0 8;");
     }
 }
 
 class detailHeader extends HBox {
     detailHeader() {
-        Text titleText = new Text("Recipe deets");
-        titleText.getStyleClass().add("titleText");
-
         this.getStyleClass().add("header");
-        this.getChildren().add(titleText);
+        this.setStyle("-fx-padding: 20px 40px 0 30px;");
     }
 }

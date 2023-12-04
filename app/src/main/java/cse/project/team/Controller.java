@@ -6,17 +6,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class Controller {
     private ListView listView;
@@ -35,7 +31,7 @@ public class Controller {
     File autoLogInfile = new File("autoLogIn.txt");
 
     final int HEIGHT = 750;
-    final int WIDTH = 360;
+    final int WIDTH = 380;
 
     public Controller(ListView listView,
             DetailView detView,
@@ -56,7 +52,7 @@ public class Controller {
         createListScene();
         createGenerateScene();
         createLoginScene();
-        setLoginScene();
+        beginLogin();
 
         this.detView.setBackButton(this::handleBackButton);
         this.detView.setSaveButton(this::handleSaveButton);
@@ -65,19 +61,15 @@ public class Controller {
 
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
-        this.listView.SetSortA_ZButton(this::handleSetSortA_ZButtonn);
-        this.listView.SetSortZ_AButton(this::handleSetSortZ_AButtonn);
-        this.listView.SetSortE_LButton(this::handleSetSortE_LButtonn);
-        this.listView.SetSortL_EButton(this::handleSetSortL_EButtonn);
         this.listView.SetLogOutButton(this::handleLogOutButton);
         this.listView.setFilter(this::handleFilterSelection);
+        this.listView.setSort(this::handleSortSelection);
 
         this.genView.setBackButton(this::handleGenerateBackButton);
         this.genView.setStartButton(this::handleGenerateStartButton);
 
         this.loginView.setCreateButton(this::handleCreateButton);
         this.loginView.setLoginButton(this::handleLoginButton);
-        this.loginView.setAutoButton(this::handleAutoButton);
 
         this.detView.setShareButton(this::handleShareButton);
     }
@@ -96,7 +88,7 @@ public class Controller {
 
             if (info[1].equals(loginView.getUsername())) {
                 String[] recDets = model.dBRequest("GET", null, null, null, null, info[0]).split("xF9j");
-                Recipe recipe = new Recipe(info[0], recDets[1]);
+                RecipeTitle recipe = new RecipeTitle(info[0], recDets[1]);
                 listView.getRecipeList().getChildren().add(0, recipe);
             }
         }
@@ -137,45 +129,52 @@ public class Controller {
     private void setDetailScene() {
         detView.setEditButtonTextToEdit();
         detView.getDetailTextArea().setEditable(false);
-        detView.getTitleTextArea().setEditable(false);
+        detView.resetLinkText();
         stage.setScene(detailScene);
     }
 
-    private void setLoginScene() {
+    private void beginLogin() {
         try {
-            // Check if the file is empty
-            if (autoLogInfile.length() > 1) {
+            if (autoLogInfile.length() > 1) { // If auto-login saved, log in.
                 FileReader fileReader = new FileReader(autoLogInfile);
                 BufferedReader bufferedReader = new BufferedReader(fileReader);
                 String line = bufferedReader.readLine();
                 bufferedReader.close();
-                System.out.println(line);
+
                 String[] parts = line.split(",");
                 String username = parts[0];
                 String password = parts[1];
+
                 loginView.setUsername(username);
                 loginView.setPassword(password);
+
                 String response = model.accountRequest("PUT", username, password, null);
+
                 if (response.equals("Login")) {
                     setListScene();
                 } else {
-                    stage.setScene(loginScene);
-                    loginView.setMessageText(
-                            "Looks like the pantry is locked from our end... \nPlease try again later!");
+                    setLoginScene();
+                    showError();
                 }
-            } else {
-                stage.setScene(loginScene);
+            } else { // If not, show login page.
+                setLoginScene();
             }
         } catch (IOException e) {
-            stage.setScene(loginScene);
-            loginView.setMessageText("Looks like the pantry is locked from our end... \nPlease try again later!");
+            setLoginScene();
+            showError();
         }
+    }
 
-        // stage.setScene(loginScene);
+    private void setLoginScene() {
+        stage.setScene(loginScene);
+    }
+
+    private void showError() {
+        loginView.setMessageText("Looks like the pantry is locked from our end... \nPlease try again later!");
     }
 
     private void handleRecipeButtons(MouseEvent event) {
-        String recipeTitle = ((Recipe) event.getSource()).getTitle();
+        String recipeTitle = ((RecipeTitle) event.getSource()).getTitle();
         String[] recInfo = model.dBRequest("GET", null, null, null, null, recipeTitle).split("xF9j");
         String details = recInfo[0];
         String mealType = recInfo[1];
@@ -284,7 +283,7 @@ public class Controller {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                genView.setRecordingLabel("Make sure you say ingredient");
+                genView.setRecordingLabel("Make sure you list ingredients!");
                 genView.showRecLabel();
                 genView.enableBackButton();
                 genView.enableStartButton();
@@ -308,7 +307,6 @@ public class Controller {
     }
 
     private void createRecipeAndImage(String audioTxt) {
-
         String mealType = extractMealType(audioTxt);
         this.whisper = audioTxt;
         // Generate recipe through ChatGPT
@@ -376,6 +374,19 @@ public class Controller {
         t.start();
     }
 
+    public void rememberMe() {
+        if (loginView.rememberMeSeleced()) {
+            try {
+                FileWriter writer = new FileWriter(autoLogInfile);
+                writer.write(loginView.getUsername() + "," + loginView.getPassword());
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
     public void handleCreateButton(ActionEvent event) {
         String username = loginView.getUsername();
         String password = loginView.getPassword();
@@ -383,23 +394,19 @@ public class Controller {
 
         switch (response) {
             case "Username taken":
-                loginView.setMessageText("This username is already taken!");
+                loginView.setMessageText("Sorry, this username is already taken!");
                 break;
             case "Empty input":
                 loginView.setMessageText("Please enter a username and password!");
                 break;
             case "Added":
+                rememberMe();
                 setListScene();
                 break;
             default:
                 loginView.setMessageText(
                         "Looks like the pantry is locked from our end... \nPlease try again later!");
         }
-    }
-
-    public void clearUsernamwPwdFields() {
-        loginView.setUsername("");
-        loginView.setPassword("");
     }
 
     public void deleteAutoLogin() {
@@ -418,17 +425,17 @@ public class Controller {
         String password = loginView.getPassword();
         String response = model.accountRequest("PUT", username, password, null);
 
-        System.out.println(response);
+        System.out.println("Response:" + response);
         switch (response) {
             case "Empty input":
                 loginView.setMessageText("Please enter a username and password!");
                 break;
             case "Wrong info":
-                loginView.setMessageText("Incorrect username or password. Please try again!");
-                clearUsernamwPwdFields();
-                deleteAutoLogin();
+                loginView.setMessageText("Whoops, you've entered an incorrect username or password. Please try again!");
+                loginView.resetFields();
                 break;
             case "Login":
+                rememberMe();
                 setListScene();
                 break;
             default:
@@ -439,49 +446,36 @@ public class Controller {
 
     private void handleLogOutButton(ActionEvent event) {
         deleteAutoLogin();
-        loginView.setUsername("");
-        loginView.setPassword("");
+        loginView.resetFields();
+        loginView.resetCheckbox();
+        loginView.clearErrorMessage();
         setLoginScene();
     }
 
-    private void handleAutoButton(ActionEvent event) {
-        try {
-            FileWriter writer = new FileWriter(autoLogInfile);
-            writer.write(loginView.getUsername() + "," + loginView.getPassword());
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void handleSortSelection(ActionEvent event) {
+        RecipeList recList = listView.getRecipeList();
+        switch (listView.getSortValue()) {
+            case "A to Z":
+                sortingStrat = new SortButtonsAZ();
+                sortingStrat.sort(recList);
+                break;
+            case "Z to A":
+                sortingStrat = new SortButtonsZA();
+                sortingStrat.sort(recList);
+                break;
+            case "Oldest First":
+                filterSelection();
+                sortingStrat = new SortButtonsOF();
+                sortingStrat.sort(recList);
+                break;
+            default:
+                filterSelection();
         }
     }
 
-    private void handleSetSortA_ZButtonn(ActionEvent event) {
-        sortingStrat = new SortButtonsAZ();
-        RecipeList recList = listView.getRecipeList();
-        sortingStrat.sort(recList);
-    }
-
-    private void handleSetSortZ_AButtonn(ActionEvent event) {
-        sortingStrat = new SortButtonsZA();
-        RecipeList recList = listView.getRecipeList();
-        sortingStrat.sort(recList);
-    }
-
-    private void handleSetSortE_LButtonn(ActionEvent event) {
-        listView.emptyList();
-        loadRecipeList();
-
-        sortingStrat = new SortButtonsEL();
-        RecipeList recList = listView.getRecipeList();
-        sortingStrat.sort(recList);
-    }
-
-    private void handleSetSortL_EButtonn(ActionEvent event) {
-        listView.emptyList();
-        loadRecipeList();
-    }
-
     public void handleShareButton(ActionEvent event) {
-        detView.setLinkText("Sharing is caring. Please wait....");
+        detView.setLinkText("Sharing is caring. Please wait...");
+        detView.disableBackButton(true);
         Thread t = new Thread(
                 new Runnable() {
                     @Override
@@ -494,6 +488,7 @@ public class Controller {
                             @Override
                             public void run() {
                                 detView.setLinkText("http://localhost:8100/share/?key=" + trim_title);
+                                detView.disableBackButton(false);
                             }
                         });
                     }
@@ -503,18 +498,21 @@ public class Controller {
     }
 
     public void handleFilterSelection(ActionEvent event) {
+        filterSelection();
+    }
+
+    public void filterSelection() {
         loadRecipeList();
         String selection = listView.getFilterValue();
         if (selection != "All") {
             RecipeList recipeList = listView.getRecipeList();
-            
-            List<Recipe> filterRecipes = recipeList.getChildren().stream()
-                    .filter(node -> node instanceof Recipe)
-                    .map(node -> (Recipe) node)
-                    .filter(Recipe -> Recipe.getMealType().equalsIgnoreCase(selection))
+
+            List<RecipeTitle> filterRecipes = recipeList.getChildren().stream()
+                    .filter(node -> node instanceof RecipeTitle)
+                    .map(node -> (RecipeTitle) node)
+                    .filter(RecipeTitle -> RecipeTitle.getMealType().equalsIgnoreCase(selection))
                     .collect(Collectors.toList());
 
-            
             recipeList.getChildren().clear();
             recipeList.getChildren().addAll(filterRecipes);
         }

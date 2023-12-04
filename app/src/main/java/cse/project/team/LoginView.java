@@ -9,56 +9,75 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.*;
 
 public class LoginView extends BorderPane {
-    private loginHeader login_header;
-    private loginFooter login_footer;
+    private LoginHeader header;
+    private LoginFooter footer;
 
     private Button loginButton;
     private Button createButton;
-    private Button autoButton;
+    private CheckBox checkbox;
 
-    private TextArea messageArea;
-    private TextField username,password;
-    public Object setLoginButton;
+    private TextField username;
+    private PasswordField password;
+
+    private Text login;
+    private Label errorMsg;
+    private Region space;
 
     public LoginView() {
-        login_header = new loginHeader();
-        login_footer = new loginFooter();
+        header = new LoginHeader();
+        footer = new LoginFooter();
 
-        loginButton = new Button("Log in");
-        loginButton.getStyleClass().add("footerButton");
-        this.getChildren().addAll(loginButton);
+        login = new Text("Welcome!");
+        login.getStyleClass().add("loginText");
 
-        createButton = new Button("Create account");
-        createButton.getStyleClass().add("footerButton");
-        this.getChildren().addAll(createButton);
-
-        login_footer.add(createButton, 0, 0);
-        login_footer.add(loginButton, 0, 1);
-
-        messageArea = new TextArea();
-        messageArea.setWrapText(true);
-        messageArea.setEditable(false);
-        messageArea.getStyleClass().addAll("textBox", "extraPadding");
-
-        messageArea.setText("Welcome to PantryPal!");
-
-        username = new TextField();
-        username.getStyleClass().addAll("textBox");
-        username.setPromptText("username:");
-        password = new TextField();
-        password.getStyleClass().addAll("textBox");
-        password.setPromptText("password:");
-
-        autoButton = new Button("remember me");
-        autoButton.getStyleClass().add("footerButton");
+        addLoginButtons();
+        addErrorMessage();
+        addLoginFields();
 
         VBox content = new VBox();
-        content.getChildren().addAll(messageArea,username,password,autoButton);
-        content.getStyleClass().add("center");
 
-        this.setTop(login_header);
+        // Add space so that "Login" and "Create Account" buttons are at the bottom of rectangle
+        VBox.setVgrow(space = new Region(), javafx.scene.layout.Priority.ALWAYS);        
+        BorderPane.setMargin(content, new javafx.geometry.Insets(20));
+        
+        content.setFillWidth(true);
+        content.getChildren().addAll(login, username, password, checkbox, errorMsg, space, loginButton, createButton);
+        content.getStyleClass().addAll("footer", "loginCenter");
+        
+        this.getStyleClass().add("borderPane");
+        this.setTop(header);
         this.setCenter(content);
-        this.setBottom(login_footer);
+        this.setBottom(footer);
+    }
+
+    public void addLoginFields() {
+        username = new TextField();
+        password = new PasswordField();
+        checkbox = new CheckBox("Remember my info please :)");
+        
+        username.getStyleClass().addAll("textBox");
+        password.getStyleClass().addAll("textBox");
+        checkbox.getStyleClass().add("checkbox");
+        
+        username.setPromptText("Your username");
+        password.setPromptText("Your password");
+    }
+
+    public void addLoginButtons() {
+        loginButton = new Button("Log in");
+        createButton = new Button("Create account");
+        
+        loginButton.getStyleClass().add("footerButton");
+        createButton.getStyleClass().add("footerButton");
+    }
+
+    public void addErrorMessage() {
+        errorMsg = new Label();
+        errorMsg.setVisible(false);
+        errorMsg.setFont(new Font(13));
+        errorMsg.setTextFill(Color.MAROON);
+        errorMsg.setWrapText(true);
+        errorMsg.setTextAlignment(TextAlignment.CENTER);
     }
 
     public void setCreateButton(EventHandler<ActionEvent> eventHandler) {
@@ -69,13 +88,12 @@ public class LoginView extends BorderPane {
         loginButton.setOnAction(eventHandler);
     }
 
-    public void setAutoButton(EventHandler<ActionEvent> eventHandler) {
-        autoButton.setOnAction(eventHandler);
+    public boolean rememberMeSeleced() {
+        return checkbox.isSelected();
     }
 
     public void autoLoginButton(){
         loginButton.fire();
-        
     }
 
     public Button getlogInButton(){
@@ -90,33 +108,43 @@ public class LoginView extends BorderPane {
         return password.getText();
     }
 
-    public String getMessageText() {
-        return messageArea.getText();
+    public void resetFields(){
+        username.clear();
+        password.clear();
     }
 
-    public void setUsername(String user){
-        username.setText(user);
-    }
-
-    public void setPassword(String pwd){
-        password.setText(pwd);
+    public void resetCheckbox(){
+        checkbox.setSelected(false);
     }
 
     public void setMessageText(String text) {
-        messageArea.setText(text);
+        errorMsg.setText(text);
+        errorMsg.setVisible(true);
     }
 
-}
+    public void clearErrorMessage() {
+        errorMsg.setVisible(false);
+    }
 
-class loginFooter extends GridPane {
-    loginFooter() {
-        this.getStyleClass().add("footer");  
+    public void setUsername(String user) {
+        username.setText(user);
+    }
+
+    public void setPassword(String user) {
+        password.setText(user);
     }
 }
 
-class loginHeader extends HBox {
-    loginHeader() {
-        Text titleText = new Text("PantryPal Login");
+class LoginFooter extends VBox {
+    LoginFooter() {
+        this.getStyleClass().add("center"); 
+        this.setPrefHeight(120);
+    }
+}
+
+class LoginHeader extends HBox {
+    LoginHeader() {
+        Text titleText = new Text("PantryPal");
         Text smileyText = new Text(" ☺");
         Circle face = new Circle(10, Color.YELLOW);
         
@@ -125,6 +153,7 @@ class loginHeader extends HBox {
         smileyText.getStyleClass().add("smileyText");
 
         this.getStyleClass().add("header");
+        this.setStyle("-fx-padding: 60px 40px 30px 30px;");
         this.getChildren().addAll(titleText, face, smileyText);
     }
 }

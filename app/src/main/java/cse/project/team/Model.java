@@ -65,7 +65,7 @@ public class Model {
         }
     }
 
-    public String shareRequest(String method, String language, String year, String query) {
+    public String shareRequest(String method, String title, String details, String query) {
         // Implement your HTTP request logic here and return the response
         //System.out.println("Input:"+year);
         try {
@@ -81,8 +81,7 @@ public class Model {
 
             if (method.equals("POST") || method.equals("PUT")) {
                 OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-                out.write(language + "\n" + year);
-                //System.out.println(language+","+year);
+                out.write(title + "\n" + details);
                 out.flush();
                 out.close();
             }

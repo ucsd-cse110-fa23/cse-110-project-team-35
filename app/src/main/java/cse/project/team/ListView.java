@@ -1,13 +1,10 @@
 package cse.project.team;
 
-import java.util.Random;
-
-import com.sun.javafx.geom.Rectangle;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.input.MouseEvent;
@@ -21,36 +18,65 @@ public class ListView extends BorderPane {
     private Header header;
     private Footer footer;
     private ScrollPane scrollPane;
-    private Button generateButton;
-    private Button logOutButton;
-    private Button SortA_ZButton;
-    private Button SortZ_AButton;
-    private Button SortE_LButton;
-    private Button SortL_EButton;
+    private Button generateButton, logOutButton;
+    private ObservableList<String> filter, sort;
+    private ComboBox<String> filterBox, sortBox;
+    private Text filterText, sortText;
+    private Region spacing;
 
     public ListView() {
         header = new Header();
         footer = new Footer();
         recipeList = new RecipeList();
 
+        filter = FXCollections.observableArrayList(
+                "Breakfast",
+                "Lunch",
+                "Dinner",
+                "All");
+        filterBox = new ComboBox<>(filter);
+        filterBox.getSelectionModel().select(3);
+        filterBox.getStyleClass().add("dropdown");
+
+        sort = FXCollections.observableArrayList(
+                "A to Z",
+                "Z to A",
+                "Oldest First",
+                "Newest First");
+        sortBox = new ComboBox<>(sort);
+        sortBox.getSelectionModel().select(3);
+        sortBox.getStyleClass().add("dropdown");
+
         scrollPane = new ScrollPane(recipeList);
         scrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
         scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
         scrollPane.getStyleClass().add("scrollPane");
 
-        this.setCenter(recipeList);
+        filterText = new Text("Filter: ");
+        sortText = new Text("Sort: ");
+
+        filterText.getStyleClass().add("dropdown");
+        sortText.getStyleClass().add("dropdown");
+
+        HBox filters = new HBox(new StackPane(filterText), filterBox, new StackPane(sortText), sortBox);
+        filters.setAlignment(Pos.CENTER);
+        filters.setSpacing(10);
+        filters.getStyleClass().add("filterBg");
+        filters.setMaxWidth(340);
+
+        VBox.setVgrow(spacing = new Region(), javafx.scene.layout.Priority.ALWAYS);
+        VBox center = new VBox(scrollPane, spacing, filters);
+        center.setAlignment(Pos.CENTER);
+
         this.setTop(header);
-        this.setCenter(scrollPane);
+        this.setCenter(center);
         this.setBottom(footer);
-        this.getStyleClass().add("BorderPane");
+        this.getStyleClass().add("borderPane");
 
         generateButton = footer.getGenerateButton();
         logOutButton = footer.getLogOutButton();
-        SortA_ZButton = footer.getSortA_ZButton();
-        SortZ_AButton = footer.getSortZ_AButton();
-        SortE_LButton = footer.getSortE_LButton();
-        SortL_EButton = footer.getSortL_EButton();
     }
 
     public RecipeList getRecipeList() {
@@ -59,7 +85,7 @@ public class ListView extends BorderPane {
 
     public void setRecipeButtons(EventHandler<MouseEvent> eventHandler) {
         for (int i = 0; i < recipeList.getChildren().size(); i++) {
-            if (recipeList.getChildren().get(i) instanceof Recipe) {
+            if (recipeList.getChildren().get(i) instanceof RecipeTitle) {
                 recipeList.getChildren().get(i).setOnMouseClicked(eventHandler);
             }
         }
@@ -80,56 +106,46 @@ public class ListView extends BorderPane {
         logOutButton.setOnAction(eventHandler);
     }
 
-    public void SetSortA_ZButton(EventHandler<ActionEvent> eventHandler) {
-        SortA_ZButton.setOnAction(eventHandler);
-    }
-
-    public void SetSortZ_AButton(EventHandler<ActionEvent> eventHandler) {
-        SortZ_AButton.setOnAction(eventHandler);
-    }
-
-    public void SetSortE_LButton(EventHandler<ActionEvent> eventHandler) {
-        SortE_LButton.setOnAction(eventHandler);
-    }
-
-    public void SetSortL_EButton(EventHandler<ActionEvent> eventHandler) {
-        SortL_EButton.setOnAction(eventHandler);
-    }
-
     public String getFilterValue() {
-        return footer.getDropdown().getValue();
+        return filterBox.getValue();
     }
 
     public void setFilter(EventHandler<ActionEvent> eventHandler) {
-        footer.getDropdown().setOnAction(eventHandler);
+        filterBox.setOnAction(eventHandler);
+    }
+
+    public String getSortValue() {
+        return sortBox.getValue();
+    }
+
+    public void setSort(EventHandler<ActionEvent> eventHandler) {
+        sortBox.setOnAction(eventHandler);
     }
 
 }
 
-class Recipe extends HBox {
-    private Text title, type;
+class RecipeTitle extends HBox {
+    private Label title, type;
     private StackPane mealType;
     private Region spaceFiller;
     private ColorPicker colorPicker = new ColorPicker();
 
-    Recipe(String name, String mt) {
-        title = new Text(name);
-        type = new Text(mt);
+    RecipeTitle(String name, String mt) {
+        title = new Label(name);
+        type = new Label(mt);
 
-        spaceFiller = new Region();
         mealType = new StackPane(type);
         mealType.getStyleClass().add("mealType");
-        mealType.setStyle("-fx-background-color: " + colorPicker.selectColor(mt));
-        
-        HBox.setHgrow(spaceFiller, javafx.scene.layout.Priority.ALWAYS);        
-        String[] colors = { "#F26B86", "#FFDFB6", "#05AEEF", "#0BBDA9", "#C1B7EE", "#89AFE8", "#F5EBC4" };
-        int randomNumber = new Random().nextInt(7);
+        mealType.setStyle("-fx-font-size: 10px; -fx-background-color: " + colorPicker.tag(mt));
 
-        this.setOnMouseEntered(e -> this.setStyle("-fx-background-color: " + colors[randomNumber]));
+        HBox.setHgrow(spaceFiller = new Region(), javafx.scene.layout.Priority.ALWAYS);
+
+        this.setOnMouseEntered(e -> this.setStyle("-fx-background-color: " + colorPicker.highlight()));
         this.setOnMouseExited(e -> this.setStyle("-fx-background-color: white;"));
         this.getStyleClass().add("textBox");
-        this.setMaxSize(300, 50);
+        this.setMaxSize(320, 50);
         this.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+        this.setSpacing(4);
         this.getChildren().addAll(title, spaceFiller, mealType);
     }
 
@@ -140,6 +156,14 @@ class Recipe extends HBox {
     String getMealType() {
         return type.getText();
     }
+
+    void setTitle(String title) {
+        this.title.setText(title);
+    }
+
+    void setType(String type) {
+        this.type.setText(type);
+    }
 }
 
 class RecipeList extends VBox {
@@ -148,65 +172,24 @@ class RecipeList extends VBox {
     }
 }
 
-class Footer extends HBox {
-    private Button generateButton;
-    private Button logOutButton;
-    private Button SortA_ZButton;
-    private Button SortZ_AButton;
-    private Button SortE_LButton;
-    private Button SortL_EButton;
-    private ObservableList<String> options; 
-    private ComboBox<String> comboBox;
+class Footer extends VBox {
+    private Button generateButton, logOutButton;
+    private Region space, verticalSpace;
 
     Footer() {
-        options = FXCollections.observableArrayList(
-                "Breakfast",
-                "Lunch",
-                "Dinner",
-                "All");
-        comboBox = new ComboBox<>(options);
-        comboBox.getSelectionModel().select(3);
-
         generateButton = new Button("Generate a Recipe!");
         generateButton.getStyleClass().add("footerButton");
 
         logOutButton = new Button("Log Out");
-        logOutButton.getStyleClass().add("footerButton");
+        logOutButton.getStyleClass().add("logoutButton");
+        HBox.setHgrow(space = new Region(), javafx.scene.layout.Priority.ALWAYS);
+        
+        verticalSpace = new Region();
+        verticalSpace.setPrefHeight(8);
 
-        SortA_ZButton = new Button("Sort A - Z");
-        SortA_ZButton.getStyleClass().add("footerButton");
-
-        SortZ_AButton = new Button("Sort Z - A");
-        SortZ_AButton.getStyleClass().add("footerButton");
-
-        SortE_LButton = new Button("Sort E - L");
-        SortE_LButton.getStyleClass().add("footerButton");
-
-        SortL_EButton = new Button("Sort L - E");
-        SortL_EButton.getStyleClass().add("footerButton");
-
-        // HBox row1 = new HBox(generateButton, logOutButton);
-        // HBox row2 = new HBox(SortA_ZButton, SortZ_AButton);
-        // HBox row3 = new HBox(SortE_LButton, SortL_EButton);
-
-        // Optionally, set spacing and alignment for HBoxes
-        // row1.setSpacing(10); // adjust spacing as needed
-        // row2.setSpacing(10); // adjust spacing as needed
-        // row3.setSpacing(10); // adjust spacing as needed
-
-        // Create a VBox and add the two HBoxes to it
-        // VBox layout = new VBox(row1, row2, row3);
-        // layout.setSpacing(5); // adjust spacing between rows as needed
-
-        // Add the VBox to the footer
-        this.getChildren().addAll(comboBox, generateButton, logOutButton, SortA_ZButton, SortE_LButton, SortL_EButton,
-                SortZ_AButton);
+        this.getChildren().addAll(generateButton, new HBox(space, logOutButton));
         this.getStyleClass().add("footer");
-
-    }
-
-    public ComboBox<String> getDropdown() {
-        return comboBox;
+        this.setStyle("-fx-padding: 35 8 8 30");
     }
 
     public Button getGenerateButton() {
@@ -216,23 +199,6 @@ class Footer extends HBox {
     public Button getLogOutButton() {
         return logOutButton;
     }
-
-    public Button getSortA_ZButton() {
-        return SortA_ZButton;
-    }
-
-    public Button getSortZ_AButton() {
-        return SortZ_AButton;
-    }
-
-    public Button getSortE_LButton() {
-        return SortE_LButton;
-    }
-
-    public Button getSortL_EButton() {
-        return SortL_EButton;
-    }
-
 }
 
 class Header extends HBox {

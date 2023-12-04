@@ -4,8 +4,6 @@ import com.sun.net.httpserver.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.*;
-import java.util.Map;
-import java.util.HashMap;
 
 public class server {
     private static final int SERVER_PORT = 8100;

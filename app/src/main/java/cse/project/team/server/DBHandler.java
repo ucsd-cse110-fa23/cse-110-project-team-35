@@ -34,7 +34,7 @@ public class DBHandler implements HttpHandler {
 
         try {
             if (method.equals("GET")) {
-                response = handleGet(httpExchange);
+                response = String.join("xF9j", handleGet(httpExchange));
             } else if (method.equals("POST")) {
                 response = handlePost(httpExchange);
             } else if (method.equals("DELETE")) {
@@ -57,7 +57,7 @@ public class DBHandler implements HttpHandler {
         outStream.close();
     }
 
-    private String handleGet(HttpExchange httpExchange) throws IOException {
+    private ArrayList<String> handleGet(HttpExchange httpExchange) throws IOException {
         URI uri = httpExchange.getRequestURI();
         String query = uri.getRawQuery();
 
@@ -138,21 +138,31 @@ public class DBHandler implements HttpHandler {
     }
 
 
-    public String getRecDetail(String title) {
+    public ArrayList<String> getRecDetail(String title) {
         Document target = recipeCollection.find(eq("title", title)).first();
-        return (target == null) ? "Does not exist" : target.getString("description") + "%" + target.getString("mealType") ;
+        ArrayList<String> recInfo = new ArrayList<String>();
+        if (target == null) {
+            recInfo.add("Does not exist");
+        }
+        else {
+            // description will be recInfo[0]
+            recInfo.add(target.getString("description"));
+            // description will be recInfo[1]
+            recInfo.add(target.getString("mealType"));
+        }
+        return recInfo;
     }
 
-
-
-    public String getRecList() {
+    public ArrayList<String> getRecList() {
+        ArrayList<String> recList = new ArrayList<String>();
         StringBuilder response = new StringBuilder();
         List<Document> recipes = recipeCollection.find().into(new ArrayList<>());
         for (Document i : recipes) {
-            response.append("*" + i.getString("title") + "%" + i.getString("username"));
+            response.append(i.getString("title") + "yL8z42" + i.getString("username"));
+            recList.add(response.toString());
+            response.setLength(0);
         }
-        response.delete(0, 1);
-        return response.toString();
+        return recList;
     }
 
     public void doPost(String title, String details, String username, String mealType) {

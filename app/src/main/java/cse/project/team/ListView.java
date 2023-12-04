@@ -97,6 +97,7 @@ class Recipe extends HBox {
     private Text title, type;
     private StackPane mealType;
     private Region spaceFiller;
+    private ColorPicker colorPicker = new ColorPicker();
 
     Recipe(String name, String mt) {
         title = new Text(name);
@@ -105,6 +106,7 @@ class Recipe extends HBox {
         spaceFiller = new Region();
         mealType = new StackPane(type);
         mealType.getStyleClass().add("mealType");
+        mealType.setStyle("-fx-background-color: " + colorPicker.selectColor(mt));
         
         HBox.setHgrow(spaceFiller, javafx.scene.layout.Priority.ALWAYS);        
         String[] colors = { "#F26B86", "#FFDFB6", "#05AEEF", "#0BBDA9", "#C1B7EE", "#89AFE8", "#F5EBC4" };

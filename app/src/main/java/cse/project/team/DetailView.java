@@ -36,6 +36,8 @@ public class DetailView extends BorderPane {
 
     private ImageView recipeImage;
 
+    private ColorPicker colorPicker = new ColorPicker();
+
     public DetailView() {
         newRec = false;
         header = new detailHeader();
@@ -159,7 +161,7 @@ public class DetailView extends BorderPane {
         this.currTitle = title;
         titleText.setText(title);
         mealTypeText.setText(mealType);
-        mealTypeText.setStyle("-fx-background-color: " + selectColor(mealType));
+        mealTypeText.setStyle("-fx-background-color: " + colorPicker.selectColor(mealType));
 
         int indexOfBackslash = recipeDetails.indexOf('%');
         
@@ -264,18 +266,6 @@ public class DetailView extends BorderPane {
         editButton.setDisable(value);
         saveButton.setDisable(value);
         deleteButton.setDisable(value);
-    }
-
-    public String selectColor(String mealType) {
-        if (mealType.equals("Breakfast")) {
-            return "blue";
-        }
-        else if (mealType.equals("Lunch")) {
-            return "yellow";
-        }
-        else {
-            return "red";
-        }
     }
 
     public void setRefreshText(){

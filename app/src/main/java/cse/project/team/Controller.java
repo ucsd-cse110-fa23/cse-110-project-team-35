@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
@@ -61,19 +62,15 @@ public class Controller {
         this.listView.setGenerateButton(this::handleGenerateButton);
         this.listView.SetSortA_ZButton(this::handleSetSortA_ZButtonn);
         this.listView.SetSortZ_AButton(this::handleSetSortZ_AButtonn);
-
         this.listView.SetSortE_LButton(this::handleSetSortE_LButtonn);
         this.listView.SetSortL_EButton(this::handleSetSortL_EButtonn);
-
+        this.listView.SetLogOutButton(this::handleLogOutButton);
 
         this.genView.setBackButton(this::handleGenerateBackButton);
         this.genView.setStartButton(this::handleGenerateStartButton);
 
         this.loginView.setCreateButton(this::handleCreateButton);
         this.loginView.setLoginButton(this::handleLoginButton);
-
-        this.listView.SetLogOutButton(this::handleLogOutButton);
-
         this.loginView.setAutoButton(this::handleAutoButton);
 
         this.detView.setShareButton(this::handleShareButton);
@@ -88,12 +85,12 @@ public class Controller {
                 continue;
             String[] info = i.split("yL8z42");
 
-            if (info.length == 1) {
+            if (info.length == 1)
                 break;
-            }
 
             if (info[1].equals(loginView.getUsername())) {
-                Recipe recipe = new Recipe(info[0]);
+                String[] recDets = model.dBRequest("GET", null, null, null, null, info[0]).split("xF9j");
+                Recipe recipe = new Recipe(info[0], recDets[1]);
                 listView.getRecipeList().getChildren().add(0, recipe);
             }
         }
@@ -122,7 +119,6 @@ public class Controller {
     }
 
     private void setListScene() {
-        // listView.getRecipeList().getChildren().clear();
         loadRecipeList();
         stage.setScene(listScene);
     }
@@ -140,7 +136,6 @@ public class Controller {
     }
 
     private void setLoginScene() {
-
         try {
             // Check if the file is empty
             if (autoLogInfile.length() > 1) {
@@ -173,12 +168,12 @@ public class Controller {
         // stage.setScene(loginScene);
     }
 
-    private void handleRecipeButtons(ActionEvent event) {
-        String recipeTitle = ((Button) event.getSource()).getText();
+    private void handleRecipeButtons(MouseEvent event) {
+        String recipeTitle = ((Recipe) event.getSource()).getTitle();
         String[] recInfo = model.dBRequest("GET", null, null, null, null, recipeTitle).split("xF9j");
         String details = recInfo[0];
-        String imagePath = new String(recipeTitle + ".jpg");
         String mealType = recInfo[1];
+        String imagePath = new String(recipeTitle + ".jpg");
 
         setDetailScene();
         detView.addDetails(recipeTitle, details.trim());
@@ -234,11 +229,9 @@ public class Controller {
                             // Prompt user to specify meal type if missing
                             if (audioTxt.equals("Error")) {
                                 missingMealType();
-                            } 
-                            else if( wordCount == 1) {
+                            } else if (wordCount == 1) {
                                 missingingredient();
-                            }
-                            else {
+                            } else {
                                 createRecipeAndImage(audioTxt);
                             }
                         }
@@ -282,7 +275,7 @@ public class Controller {
 
     }
 
-     private void missingingredient() {
+    private void missingingredient() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -295,26 +288,22 @@ public class Controller {
 
     }
 
-
     // if more than one mealtype mentioned, returns in order of Brk, Lun, Din
     private String extractMealType(String audioText) {
         audioText = audioText.toLowerCase();
         if (audioText.contains("breakfast")) {
             return "Breakfast";
-        }
-        else if (audioText.contains("lunch")) {
+        } else if (audioText.contains("lunch")) {
             return "Lunch";
-        }
-        else if (audioText.contains("dinner")) {
+        } else if (audioText.contains("dinner")) {
             return "Dinner";
-        }
-        else {
+        } else {
             return "N/A";
         }
     }
 
     private void createRecipeAndImage(String audioTxt) {
-        
+
         String mealType = extractMealType(audioTxt);
         this.whisper = audioTxt;
         // Generate recipe through ChatGPT
@@ -352,16 +341,17 @@ public class Controller {
 
     private void handleSaveButton(ActionEvent event) {
         System.out.println(detView.getMealTypeText());
-        model.dBRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), loginView.getUsername(), detView.getMealTypeText(), null);
+        model.dBRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), loginView.getUsername(),
+                detView.getMealTypeText(), null);
         System.out.println("Trying to save");
-        //detView.stopTextAnim();
+        // detView.stopTextAnim();
         detView.reset();
         setListScene();
     }
 
     private void handleDeleteButton(ActionEvent event) {
         model.dBRequest("DELETE", null, null, loginView.getUsername(), null, detView.getCurrTitle());
-        //detView.stopTextAnim();
+        // detView.stopTextAnim();
         model.shareRequest("DELETE", null, null, detView.getCurrTitle());
         detView.reset();
         setListScene();
@@ -471,7 +461,7 @@ public class Controller {
         sortingStrat.sort(recList);
     }
 
-     private void handleSetSortE_LButtonn(ActionEvent event) {
+    private void handleSetSortE_LButtonn(ActionEvent event) {
         listView.emptyList();
         loadRecipeList();
 

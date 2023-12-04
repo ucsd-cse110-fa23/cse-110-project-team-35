@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -51,11 +52,10 @@ public class ListView extends BorderPane {
         return recipeList;
     }
 
-
-    public void setRecipeButtons(EventHandler<ActionEvent> eventHandler) {
+    public void setRecipeButtons(EventHandler<MouseEvent> eventHandler) {
         for (int i = 0; i < recipeList.getChildren().size(); i++) {
-            if (recipeList.getChildren().get(i) instanceof Button) {
-                ((Button) recipeList.getChildren().get(i)).setOnAction(eventHandler);
+            if (recipeList.getChildren().get(i) instanceof Recipe ) {
+                recipeList.getChildren().get(i).setOnMouseClicked(eventHandler);
             }
         }
     }
@@ -66,8 +66,6 @@ public class ListView extends BorderPane {
     public void emptyList() {
         recipeList.getChildren().clear();
     }
-
-
 
     public void setGenerateButton(EventHandler<ActionEvent> eventHandler) {
         generateButton.setOnAction(eventHandler);
@@ -95,14 +93,37 @@ public class ListView extends BorderPane {
 
 }
 
-class Recipe extends Button {
-    Recipe(String name) {
-        this.setText(name);
-        this.getStyleClass().add("textBox");
+class Recipe extends HBox {
+    private Text title, type;
+    private StackPane mealType;
+    private Region spaceFiller;
+
+    Recipe(String name, String mt) {
+        title = new Text(name);
+        type = new Text(mt);
+        
+        spaceFiller = new Region();
+        mealType = new StackPane(type);
+        mealType.getStyleClass().add("mealType");
+        
+        HBox.setHgrow(spaceFiller, javafx.scene.layout.Priority.ALWAYS);        
         String[] colors = { "#F26B86", "#FFDFB6", "#05AEEF", "#0BBDA9", "#C1B7EE", "#89AFE8", "#F5EBC4" };
         int randomNumber = new Random().nextInt(7);
+        
         this.setOnMouseEntered(e -> this.setStyle("-fx-background-color: " + colors[randomNumber]));
         this.setOnMouseExited(e -> this.setStyle("-fx-background-color: white;"));
+        this.getStyleClass().add("textBox");
+        this.setMaxSize(300, 50);
+        this.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+        this.getChildren().addAll(title, spaceFiller, mealType);
+    }
+
+    String getTitle() {
+        return title.getText();
+    }
+
+    String getMealType() {
+        return type.getText();
     }
 }
 
@@ -119,7 +140,6 @@ class Footer extends HBox {
     private Button SortZ_AButton;
     private Button SortE_LButton;
     private Button SortL_EButton;
-
 
     Footer() {
         generateButton = new Button("Generate a Recipe!");
@@ -139,9 +159,6 @@ class Footer extends HBox {
 
         SortL_EButton = new Button("Sort L - E");
         SortL_EButton.getStyleClass().add("footerButton");
-
-
-
 
         HBox row1 = new HBox(generateButton, logOutButton);
         HBox row2 = new HBox(SortA_ZButton, SortZ_AButton);
@@ -185,7 +202,6 @@ class Footer extends HBox {
         return SortL_EButton;
     }
 
-
 }
 
 class Header extends HBox {
@@ -193,7 +209,7 @@ class Header extends HBox {
         Text titleText = new Text("PantryPal");
         Text smileyText = new Text(" ☺");
         Circle face = new Circle(10, Color.YELLOW);
-        
+
         smileyText.setTranslateX(face.getCenterX() - 42);
         titleText.getStyleClass().add("titleText");
         smileyText.getStyleClass().add("smileyText");

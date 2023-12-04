@@ -13,10 +13,10 @@ interface SortingStrategy {
 class SortButtonsAZ implements SortingStrategy {
     public void sort(RecipeList recipeList) {
         // Extract buttons and sort them
-        List<Button> sortedButtons = recipeList.getChildren().stream()
-            .filter(node -> node instanceof Button)
-            .map(node -> (Button) node)
-            .sorted(Comparator.comparing(Button::getText, String.CASE_INSENSITIVE_ORDER))
+        List<Recipe> sortedButtons = recipeList.getChildren().stream()
+            .filter(node -> node instanceof Recipe)
+            .map(node -> (Recipe) node)
+            .sorted(Comparator.comparing(Recipe::getTitle, String.CASE_INSENSITIVE_ORDER))
             .collect(Collectors.toList());
 
         // Clear the list and re-add sorted buttons
@@ -28,10 +28,10 @@ class SortButtonsAZ implements SortingStrategy {
 class SortButtonsZA implements SortingStrategy {
     public void sort(RecipeList recipeList) {
         // Extract buttons and sort them in descending order
-        List<Button> sortedButtons = recipeList.getChildren().stream()
-                .filter(node -> node instanceof Button)
-                .map(node -> (Button) node)
-                .sorted(Comparator.comparing(Button::getText, String.CASE_INSENSITIVE_ORDER).reversed())
+        List<Recipe> sortedButtons = recipeList.getChildren().stream()
+                .filter(node -> node instanceof Recipe)
+                .map(node -> (Recipe) node)
+                .sorted(Comparator.comparing(Recipe::getTitle, String.CASE_INSENSITIVE_ORDER).reversed())
                 .collect(Collectors.toList());
     
         // Clear the current children and add the sorted buttons back
@@ -42,9 +42,9 @@ class SortButtonsZA implements SortingStrategy {
 
 class SortButtonsEL implements SortingStrategy {
     public void sort(RecipeList recipeList) {
-        List<Button> buttons = recipeList.getChildren().stream()
-        .filter(node -> node instanceof Button)
-        .map(node -> (Button) node)
+        List<Recipe> buttons = recipeList.getChildren().stream()
+        .filter(node -> node instanceof Recipe)
+        .map(node -> (Recipe) node)
         .collect(Collectors.toList());
 
         Collections.reverse(buttons);

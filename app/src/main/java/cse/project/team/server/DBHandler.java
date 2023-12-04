@@ -137,7 +137,6 @@ public class DBHandler implements HttpHandler {
         return response;
     }
 
-
     public ArrayList<String> getRecDetail(String title) {
         Document target = recipeCollection.find(eq("title", title)).first();
         ArrayList<String> recInfo = new ArrayList<String>();
@@ -177,8 +176,6 @@ public class DBHandler implements HttpHandler {
          */
         /* 
         Bson filter = eq("title", title);
-
-        System.out.println("Mealtype: ");
 
         Bson updateDescription = com.mongodb.client.model.Updates.set("description", details);
         Bson updateUsername = com.mongodb.client.model.Updates.set("username", username);

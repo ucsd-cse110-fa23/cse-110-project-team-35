@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.*;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
@@ -20,6 +21,7 @@ public class DetailView extends BorderPane {
     private Button editButton;
     private Button saveButton;
     private Button deleteButton;
+    private Button refreshButton;
 
     private TextArea titleText, detailText;
 
@@ -39,16 +41,21 @@ public class DetailView extends BorderPane {
         editButton = new Button("Edit Mode");
         saveButton = new Button("Save Recipe");
         deleteButton = new Button("Delete Recipe");
+        refreshButton = new Button("Refresh Recipe");
+
+        refreshButton.setVisible(false);
 
         back.getStyleClass().add("footerButton");
         saveButton.getStyleClass().add("footerButton");
         editButton.getStyleClass().add("footerButton");
         deleteButton.getStyleClass().add("footerButton");
+        refreshButton.getStyleClass().add("footerButton");
 
         footer.add(editButton, 0, 0);
         footer.add(saveButton, 0, 1);
         footer.add(back, 1, 1);
         footer.add(deleteButton, 1, 0);
+        footer.add(refreshButton, 0,2);
 
         titleText = new TextArea();
         titleText.setWrapText(true);
@@ -65,8 +72,23 @@ public class DetailView extends BorderPane {
         recipeImage.setPreserveRatio(true);
 
         VBox details = new VBox();
-        details.getChildren().addAll(titleText, detailText,recipeImage);
+        details.getChildren().addAll(titleText, detailText);
         details.getStyleClass().add("center");
+
+        header.getChildren().add(recipeImage);
+        // Set the size of the ImageView
+        recipeImage.setFitWidth(100);
+        recipeImage.setFitHeight(100);
+        recipeImage.setPreserveRatio(true);
+
+        // Create a Circle to use as a mask
+        Circle circle = new Circle();
+        circle.setRadius(50); // Set the radius to half of the desired width/height
+        circle.setCenterX(50); // Set the center X coordinate
+        circle.setCenterY(50); // Set the center Y coordinate
+
+        // Set the clip on the ImageView
+        recipeImage.setClip(circle);
 
         this.setTop(header);
         this.setCenter(details);
@@ -107,16 +129,20 @@ public class DetailView extends BorderPane {
         return detailText.getText();
     }
 
-    public void addDetails(String title, String recipeDetails, String imagePath) {
+    public void addDetails(String title, String recipeDetails) {
         this.currTitle = title;
         titleText.setText(title);
-        setAnimation(recipeDetails);
+        detailText.setText(recipeDetails);
 
+    }
+
+    public void setImage(String imagePath){
         // Load and set the image
         if (imagePath != null && !imagePath.isEmpty()) {
             File selectedFile = new File(imagePath);
             Image image = new Image(selectedFile.toURI().toString());
             recipeImage.setImage(image);
+            showImage();
         }
     }
 
@@ -130,6 +156,10 @@ public class DetailView extends BorderPane {
 
     public void setDeleteButton(EventHandler<ActionEvent> eventHandler) {
         deleteButton.setOnAction(eventHandler);
+    }
+
+    public void setRefreshButton(EventHandler<ActionEvent> eventHandler) {
+        refreshButton.setOnAction(eventHandler);
     }
 
     public void toggleEditMode() {
@@ -177,6 +207,32 @@ public class DetailView extends BorderPane {
         editButton.setDisable(value);
         saveButton.setDisable(value);
         deleteButton.setDisable(value);
+    }
+
+    public void setRefreshText(){
+        this.titleText.setText("Cooking up Something new...");
+        this.detailText.setText("Talking to the chefGPT.  Please wait....");
+    }
+
+    public void showRefreshButton() {
+        this.refreshButton.setVisible(true);
+    }
+
+    public void hideRefreshButton() {
+        this.refreshButton.setVisible(false);
+    }
+
+    public void hideImage() {
+        recipeImage.setVisible(false);
+    }
+
+    public void showImage(){
+        recipeImage.setVisible(true);
+    }
+
+    public void reset() {
+        hideRefreshButton();
+        hideImage();
     }
 
 }

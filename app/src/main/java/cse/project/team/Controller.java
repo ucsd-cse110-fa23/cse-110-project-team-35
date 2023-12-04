@@ -11,11 +11,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class Controller {
     private ListView listView;
     private DetailView detView;
+    private String whisper;
     private GenerateView genView;
     private LoginView loginView;
     private Model model;
@@ -43,6 +43,7 @@ public class Controller {
         this.loginView = loginView;
         this.model = model;
         this.stage = stage;
+        this.whisper = "";
 
         createDetailScene();
         createListScene();
@@ -53,6 +54,7 @@ public class Controller {
         this.detView.setBackButton(this::handleBackButton);
         this.detView.setSaveButton(this::handleSaveButton);
         this.detView.setDeleteButton(this::handleDeleteButton);
+        this.detView.setRefreshButton(this::handleRefreshButton);
 
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
@@ -156,14 +158,31 @@ public class Controller {
         String recipeTitle = ((Button) event.getSource()).getText();
         String details = model.dBRequest("GET", null, null, null, recipeTitle);
         String imagePath = new String(recipeTitle + ".jpg");
-
-        model.generateImage(recipeTitle);
-        detView.addDetails(recipeTitle, details.trim(), imagePath);
         setDetailScene();
+        detView.addDetails(recipeTitle, details.trim());
+
+        //generate detail view image and set it
+        //needed for smooth transition and not freezing
+        Thread t = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        model.generateImage(recipeTitle);
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                detView.setImage(imagePath);
+                            }
+                        });
+                    }
+                });
+
+        t.start();
+
     }
 
     private void handleBackButton(ActionEvent event) {
-        detView.stopTextAnim();
+        detView.reset();
         setListScene();
     }
 
@@ -234,26 +253,28 @@ public class Controller {
     }
 
     private void createRecipeAndImage(String audioTxt) {
+        this.whisper = audioTxt;
+        // Generate recipe through ChatGPT
+        String recipe = model.genRequest("GET", audioTxt);
+        String[] recipeTitles = recipe.split("\n");
+
+        // Generate image based on recipe title through DALL-E
+        model.generateImage(recipeTitles[0]);
+
+        // Save image on local computer
+        String imagePath = new String(recipeTitles[0] + ".jpg");
+
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                // Generate recipe through ChatGPT
-                String recipe = model.genRequest("GET", audioTxt);
-                String[] recipeTitles = recipe.split("\n");
-
-                // Generate image based on recipe title through DALL-E
-                model.generateImage(recipeTitles[0]);
-
-                // Save image on local computer
-                String imagePath = new String(recipeTitles[0] + ".jpg");
-
                 // Show image and recipe details
                 detView.addDetails(recipe.split("\n")[0],
-                        recipe.substring(recipe.split("\n")[0].length()).trim(),
-                        imagePath);
+                        recipe.substring(recipe.split("\n")[0].length()).trim());
                 detView.disableButtons(false);
+                detView.setImage(imagePath);
 
                 setDetailScene();
+                detView.showRefreshButton();
                 genView.reset();
             }
         });
@@ -266,17 +287,31 @@ public class Controller {
 
     private void handleSaveButton(ActionEvent event) {
         model.dBRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), loginView.getUsername(), null);
-        detView.stopTextAnim();
+        detView.reset();
         setListScene();
     }
 
     private void handleDeleteButton(ActionEvent event) {
         model.dBRequest("DELETE", null, null, loginView.getUsername(), detView.getCurrTitle());
-        detView.stopTextAnim();
+        detView.reset();
         setListScene();
     }
 
-    public void handleCreateButton(ActionEvent event) { 
+    private void handleRefreshButton(ActionEvent event) {
+        final String text = this.whisper;
+        this.detView.setRefreshText();
+        Thread t = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        createRecipeAndImage(text);
+                    }
+                });
+
+        t.start();
+    }
+
+    public void handleCreateButton(ActionEvent event) {
         String username = loginView.getUsername();
         String password = loginView.getPassword();
         String response = model.accountRequest("POST", username, password, null);

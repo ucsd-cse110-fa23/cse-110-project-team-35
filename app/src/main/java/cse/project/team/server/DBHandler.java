@@ -71,6 +71,7 @@ public class DBHandler implements HttpHandler {
         InputStream inStream = httpExchange.getRequestBody();
         Scanner scanner = new Scanner(inStream);
         String postData = scanner.toString();
+        System.out.println("Post: " + postData);
         String title = postData.substring(
                 0,
                 postData.indexOf(",")), details = postData.substring(postData.indexOf(",") + 1),

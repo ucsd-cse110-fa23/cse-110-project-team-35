@@ -1,8 +1,10 @@
 package cse.project.team;
 
 import cse.project.team.server.DBHandler;
+import cse.project.team.server.MockDalle;
 import cse.project.team.server.accountHandler;
 import cse.project.team.server.genMock;
+import cse.project.team.server.shareHandler;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 
 import javafx.event.ActionEvent;
@@ -333,7 +336,7 @@ class AppTest {
     @Test
     public void testLogin() {
         GivenExistingACC();
-        String respones = WhenUserEntersInfo(username,password);
+        String respones = WhenUserEntersInfo(username, password);
         ThenLogin(respones);
     }
 
@@ -396,6 +399,112 @@ class AppTest {
             }
         }
         return false;
+    }
+
+    /*
+     * US12:
+     * BDD Scenario 1: The user clicks “Refresh” on an unsaved recipe.
+     * Given the user has generated a new recipe that has not yet been saved,
+     * And the user is on the recipe details page,
+     * When the user clicks the “Refresh” button,
+     * Then a new recipe is generated based on the same voice input as the previous;
+     * When the new recipe is done generating,
+     * Then the new recipe details are shown on the recipe details page.
+     */
+
+    @Test
+    public void testRefresh() throws IOException, URISyntaxException, Exception {
+        genI gen = givenGen();
+        String result = whenGen(gen);
+        thenGen(result);
+        result = whenGen(gen);
+        thenGen(result);
+    }
+
+    /*
+     * US13:
+     * BDD Scenario 1: Server is down.
+     * Given the server is not running,
+     * When the app is launched,
+     * Then the create account/login page is shown,
+     * And an error message saying “Sorry, the server is down!” is displayed;
+     * When the user enters their information and clicks the “Login” or “Create
+     * Account” button,
+     * Then nothing changes.
+     */
+    @Test
+    public void testServerNotRunning() {
+        Model model = givenNoServer();
+        String response = whenNoServer(model);
+        thenNoServer(response);
+    }
+
+    public Model givenNoServer() {
+        return new Model();
+    }
+
+    public String whenNoServer(Model model) {
+        return model.accountRequest("PUT", "", "", null);
+
+    }
+
+    public void thenNoServer(String response) {
+        assertNotEquals("Login", response);
+    }
+
+    /*
+     * US17: 
+     * BDD Scenario 1: An existing recipe was shared.
+     * Given a saved recipe that exists in the database,
+     * When the user clicks the “Share” button on the recipe details page,
+     * Then a web URL linking to the recipe’s details will be generated;
+     * When the URL is pasted in a web browser,
+     * Then the recipe details will be displayed in a web browser.
+     * BDD Scenario 2: A deleted recipe was shared.
+     * Given the share URL of a recipe has already been generated,
+     * When the recipe is deleted,
+     * And the share URL is clicked,
+     * Then a web page displaying a “Recipe not found, sorry!” error is opened.
+     */
+    //Scenario 1
+    @Test
+    public void testSharedRecipe() {
+        shareHandler share = givenSharedRecipe();
+        whenSharedRecipe(share);
+        thenSharedRecipe(share);
+    }
+    //Scenario 2
+    @Test
+    public void testSharedRecipeDeleted() throws UnsupportedEncodingException {
+        shareHandler share = givenSharedRecipe();
+        givenSharedRecipe(share);
+        whenSharedRecipeDeleted(share);
+        thenSharedRecipeDeleted(share);
+    }
+
+    private void thenSharedRecipeDeleted(shareHandler share) {
+        assertEquals("Not found", share.doGet(mock_title));
+    }
+
+    private void whenSharedRecipeDeleted(shareHandler share) throws UnsupportedEncodingException {
+        share.doDelete(mock_title);
+    }
+
+    private void givenSharedRecipe(shareHandler share) {
+        share.doPost(mock_title + "\n" + mock_details);
+    }
+
+    private void thenSharedRecipe(shareHandler share) {
+        assertNotEquals("Not found", share.doGet(mock_title));
+    }
+
+    private void whenSharedRecipe(shareHandler share) {
+        share.doPost(mock_title + "\n" + mock_details);
+    }
+
+    private shareHandler givenSharedRecipe() {
+        shareHandler share = new shareHandler(new MockDalle());
+        return share;
     }
 
 }

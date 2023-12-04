@@ -11,11 +11,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class Controller {
     private ListView listView;
     private DetailView detView;
+    private String whisper;
     private GenerateView genView;
     private LoginView loginView;
     private Model model;
@@ -28,7 +28,7 @@ public class Controller {
 
     File autoLogInfile = new File("autoLogIn.txt");
 
-    final int HEIGHT = 650;
+    final int HEIGHT = 750;
     final int WIDTH = 360;
 
     public Controller(ListView listView,
@@ -44,6 +44,7 @@ public class Controller {
         this.loginView = loginView;
         this.model = model;
         this.stage = stage;
+        this.whisper = "";
 
         createDetailScene();
         createListScene();
@@ -54,6 +55,7 @@ public class Controller {
         this.detView.setBackButton(this::handleBackButton);
         this.detView.setSaveButton(this::handleSaveButton);
         this.detView.setDeleteButton(this::handleDeleteButton);
+        this.detView.setRefreshButton(this::handleRefreshButton);
 
         this.listView.setRecipeButtons(this::handleRecipeButtons);
         this.listView.setGenerateButton(this::handleGenerateButton);
@@ -73,7 +75,8 @@ public class Controller {
         this.listView.SetLogOutButton(this::handleLogOutButton);
 
         this.loginView.setAutoButton(this::handleAutoButton);
-        
+
+        this.detView.setShareButton(this::handleShareButton);
     }
 
     private void loadRecipeList() {
@@ -147,14 +150,24 @@ public class Controller {
                 bufferedReader.close();
                 System.out.println(line);
                 String[] parts = line.split(",");
-                loginView.setUsername(parts[0]);
-                loginView.setPassword(parts[1]);
-                setListScene();
+                String username = parts[0];
+                String password = parts[1];
+                loginView.setUsername(username);
+                loginView.setPassword(password);
+                String response = model.accountRequest("PUT", username, password, null);
+                if (response.equals("Login")) {
+                    setListScene();
+                } else {
+                    stage.setScene(loginScene);
+                    loginView.setMessageText(
+                            "Looks like the pantry is locked from our end... \nPlease try again later!");
+                }
             } else {
                 stage.setScene(loginScene);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            stage.setScene(loginScene);
+            loginView.setMessageText("Looks like the pantry is locked from our end... \nPlease try again later!");
         }
 
         // stage.setScene(loginScene);
@@ -167,13 +180,32 @@ public class Controller {
         String imagePath = new String(recipeTitle + ".jpg");
         String mealType = recInfo[1];
 
-        model.generateImage(recipeTitle);
-        detView.addDetails(recipeTitle, details.trim(), imagePath, mealType);
         setDetailScene();
+        detView.addDetails(recipeTitle, details.trim());
+
+        // generate detail view image and set it
+        // needed for smooth transition and not freezing
+        Thread t = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        model.generateImage(recipeTitle);
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                detView.setImage(imagePath);
+                                detView.addDetails(recipeTitle, details.trim(), mealType);
+                            }
+                        });
+                    }
+                });
+
+        t.start();
+
     }
 
     private void handleBackButton(ActionEvent event) {
-        detView.stopTextAnim();
+        detView.reset();
         setListScene();
     }
 
@@ -282,28 +314,32 @@ public class Controller {
     }
 
     private void createRecipeAndImage(String audioTxt) {
+        
+        String mealType = extractMealType(audioTxt);
+        this.whisper = audioTxt;
+        // Generate recipe through ChatGPT
+        String recipe = model.genRequest("GET", audioTxt);
+        String[] recipeTitles = recipe.split("\n");
+        String title = recipeTitles[0].replaceAll("[^a-zA-Z0-9\\s]", "");
+
+        // Generate image based on recipe title through DALL-E
+        model.generateImage(title);
+
+        // Save image on local computer
+        String imagePath = new String(title + ".jpg");
+
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                // Generate recipe through ChatGPT
-                String recipe = model.genRequest("GET", audioTxt);
-                String mealType = extractMealType(audioTxt);
-                String[] recipeTitles = recipe.split("\n");
-
-                // Generate image based on recipe title through DALL-E
-                model.generateImage(recipeTitles[0]);
-
-                // Save image on local computer
-                String imagePath = new String(recipeTitles[0] + ".jpg");
-
                 // Show image and recipe details
                 detView.addDetails(recipe.split("\n")[0],
                         recipe.substring(recipe.split("\n")[0].length()).trim(),
-                        imagePath,
                         mealType);
                 detView.disableButtons(false);
+                detView.setImage(imagePath);
 
                 setDetailScene();
+                detView.showRefreshButton();
                 genView.reset();
             }
         });
@@ -318,17 +354,34 @@ public class Controller {
         System.out.println(detView.getMealTypeText());
         model.dBRequest("PUT", detView.getCurrTitle(), detView.getDetailText(), loginView.getUsername(), detView.getMealTypeText(), null);
         System.out.println("Trying to save");
-        detView.stopTextAnim();
+        //detView.stopTextAnim();
+        detView.reset();
         setListScene();
     }
 
     private void handleDeleteButton(ActionEvent event) {
         model.dBRequest("DELETE", null, null, loginView.getUsername(), null, detView.getCurrTitle());
-        detView.stopTextAnim();
+        //detView.stopTextAnim();
+        model.shareRequest("DELETE", null, null, detView.getCurrTitle());
+        detView.reset();
         setListScene();
     }
 
-    public void handleCreateButton(ActionEvent event) { 
+    private void handleRefreshButton(ActionEvent event) {
+        final String text = this.whisper;
+        this.detView.setRefreshText();
+        Thread t = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        createRecipeAndImage(text);
+                    }
+                });
+
+        t.start();
+    }
+
+    public void handleCreateButton(ActionEvent event) {
         String username = loginView.getUsername();
         String password = loginView.getPassword();
         String response = model.accountRequest("POST", username, password, null);
@@ -343,6 +396,9 @@ public class Controller {
             case "Added":
                 setListScene();
                 break;
+            default:
+                loginView.setMessageText(
+                        "Looks like the pantry is locked from our end... \nPlease try again later!");
         }
     }
 
@@ -380,6 +436,9 @@ public class Controller {
             case "Login":
                 setListScene();
                 break;
+            default:
+                loginView.setMessageText(
+                        "Looks like the pantry is locked from our end... \nPlease try again later!");
         }
     }
 
@@ -424,5 +483,27 @@ public class Controller {
     private void handleSetSortL_EButtonn(ActionEvent event) {
         listView.emptyList();
         loadRecipeList();
+    }
+
+    public void handleShareButton(ActionEvent event) {
+        detView.setLinkText("Sharing is caring. Please wait....");
+        Thread t = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        String title = detView.getCurrTitle();
+                        String detail = detView.getDetailText();
+                        String response = model.shareRequest("POST", title, detail, null);
+                        String trim_title = title.replaceAll("\\s", "");
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                detView.setLinkText("http://localhost:8100/share/?key=" + trim_title);
+                            }
+                        });
+                    }
+                });
+
+        t.start();
     }
 }

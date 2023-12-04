@@ -16,7 +16,7 @@ class SortButtonsAZ implements SortingStrategy {
         List<Button> sortedButtons = recipeList.getChildren().stream()
             .filter(node -> node instanceof Button)
             .map(node -> (Button) node)
-            .sorted(Comparator.comparing(Button::getText))
+            .sorted(Comparator.comparing(Button::getText, String.CASE_INSENSITIVE_ORDER))
             .collect(Collectors.toList());
 
         // Clear the list and re-add sorted buttons
@@ -31,7 +31,7 @@ class SortButtonsZA implements SortingStrategy {
         List<Button> sortedButtons = recipeList.getChildren().stream()
                 .filter(node -> node instanceof Button)
                 .map(node -> (Button) node)
-                .sorted(Comparator.comparing(Button::getText).reversed())
+                .sorted(Comparator.comparing(Button::getText, String.CASE_INSENSITIVE_ORDER).reversed())
                 .collect(Collectors.toList());
     
         // Clear the current children and add the sorted buttons back

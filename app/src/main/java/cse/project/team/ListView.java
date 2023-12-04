@@ -66,54 +66,9 @@ public class ListView extends BorderPane {
 
     //https://stackoverflow.com/questions/73442672/java-sorting-using-lambda-with-streams
     //https://stackoverflow.com/questions/45177184/map-to-list-after-filtering-on-maps-key-using-java8-stream
-    public void sortButtonsAZ() {
-        // Extract buttons and sort them
-        List<Button> sortedButtons = recipeList.getChildren().stream()
-            .filter(node -> node instanceof Button)
-            .map(node -> (Button) node)
-            .sorted(Comparator.comparing(Button::getText))
-            .collect(Collectors.toList());
-
-        // Clear the list and re-add sorted buttons
-        recipeList.getChildren().clear();
-        recipeList.getChildren().addAll(sortedButtons);
-        
-    }
-
-
-    public void sortButtonsZA() {
-        // Extract buttons and sort them in descending order
-        List<Button> sortedButtons = recipeList.getChildren().stream()
-                .filter(node -> node instanceof Button)
-                .map(node -> (Button) node)
-                .sorted(Comparator.comparing(Button::getText).reversed())
-                .collect(Collectors.toList());
-    
-        // Clear the current children and add the sorted buttons back
-        recipeList.getChildren().clear();
-        recipeList.getChildren().addAll(sortedButtons);
-    
-    }
-
-    public void sortButtonsEL() {
-        List<Button> buttons = recipeList.getChildren().stream()
-        .filter(node -> node instanceof Button)
-        .map(node -> (Button) node)
-        .collect(Collectors.toList());
-
-        Collections.reverse(buttons);
-        // Clear the list and re-add buttons in their original order
-        recipeList.getChildren().clear();
-        recipeList.getChildren().addAll(buttons);
-                
-    
-    }
 
     public void emptyList() {
-        
         recipeList.getChildren().clear();
-                
-    
     }
 
 

@@ -21,6 +21,7 @@ public class Controller {
     private Model model;
     private Stage stage;
     private Scene listScene, detailScene, generateScene, loginScene;
+    private SortingStrategy sortingStrat;
 
     final File STYLE = new File("style.css");
     final String STYLESHEET = "file:" + STYLE.getPath();
@@ -378,19 +379,25 @@ public class Controller {
         }
     }
 
-
     private void handleSetSortA_ZButtonn(ActionEvent event) {
-        listView.sortButtonsAZ();
+        sortingStrat = new SortButtonsAZ();
+        RecipeList recList = listView.getRecipeList();
+        sortingStrat.sort(recList);
     }
 
     private void handleSetSortZ_AButtonn(ActionEvent event) {
-        listView.sortButtonsZA();
+        sortingStrat = new SortButtonsZA();
+        RecipeList recList = listView.getRecipeList();
+        sortingStrat.sort(recList);
     }
 
      private void handleSetSortE_LButtonn(ActionEvent event) {
         listView.emptyList();
         loadRecipeList();
-        listView.sortButtonsEL();
+
+        sortingStrat = new SortButtonsEL();
+        RecipeList recList = listView.getRecipeList();
+        sortingStrat.sort(recList);
     }
 
     private void handleSetSortL_EButtonn(ActionEvent event) {

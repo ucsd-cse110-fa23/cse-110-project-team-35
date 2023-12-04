@@ -78,12 +78,12 @@ public class Controller {
 
     private void loadRecipeList() {
         listView.getRecipeList().getChildren().clear();
-        String[] rlist = model.dBRequest("GET", null, null, null, null, null).split("\\*");
+        String[] rlist = model.dBRequest("GET", null, null, null, null, null).split("xF9j");
 
         for (String i : rlist) {
             if (i.length() == 0)
                 continue;
-            String[] info = i.split("%");
+            String[] info = i.split("yL8z42");
 
             if (info.length == 1) {
                 break;
@@ -162,9 +162,10 @@ public class Controller {
 
     private void handleRecipeButtons(ActionEvent event) {
         String recipeTitle = ((Button) event.getSource()).getText();
-        String details = model.dBRequest("GET", null, null, null, null, recipeTitle);
+        String[] recInfo = model.dBRequest("GET", null, null, null, null, recipeTitle).split(";&*$");
+        String details = recInfo[0];
         String imagePath = new String(recipeTitle + ".jpg");
-        String mealType = extractMealType(details);
+        String mealType = recInfo[1];
 
         model.generateImage(recipeTitle);
         detView.addDetails(recipeTitle, details.trim(), imagePath, mealType);

@@ -6,15 +6,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Path;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.*;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.*;
-
-import com.google.common.io.Files;
 
 public class DetailView extends BorderPane {
     private detailHeader header;

@@ -1,14 +1,10 @@
 package cse.project.team.server;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import org.json.JSONObject;
 
 public class DalleOnline implements IDalle{

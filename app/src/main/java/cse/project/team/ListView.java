@@ -9,10 +9,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.*;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.Collections;
 
 public class ListView extends BorderPane {
     private RecipeList recipeList;

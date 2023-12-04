@@ -202,11 +202,11 @@ class AppTest {
       String title = newGen.split("\n")[0];
       String details = newGen.substring(title.length());
       REChandler.doPost(title, details, details, "Dinner");
-      String detail1 = REChandler.getRecDetail(title);
+      String detail1 = REChandler.getRecDetail(title).get(0);
       String detail_1= detail1.split("%")[0];
       assertEquals(details, detail_1);
       REChandler.doPost(title, other_details,username, "Dinner");
-      String detail2 = REChandler.getRecDetail(title);
+      String detail2 = REChandler.getRecDetail(title).get(0);
       String detail_2 = detail2.split("%")[0];
       assertEquals(other_details, detail_2);
       REChandler.doDelete(title);

@@ -6,6 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
+import static com.mongodb.client.model.Filters.in;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -141,14 +143,24 @@ public class Controller {
                 bufferedReader.close();
                 System.out.println(line);
                 String[] parts = line.split(",");
-                loginView.setUsername(parts[0]);
-                loginView.setPassword(parts[1]);
-                setListScene();
+                String username = parts[0];
+                String password = parts[1];
+                loginView.setUsername(username);
+                loginView.setPassword(password);
+                String response = model.accountRequest("PUT", username, password, null);
+                if (response.equals("Login")) {
+                    setListScene();
+                } else {
+                    stage.setScene(loginScene);
+                    loginView.setMessageText(
+                            "Looks like the pantry is locked from our end... \nPlease try again later!");
+                }
             } else {
                 stage.setScene(loginScene);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            stage.setScene(loginScene);
+            loginView.setMessageText("Looks like the pantry is locked from our end... \nPlease try again later!");
         }
 
         // stage.setScene(loginScene);
@@ -161,8 +173,8 @@ public class Controller {
         setDetailScene();
         detView.addDetails(recipeTitle, details.trim());
 
-        //generate detail view image and set it
-        //needed for smooth transition and not freezing
+        // generate detail view image and set it
+        // needed for smooth transition and not freezing
         Thread t = new Thread(
                 new Runnable() {
                     @Override
@@ -326,6 +338,9 @@ public class Controller {
             case "Added":
                 setListScene();
                 break;
+            default:
+                loginView.setMessageText(
+                        "Looks like the pantry is locked from our end... \nPlease try again later!");
         }
     }
 
@@ -363,6 +378,9 @@ public class Controller {
             case "Login":
                 setListScene();
                 break;
+            default:
+                loginView.setMessageText(
+                        "Looks like the pantry is locked from our end... \nPlease try again later!");
         }
     }
 

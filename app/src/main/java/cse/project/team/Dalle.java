@@ -18,11 +18,11 @@ public class Dalle implements DalleI {
 
     public String generateDalle(String title) {
         // DALLE starts
-
+        int n = 1;
         // Create a request body which you will pass into request object
         JSONObject dalle_requestBody = new JSONObject();
         dalle_requestBody.put("model", DALLE_MODEL);
-        dalle_requestBody.put("prompt", dalle_prompt);
+        dalle_requestBody.put("prompt", title);
         dalle_requestBody.put("n", n);
         dalle_requestBody.put("size", "256x256");
 
@@ -56,22 +56,24 @@ public class Dalle implements DalleI {
         System.out.println(generatedImageURL);
 
         return generatedImageURL;
+
     }
 
-    private void downloadImage(String generatedImageURL, ) {
-        int n = 1;
-        String dalle_prompt = input;
-        String currentDirectory = System.getProperty("user.dir");
-        String fileName = dalle_prompt + ".jpg";
-        File imageFile = new File(currentDirectory, fileName);
-        if (!imageFile.exists()) {
-            // Download the Generated Image to the Current Directory
-            try (InputStream in = new URI(generatedImageURL).toURL().openStream()) {
-                Files.copy(in, Paths.get(input + ".jpg"));
-                System.out.println("Image downloaded successfully.");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    public void downloadImage(String generatedImageURL, String title) {
+
+        // Download the Generated Image to the Current Directory
+        try (InputStream in = new URI(generatedImageURL).toURL().openStream()) {
+            Files.copy(in, Paths.get(title + ".jpg"));
+            System.out.println("Image downloaded successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+    public boolean fileExists(String title) {
+        String currentDirectory = System.getProperty("user.dir");
+        String fileName = title + ".jpg";
+        File imageFile = new File(currentDirectory, fileName);
+        return imageFile.exists();
     }
 }

@@ -13,8 +13,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.stream.Collectors;
 
-import com.sun.glass.ui.SystemClipboard;
-
 public class Model {
     private audioRec audio;
     private Dalle dalle;
@@ -33,7 +31,11 @@ public class Model {
     }
 
     public void generateImage(String title) {
-        dalle.generateDalle(title);
+        if(!dalle.fileExists(title)){
+            String response = dalle.generateDalle(title);
+            dalle.downloadImage(response,title);
+        }
+
     }
 
     public String dBRequest(String method, String title, String details, String username, String mealType, String query) {

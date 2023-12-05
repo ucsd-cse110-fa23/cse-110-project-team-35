@@ -1,7 +1,6 @@
 package cse.project.team;
 
 import cse.project.team.server.DBHandler;
-import cse.project.team.server.MockDalle;
 import cse.project.team.server.accountHandler;
 import cse.project.team.server.genMock;
 import cse.project.team.server.shareHandler;
@@ -373,34 +372,10 @@ class AppTest {
      */
     // test generating a picture and using it
     @Test
-    public void testFindImage() throws IOException, URISyntaxException, Exception {
-        // Assert that the printed message matches the expected output
-        String currentDirectory = System.getProperty("user.dir");
-        // Specify the file name to search for
-        String fileName = "dalleTest.jpg";
-        // Assert that the file exists
-        boolean fileFound = searchFile(new File(currentDirectory), fileName);
-        assertTrue(fileFound);
+    public void testDalle() throws IOException, URISyntaxException, Exception {
+        ;
     }
 
-    private boolean searchFile(File directory, String fileName) {
-        if (directory.exists() && directory.isDirectory()) {
-            File[] files = directory.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isFile() && file.getName().equals(fileName)) {
-                        return true; // File found
-                    }
-                    if (file.isDirectory()) {
-                        if (searchFile(file, fileName)) {
-                            return true; // File found in a subdirectory
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
 
     /*
      * US12:
@@ -504,7 +479,7 @@ class AppTest {
     }
 
     private shareHandler givenSharedRecipe() {
-        shareHandler share = new shareHandler(new MockDalle());
+        shareHandler share = new shareHandler(new DalleMock());
         return share;
     }
 

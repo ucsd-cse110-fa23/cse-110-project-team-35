@@ -1,6 +1,9 @@
 package cse.project.team.server;
 
 import com.sun.net.httpserver.*;
+
+import cse.project.team.Dalle;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.*;
@@ -37,7 +40,7 @@ public class server {
         server.createContext("/account/",new accountHandler("Main_CSE110_Proj"));
         server.createContext("/gen/", new GenHandler(new genAPI()));
 
-        server.createContext("/share/",new shareHandler(new DalleOnline()));
+        server.createContext("/share/",new shareHandler(new Dalle()));
         server.setExecutor(threadPoolExecutor);
         server.start();
 

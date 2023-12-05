@@ -42,7 +42,6 @@ public class server {
         server.start();
 
         System.out.println("Server started on port " + SERVER_PORT);
-
     }
 
     public void stop() {

@@ -1,5 +1,5 @@
 package cse.project.team;
 
 public interface DalleI {
-    public void generateDalle(String input);
+    public String generateDalle(String input);
 }

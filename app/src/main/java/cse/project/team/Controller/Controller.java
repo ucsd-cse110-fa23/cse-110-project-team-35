@@ -1,4 +1,4 @@
-package cse.project.team;
+package cse.project.team.Controller;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -13,6 +13,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import cse.project.team.Controller.Components.SortButtonsAZ;
+import cse.project.team.Controller.Components.SortButtonsOF;
+import cse.project.team.Controller.Components.SortButtonsZA;
+import cse.project.team.Controller.Components.SortingStrategy;
+import cse.project.team.Model.Model;
+import cse.project.team.views.DetailView;
+import cse.project.team.views.GenerateView;
+import cse.project.team.views.ListView;
+import cse.project.team.views.LoginView;
+import cse.project.team.views.Components.RecipeList;
+import cse.project.team.views.Components.RecipeTitle;
 
 public class Controller {
     private ListView listView;

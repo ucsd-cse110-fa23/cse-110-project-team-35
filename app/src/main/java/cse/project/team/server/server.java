@@ -2,7 +2,7 @@ package cse.project.team.server;
 
 import com.sun.net.httpserver.*;
 
-import cse.project.team.Dalle;
+import cse.project.team.Model.Components.Dalle;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

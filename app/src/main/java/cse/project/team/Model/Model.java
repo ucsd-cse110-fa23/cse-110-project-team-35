@@ -1,4 +1,4 @@
-package cse.project.team;
+package cse.project.team.Model;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,6 +12,9 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.stream.Collectors;
+
+import cse.project.team.Model.Components.Dalle;
+import cse.project.team.Model.Components.audioRec;
 
 public class Model {
     private audioRec audio;

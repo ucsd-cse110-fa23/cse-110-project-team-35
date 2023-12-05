@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.*;
 import com.sun.net.httpserver.*;
 
-import cse.project.team.DalleI;
+import cse.project.team.Model.Components.DalleI;
 
 public class shareHandler implements HttpHandler {
 

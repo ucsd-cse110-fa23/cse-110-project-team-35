@@ -1,4 +1,4 @@
-package cse.project.team;
+package cse.project.team.Model.Components;
 
 public class DalleMock extends Dalle {
     /* Shows a trollface image for every recipe, saved with the correct filename */

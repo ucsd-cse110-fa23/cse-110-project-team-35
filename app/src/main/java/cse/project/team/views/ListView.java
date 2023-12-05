@@ -1,5 +1,8 @@
-package cse.project.team;
+package cse.project.team.views;
 
+import cse.project.team.Model.Components.ColorPicker;
+import cse.project.team.views.Components.RecipeList;
+import cse.project.team.views.Components.RecipeTitle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -124,53 +127,8 @@ public class ListView extends BorderPane {
 
 }
 
-class RecipeTitle extends HBox {
-    private Label title, type;
-    private StackPane mealType;
-    private Region spaceFiller;
-    private ColorPicker colorPicker = new ColorPicker();
 
-    RecipeTitle(String name, String mt) {
-        title = new Label(name);
-        type = new Label(mt);
 
-        mealType = new StackPane(type);
-        mealType.getStyleClass().add("mealType");
-        mealType.setStyle("-fx-font-size: 10px; -fx-background-color: " + colorPicker.tag(mt));
-
-        HBox.setHgrow(spaceFiller = new Region(), javafx.scene.layout.Priority.ALWAYS);
-
-        this.setOnMouseEntered(e -> this.setStyle("-fx-background-color: " + colorPicker.highlight()));
-        this.setOnMouseExited(e -> this.setStyle("-fx-background-color: white;"));
-        this.getStyleClass().add("textBox");
-        this.setMaxSize(320, 50);
-        this.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
-        this.setSpacing(4);
-        this.getChildren().addAll(title, spaceFiller, mealType);
-    }
-
-    String getTitle() {
-        return title.getText();
-    }
-
-    String getMealType() {
-        return type.getText();
-    }
-
-    void setTitle(String title) {
-        this.title.setText(title);
-    }
-
-    void setType(String type) {
-        this.type.setText(type);
-    }
-}
-
-class RecipeList extends VBox {
-    RecipeList() {
-        this.getStyleClass().add("listCenter");
-    }
-}
 
 class Footer extends VBox {
     private Button generateButton, logOutButton;

@@ -1,4 +1,4 @@
-package cse.project.team;
+package cse.project.team.views;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

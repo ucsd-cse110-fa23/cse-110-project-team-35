@@ -1,4 +1,4 @@
-package cse.project.team;
+package cse.project.team.views;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,7 +13,7 @@ import javafx.util.Duration;
 
 import javafx.event.*;
 
-class GenerateView extends BorderPane {
+public class GenerateView extends BorderPane {
     private Button startButton;
     private Button backButton;
     private Label recordingLabel;
@@ -24,7 +24,7 @@ class GenerateView extends BorderPane {
     private int currentIndex;
     private Timeline timeline;
 
-    GenerateView() {
+    public GenerateView() {
         footer = new genFooter();
         header = new genHeader();
         textBox = new VBox();

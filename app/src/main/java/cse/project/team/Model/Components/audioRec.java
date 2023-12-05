@@ -1,4 +1,4 @@
-package cse.project.team;
+package cse.project.team.Model.Components;
 
 import java.io.File;
 

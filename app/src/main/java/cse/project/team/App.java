@@ -1,5 +1,11 @@
 package cse.project.team;
 
+import cse.project.team.Controller.Controller;
+import cse.project.team.Model.Model;
+import cse.project.team.views.DetailView;
+import cse.project.team.views.GenerateView;
+import cse.project.team.views.ListView;
+import cse.project.team.views.LoginView;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

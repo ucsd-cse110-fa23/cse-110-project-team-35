@@ -268,12 +268,35 @@ class AppTest {
     }
 
     // US 11
+    
+    // BDD Scenario 2: A new recipe is generated.
+	// Given the user has clicked the “Generate Recipe” or “Refresh” button,
+	// And a valid voice input has been provided,
+	// When the new recipe is done generating,
+	// Then an image of the potential dish is shown on the recipe detail page.
     @Test
     public void testDalle() throws IOException, URISyntaxException, Exception {
         String genResponse = givenDallePrompt();
         String urlImage = whenDalle(genResponse);
         thenImage(genResponse, urlImage);
         
+    }
+
+    // BDD Scenario 1: The recipe for the dish is already saved.
+	// Given the user is on the recipe list page,
+	// And the user has saved recipes,
+	// When the user clicks on a recipe title to view the details,
+	// Then an image of the dish is generated and shown on the details page.
+    @Test
+    public void testDalle2() throws IOException, URISyntaxException, Exception {
+        String savedRecipe = givenRecipe();
+        String urlImage = whenDalle(savedRecipe);
+        thenImage(savedRecipe, urlImage);
+        
+    }
+
+    private String givenRecipe() {
+        return mock_title;
     }
 
     private void thenImage(String genResponse, String urlImage) {

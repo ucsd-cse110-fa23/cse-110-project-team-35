@@ -9,8 +9,10 @@ import cse.project.team.Model.Model;
 import cse.project.team.Model.Components.DalleMock;
 import cse.project.team.Server.DBHandler;
 import cse.project.team.Server.accountHandler;
-import cse.project.team.Server.genI;
-import cse.project.team.Server.genMock;
+import cse.project.team.Server.GPTI;
+import cse.project.team.Server.GPTMock;
+import cse.project.team.Server.WhisperI;
+import cse.project.team.Server.WhisperMock;
 import cse.project.team.Server.shareHandler;
 import cse.project.team.Views.Components.RecipeList;
 import cse.project.team.Model.Components.ColorPicker;
@@ -50,7 +52,6 @@ class AppTest {
     public void clearDatabase() {
         REChandler.clear();
         ACChandler.clear();
-        
     }
 
     @AfterEach
@@ -171,18 +172,25 @@ class AppTest {
     // US 7 + US 8
      @Test
     public void testGen() throws Exception {
-        genI gen = givenGen();
-        String result = whenGen(gen);
+        GPTI gen = givenGen();
+        WhisperI whisper = givenAudio();
+        String result = whenGen(gen, whisper);
         thenGen(result);
     }
 
-    public genI givenGen() {
-        genI gen = new genMock();
+    public GPTI givenGen() {
+        GPTI gen = new GPTMock();
+        WhisperI whisper = new WhisperMock();
         return gen;
     }
 
-    public String whenGen(genI gen) throws IOException, URISyntaxException, Exception {
-        String whisper = gen.audioGen(new ByteArrayInputStream("MOCK Audio Bytes".getBytes()));
+    public WhisperI givenAudio() {
+        WhisperI whisper = new WhisperMock();
+        return whisper;
+    }
+
+    public String whenGen(GPTI gen, WhisperI audio) throws IOException, URISyntaxException, Exception {
+        String whisper = audio.audioGen(new ByteArrayInputStream("MOCK Audio Bytes".getBytes()));
         String newGen = gen.chatgen(whisper);
         return newGen;
     }
@@ -194,7 +202,7 @@ class AppTest {
     // End to End Scnario Test MS1
     @Test
     public void testEndToEnd() throws IOException, URISyntaxException, Exception {
-        genI gen = new genMock();
+        GPTI gen = new GPTMock();
         String newGen = gen.chatgen("dinner potato");
         String title = newGen.split("\n")[0];
         String details = newGen.substring(title.length());
@@ -214,6 +222,75 @@ class AppTest {
         REChandler.doDelete(title);
         
         assertEquals("Does not exist", REChandler.getRecDetail(mock_title).get(0));
+    }
+
+    // End to End Scenario Test MS2
+    @Test
+    public void testEndToEnd2() throws Exception{
+        // User Creates an Account
+        ACChandler.doPost("yiming105", "pineapple123");
+
+        // Database should be storing this account and no others
+        assertEquals(ACChandler.getRecDetail("yiming105"), "pineapple123");
+        assertEquals(ACChandler.getRecDetail("jkissinger"), "Does not exist");
+
+        // No new accounts should be able to be made with this username
+        String postResult = ACChandler.doPost("yiming105", "gao1125");
+        assertEquals(postResult, "Username taken");
+
+        // User should be able to generate new recipes for this account
+        String audioText = "dinner potato";
+        GPTI gen = new GPTMock();
+        String newGen = gen.chatgen(audioText); 
+
+        String title1 = newGen.split("\n")[0]; // mashed potat
+        String description1 = newGen.substring(title1.length());
+        String mealType1 = Controller.extractMealType(audioText);
+        
+        REChandler.doPost(title1, description1, "yiming105", 
+                mealType1);
+        
+        // its details are correct in the database
+        ArrayList<String> detail1 = REChandler.getRecDetail(title1);
+        String description_1 = detail1.get(0);
+        String mealType_1 = detail1.get(1);
+        assertEquals(description1, description_1);
+        assertEquals(mealType1, mealType_1);
+
+        // let's do some more
+        REChandler.doPost("Tomato Soup", "Chop 3 basil leaves and 2 tomatoes...", 
+                "yiming105", "Lunch");
+        REChandler.doPost("Acai Bowl", "Ingredients: yogurt, acai berries, granola", 
+                "yiming105", "Breakfast");
+        REChandler.doPost("Xmas Ham", "Preheat oven to 350 degrees...", 
+                "yiming105", "Dinner");
+        
+        shareHandler share = givenSharedRecipe();
+        share.doPost(title1 + "\n" + description1);
+        assertNotEquals("Not found", share.doGet(title1));
+        share.doDelete(title1);
+        assertEquals("Not found", share.doGet(title1));
+        /*
+        RecipeList recList = new RecipeList();
+
+        recList.addRecipe(0, title1, "Dinner");
+        recList.addRecipe(1, "Tomato Soup", "Lunch");
+        recList.addRecipe(2, "Acai Bowl", "Breakfast");
+        recList.addRecipe(3, "Xmas Ham", "Dinner");
+        
+
+        // Now, the user can sort as they wish
+        SortingStrategy sorterAZ = new SortButtonsAZ();
+        sorterAZ.sort(recList);
+
+        ArrayList<String> expectationAZ = new ArrayList<String>(); 
+        expectationAZ.add("Acai Bowl");
+        expectationAZ.add("mashed potat");
+        expectationAZ.add("Tomato Soup");
+        expectationAZ.add("Xmas Ham");
+
+        assertEquals(expectationAZ, recList.getTitles());
+        */
     }
 
     // US 9
@@ -325,7 +402,7 @@ class AppTest {
     }
 
     private String givenDallePrompt() throws IOException, URISyntaxException, Exception {
-        return whenGen(new genMock()).split("\n")[0];
+        return whenGen(new GPTMock(), new WhisperMock()).split("\n")[0];
     }
 
     private boolean fileExists(String title){
@@ -344,10 +421,11 @@ class AppTest {
 
     @Test
     public void testRefresh() throws IOException, URISyntaxException, Exception {
-        genI gen = givenGen();
-        String result = whenGen(gen);
+        GPTI gen = givenGen();
+        WhisperI audio = givenAudio();
+        String result = whenGen(gen, audio);
         thenGen(result);
-        result = whenGen(gen);
+        result = whenGen(gen, audio);
         thenGen(result);
     }
 

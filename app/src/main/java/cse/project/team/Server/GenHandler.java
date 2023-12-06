@@ -11,10 +11,12 @@ import java.net.URLDecoder;
 import com.sun.net.httpserver.*;
 
 public class GenHandler implements HttpHandler {
-    private genI generation;
+    private GPTI chat;
+    private WhisperI audio;
 
-    GenHandler(genI gen) {
-        this.generation = gen;
+    GenHandler(GPTI chatGen, WhisperI audioGen) {
+        this.chat = chatGen;
+        this.audio = audioGen;
     }
 
     @Override
@@ -47,7 +49,7 @@ public class GenHandler implements HttpHandler {
 
     private String handlePost(HttpExchange httpExchange) throws IOException, URISyntaxException, Exception {
         InputStream input = httpExchange.getRequestBody();
-        String audioTxt = generation.audioGen(input);
+        String audioTxt = audio.audioGen(input);
         audioTxt = audioTxt.toLowerCase();
         System.out.println("AudioTxt in GenHandler:" + audioTxt);
 
@@ -62,7 +64,7 @@ public class GenHandler implements HttpHandler {
         String audioTxt = URLDecoder.decode(query.substring(query.indexOf("=") + 1), "UTF-8");
 
         try {
-            return generation.chatgen(audioTxt);
+            return chat.chatgen(audioTxt);
         } catch (URISyntaxException | IOException | InterruptedException e) {
             e.printStackTrace();
         }

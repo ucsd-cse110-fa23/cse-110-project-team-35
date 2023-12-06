@@ -38,7 +38,7 @@ public class server {
                      */
         server.createContext("/db/", new DBHandler("Main_CSE110_Proj"));
         server.createContext("/account/",new accountHandler("Main_CSE110_Proj"));
-        server.createContext("/gen/", new GenHandler(new genAPI()));
+        server.createContext("/gen/", new GenHandler(new GPT(), new Whisper()));
 
         server.createContext("/share/",new shareHandler(new Dalle()));
         server.setExecutor(threadPoolExecutor);

@@ -1,5 +1,6 @@
 package cse.project.team;
 
+import cse.project.team.Controller.Components.Filter;
 import cse.project.team.Controller.Components.SortButtonsAZ;
 import cse.project.team.Controller.Components.SortButtonsOF;
 import cse.project.team.Controller.Components.SortButtonsZA;
@@ -15,6 +16,7 @@ import cse.project.team.Views.Components.RecipeList;
 import cse.project.team.Model.Components.ColorPicker;
 import cse.project.team.Controller.Controller;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,6 +50,22 @@ class AppTest {
     public void clearDatabase() {
         REChandler.clear();
         ACChandler.clear();
+        
+    }
+
+    @AfterEach
+    public void clean(){
+        String currentDirectory = System.getProperty("user.dir");
+        Path currentPath = Paths.get(currentDirectory);
+        String fileName = mock_title + ".jpg";
+        Path file = currentPath.resolve(fileName);
+        if(fileExists(mock_title)){
+            try {
+                Files.delete(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Test
@@ -170,7 +188,7 @@ class AppTest {
     }
 
     public void thenGen(String newGen) {
-        assertEquals("Mashed potats\n Take potatoe. Mash. Done. :)", newGen);
+        assertEquals("Mashed potat\n Take potatoe. Mash. Done. :)", newGen);
     }
 
     // End to End Scnario Test MS1
@@ -269,11 +287,7 @@ class AppTest {
 
     // US 11
     
-    // BDD Scenario 2: A new recipe is generated.
-	// Given the user has clicked the “Generate Recipe” or “Refresh” button,
-	// And a valid voice input has been provided,
-	// When the new recipe is done generating,
-	// Then an image of the potential dish is shown on the recipe detail page.
+    // BDD Scenario 2
     @Test
     public void testDalle() throws IOException, URISyntaxException, Exception {
         String genResponse = givenDallePrompt();
@@ -282,11 +296,7 @@ class AppTest {
         
     }
 
-    // BDD Scenario 1: The recipe for the dish is already saved.
-	// Given the user is on the recipe list page,
-	// And the user has saved recipes,
-	// When the user clicks on a recipe title to view the details,
-	// Then an image of the dish is generated and shown on the details page.
+    // BDD Scenario 1
     @Test
     public void testDalle2() throws IOException, URISyntaxException, Exception {
         String savedRecipe = givenRecipe();
@@ -329,16 +339,8 @@ class AppTest {
 
     /*
      * US12:
-     * BDD Scenario 1: The user clicks “Refresh” on an unsaved recipe.
-     * Given the user has generated a new recipe that has not yet been saved,
-     * And the user is on the recipe details page,
-     * When the user clicks the “Refresh” button,
-     * Then a new recipe is generated based on the same voice input as the previous;
-     * When the new recipe is done generating,
-     * Then the new recipe details are shown on the recipe details page.
+     * BDD Scenario 1
      */
-
-    
 
     @Test
     public void testRefresh() throws IOException, URISyntaxException, Exception {
@@ -381,8 +383,8 @@ class AppTest {
         assertEquals(expected_mealtype, mealtype);
     }
 
-    // US 15    
-    private void testSortedAtoZ() {
+    // US 15
+    public void testSortedAtoZ() {
         RecipeList mock = new RecipeList();
         givenRecipeList(mock);
         whenSortedAtoZ(mock);
@@ -405,8 +407,8 @@ class AppTest {
 
     private void givenRecipeList(RecipeList mock) {
         mock.addRecipe(0, "B", "breakfast");
-        mock.addRecipe(1, "C", "breakfast");
-        mock.addRecipe(2, "A", "breakfast");
+        mock.addRecipe(1, "C", "lunch");
+        mock.addRecipe(2, "A", "dinner");
     }
 
     private void whenSortedAtoZ(RecipeList mock) {
@@ -449,6 +451,31 @@ class AppTest {
     }
 
     // US 16
+    //BDD Scenerio 1
+
+    public void testfilterbreakfast(){
+        RecipeList mock = new RecipeList();
+        givenRecipeList(mock);
+        whenFilter("breakfast", mock);
+        thenBreakfast(mock);
+    }
+    
+
+    private void thenBreakfast(RecipeList mock) {
+        List<String> expected = new ArrayList<>();
+        expected.add(1,"B");
+        assertEquals(expected, mock.getTitles());
+    }
+
+    private void thenLunch() {
+    }
+
+    private void thenDinner() {
+    }
+
+    private void whenFilter(String mealType, RecipeList mock) {
+        Filter.filterSelection(mealType, mock);
+    }
 
     // US 17
     // Scenario 1

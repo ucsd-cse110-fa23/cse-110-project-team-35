@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cse.project.team.Controller.Components.Filter;
 import cse.project.team.Controller.Components.SortButtonsAZ;
 import cse.project.team.Controller.Components.SortButtonsOF;
 import cse.project.team.Controller.Components.SortButtonsZA;
@@ -465,12 +466,12 @@ public class Controller {
                 sortingStrat.sort(recList);
                 break;
             case "Oldest First":
-                filterSelection();
+                Filter.filterSelection(listView.getFilterValue(), recList);
                 sortingStrat = new SortButtonsOF();
                 sortingStrat.sort(recList);
                 break;
             default:
-                filterSelection();
+                Filter.filterSelection(listView.getFilterValue(), recList);
         }
     }
 
@@ -499,23 +500,9 @@ public class Controller {
     }
 
     public void handleFilterSelection(ActionEvent event) {
-        filterSelection();
-    }
-
-    public void filterSelection() {
         loadRecipeList();
         String selection = listView.getFilterValue();
-        if (selection != "All") {
-            RecipeList recipeList = listView.getRecipeList();
-
-            List<RecipeTitle> filterRecipes = recipeList.getChildren().stream()
-                    .filter(node -> node instanceof RecipeTitle)
-                    .map(node -> (RecipeTitle) node)
-                    .filter(RecipeTitle -> RecipeTitle.getMealType().equalsIgnoreCase(selection))
-                    .collect(Collectors.toList());
-
-            recipeList.getChildren().clear();
-            recipeList.getChildren().addAll(filterRecipes);
-        }
+        Filter.filterSelection(selection, listView.getRecipeList());
     }
+
 }

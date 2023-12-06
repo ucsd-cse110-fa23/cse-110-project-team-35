@@ -50,7 +50,6 @@ class AppTest {
     public void clearDatabase() {
         REChandler.clear();
         ACChandler.clear();
-        
     }
 
     @AfterEach
@@ -214,6 +213,70 @@ class AppTest {
         REChandler.doDelete(title);
         
         assertEquals("Does not exist", REChandler.getRecDetail(mock_title).get(0));
+    }
+
+    // End to End Scenario Test MS2
+    @Test
+    public void testEndToEnd2() throws Exception{
+        // User Creates an Account
+        ACChandler.doPost("yiming105", "pineapple123");
+
+        // Database should be storing this account and no others
+        assertEquals(ACChandler.getRecDetail("yiming105"), "pineapple123");
+        assertEquals(ACChandler.getRecDetail("jkissinger"), "Does not exist");
+
+        // No new accounts should be able to be made with this username
+        String postResult = ACChandler.doPost("yiming105", "gao1125");
+        assertEquals(postResult, "Username taken");
+
+        // User should be able to generate new recipes for this account
+        String audioText = "dinner potato";
+        genI gen = new genMock();
+        String newGen = gen.chatgen(audioText); 
+
+        String title1 = newGen.split("\n")[0]; // mashed potat
+        String description1 = newGen.substring(title1.length());
+        String mealType1 = Controller.extractMealType(audioText);
+        
+        REChandler.doPost(title1, description1, "yiming105", 
+                mealType1);
+        
+        // its details are correct in the database
+        ArrayList<String> detail1 = REChandler.getRecDetail(title1);
+        String description_1 = detail1.get(0);
+        String mealType_1 = detail1.get(1);
+        assertEquals(description1, description_1);
+        assertEquals(mealType1, mealType_1);
+
+        // let's do some more
+        REChandler.doPost("Tomato Soup", "Chop 3 basil leaves and 2 tomatoes...", 
+                "yiming105", "Lunch");
+        REChandler.doPost("Acai Bowl", "Ingredients: yogurt, acai berries, granola", 
+                "yiming105", "Breakfast");
+        REChandler.doPost("Xmas Ham", "Preheat oven to 350 degrees...", 
+                "yiming105", "Dinner");
+        
+        /*
+        RecipeList recList = new RecipeList();
+
+        recList.addRecipe(0, title1, "Dinner");
+        recList.addRecipe(1, "Tomato Soup", "Lunch");
+        recList.addRecipe(2, "Acai Bowl", "Breakfast");
+        recList.addRecipe(3, "Xmas Ham", "Dinner");
+        
+
+        // Now, the user can sort as they wish
+        SortingStrategy sorterAZ = new SortButtonsAZ();
+        sorterAZ.sort(recList);
+
+        ArrayList<String> expectationAZ = new ArrayList<String>(); 
+        expectationAZ.add("Acai Bowl");
+        expectationAZ.add("mashed potat");
+        expectationAZ.add("Tomato Soup");
+        expectationAZ.add("Xmas Ham");
+
+        assertEquals(expectationAZ, recList.getTitles());
+        */
     }
 
     // US 9

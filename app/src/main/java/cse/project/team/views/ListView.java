@@ -1,6 +1,5 @@
 package cse.project.team.Views;
 
-import cse.project.team.Model.Components.ColorPicker;
 import cse.project.team.Views.Components.RecipeList;
 import cse.project.team.Views.Components.RecipeTitle;
 import javafx.collections.FXCollections;
@@ -58,9 +57,9 @@ public class ListView extends BorderPane {
         scrollPane.getStyleClass().add("scrollPane");
 
         filterText = new Text("Filter: ");
-        sortText = new Text("Sort: ");
-
         filterText.getStyleClass().add("dropdown");
+        
+        sortText = new Text("Sort: ");
         sortText.getStyleClass().add("dropdown");
 
         HBox filters = new HBox(new StackPane(filterText), filterBox, new StackPane(sortText), sortBox);
@@ -94,9 +93,6 @@ public class ListView extends BorderPane {
         }
     }
 
-    // https://stackoverflow.com/questions/73442672/java-sorting-using-lambda-with-streams
-    // https://stackoverflow.com/questions/45177184/map-to-list-after-filtering-on-maps-key-using-java8-stream
-
     public void emptyList() {
         recipeList.getChildren().clear();
     }
@@ -126,9 +122,6 @@ public class ListView extends BorderPane {
     }
 
 }
-
-
-
 
 class Footer extends VBox {
     private Button generateButton, logOutButton;

@@ -57,7 +57,7 @@ public class LoginView extends BorderPane {
         
         username.getStyleClass().addAll("textBox");
         password.getStyleClass().addAll("textBox");
-        checkbox.getStyleClass().add("checkbox");
+        checkbox.getStyleClass().add("checkBox");
         
         username.setPromptText("Your username");
         password.setPromptText("Your password");

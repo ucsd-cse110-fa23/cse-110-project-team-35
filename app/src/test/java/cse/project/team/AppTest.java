@@ -447,7 +447,43 @@ class AppTest {
         assertEquals(expected_mealtype, mealtype);
     }
 
-    
+    /*
+     * US 15:
+     * BDD Scenario 1: Sort multiple recipes.
+     * Given the user in on the recipe list page,
+     * And the recipe list is not empty,
+     * When the user selects the “A - Z” sorting option from the dropdown,
+     * Then recipes will be displayed in alphabetical order from A to Z;
+     * When the user selects the “Z - A” sorting option from the dropdown,
+     * Then recipes will be displayed in reverse alphabetical order from Z to A;
+     * When the user selects the “New - Old” sorting option from the dropdown,
+     * Then recipes will be displayed in chronological order;
+     * When the user selects the “Old - New” sorting option from the dropdown,
+     * Then recipes will be displayed in reverse chronological order.
+     * BDD Scenario 2: No sort option selected.
+     * Given the user in on the recipe list page,
+     * And the recipe list is not empty,
+     * When the user doesn’t select any sorting options from the dropdown,
+     * Then the recipe list is displayed in reverse chronological order.
+     * BDD Scenario 3: Sort an empty list.
+     * Given the user in on the recipe list page,
+     * And the recipe list is empty,
+     * When the user select a sorting option from the dropdown,
+     * Then nothing changes.
+     */
+    // Scenario 1:
+    @Test
+    public void testSortFullRecipe(){
+    }
+    // Scenario 2:
+    @Test
+    public void testNoSortRecipe(){
+    }
+    // Scenario 3:
+    @Test
+    public void testSortEmptyRecipe(){
+    }
+
 
     /*
      * US17: 

@@ -1,4 +1,4 @@
-package cse.project.team;
+package cse.project.team.Model;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,7 +13,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.stream.Collectors;
 
-import com.sun.glass.ui.SystemClipboard;
+import cse.project.team.Model.Components.Dalle;
+import cse.project.team.Model.Components.audioRec;
 
 public class Model {
     private audioRec audio;
@@ -33,7 +34,11 @@ public class Model {
     }
 
     public void generateImage(String title) {
-        dalle.generateDalle(title);
+        if(!dalle.fileExists(title)){
+            String response = dalle.generateDalle(title);
+            dalle.downloadImage(response,title);
+        }
+
     }
 
     public String dBRequest(String method, String title, String details, String username, String mealType, String query) {
@@ -65,7 +70,7 @@ public class Model {
         }
     }
 
-    public String shareRequest(String method, String language, String year, String query) {
+    public String shareRequest(String method, String title, String details, String query) {
         // Implement your HTTP request logic here and return the response
         //System.out.println("Input:"+year);
         try {
@@ -81,8 +86,7 @@ public class Model {
 
             if (method.equals("POST") || method.equals("PUT")) {
                 OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-                out.write(language + "\n" + year);
-                //System.out.println(language+","+year);
+                out.write(title + "\n" + details);
                 out.flush();
                 out.close();
             }

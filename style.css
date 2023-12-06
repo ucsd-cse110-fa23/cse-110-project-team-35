@@ -16,6 +16,24 @@
     -fx-cursor: hand;
 }
 
+.loginText, .checkBox {
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+}
+
+.checkBox .box {
+    -fx-background-color: white;
+    -fx-border-width: 2px;
+    -fx-border-color: black;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+}
+
+.loginCenter {
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+}
+
 .footerButton:hover {
     -fx-background-color: #88AFE8;
 }
@@ -44,7 +62,7 @@
     -fx-background-color: #EB6E52;
     -fx-background-radius: 20px 20px 0 0;
     
-    -fx-border-width: 2px;
+    -fx-border-width: 2;
     -fx-border-color: black;
     -fx-border-radius: 20px 20px 0 0;
     
@@ -52,10 +70,43 @@
     -fx-vgap: 10px;
 }
 
+.filterBg {
+    -fx-alignment: center;
+    -fx-spacing: 10px;
+    
+    -fx-background-color: #E1965C;
+    -fx-background-radius: 20px 20px 0 0;
+    
+    -fx-border-width: 2 2 0 2;
+    -fx-border-color: black;
+    -fx-border-radius: 20px 20px 0 0;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.dropdown {
+    -fx-background-color: transparent;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-font-fill: black;
+}
+
 .titleText {
     -fx-font-size: 35;
     -fx-font-weight: bold;
     -fx-effect: dropshadow(gaussian, black, 0, 0, 0, 1);
+}
+
+.logoutButton {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-text-fill: brown;
+}
+
+.logoutButton .text{
+    -fx-cursor: hand;
 }
 
 .smileyText {
@@ -71,7 +122,7 @@
     -fx-spacing: 5px;
 }
 
-.BorderPane {
+.borderPane {
     -fx-background-color: #EFEBE3;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
@@ -81,7 +132,7 @@
 .scrollPane {
     -fx-background-color: #EFEBE3;
     -fx-pref-width: 200px;
-    -fx-pref-height: 200px;
+    -fx-pref-height: 400px;
 }
 
 .scrollPane .thumb {
@@ -112,7 +163,6 @@
     -fx-spacing: 10px;
     -fx-padding: 22px 30px 30px 30px;
     -fx-background-color: #EFEBE3;
-    -fx-min-height: 442px;
 }
 
 .textBox {
@@ -128,7 +178,7 @@
     -fx-border-width: 2px;
     -fx-border-color: black;
     
-    -fx-pref-width: 300px;
+    -fx-pref-width: 320px;
     -fx-pref-height: 50px;
     -fx-effect: dropshadow(gaussian, black, 1, 1, 1, 1);
     -fx-alignment: center-left;

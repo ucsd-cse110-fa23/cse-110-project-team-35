@@ -1,11 +1,12 @@
-package cse.project.team.server;
+package cse.project.team.Server;
 
 import com.sun.net.httpserver.*;
+
+import cse.project.team.Model.Components.Dalle;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.*;
-import java.util.Map;
-import java.util.HashMap;
 
 public class server {
     private static final int SERVER_PORT = 8100;
@@ -39,12 +40,11 @@ public class server {
         server.createContext("/account/",new accountHandler("Main_CSE110_Proj"));
         server.createContext("/gen/", new GenHandler(new genAPI()));
 
-        server.createContext("/share/",new shareHandler(new DalleOnline()));
+        server.createContext("/share/",new shareHandler(new Dalle()));
         server.setExecutor(threadPoolExecutor);
         server.start();
 
         System.out.println("Server started on port " + SERVER_PORT);
-
     }
 
     public void stop() {

@@ -1,33 +1,33 @@
 package cse.project.team;
 
-import cse.project.team.server.DBHandler;
-import cse.project.team.server.MockDalle;
-import cse.project.team.server.accountHandler;
-import cse.project.team.server.genMock;
-import cse.project.team.server.shareHandler;
+import cse.project.team.Controller.Components.Filter;
+import cse.project.team.Controller.Components.SortButtonsAZ;
+import cse.project.team.Controller.Components.SortButtonsOF;
+import cse.project.team.Controller.Components.SortButtonsZA;
+import cse.project.team.Controller.Components.SortingStrategy;
+import cse.project.team.Model.Model;
+import cse.project.team.Model.Components.DalleMock;
+import cse.project.team.Server.DBHandler;
+import cse.project.team.Server.accountHandler;
+import cse.project.team.Server.genI;
+import cse.project.team.Server.genMock;
+import cse.project.team.Server.shareHandler;
+import cse.project.team.Views.Components.RecipeList;
+import cse.project.team.Model.Components.ColorPicker;
+import cse.project.team.Controller.Controller;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import cse.project.team.server.genI;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.*;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
-import javafx.scene.text.*;
-import javafx.application.Application;
-import javafx.application.Platform;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import java.util.*;
 
@@ -46,17 +46,26 @@ class AppTest {
     final String username = "test";
     final String password = "test";
 
-    /*
-     * @BeforeAll
-     * static void initJfxRuntime() {
-     * Platform.startup(() -> {});
-     * }
-     */
-
     @BeforeEach
     public void clearDatabase() {
         REChandler.clear();
         ACChandler.clear();
+        
+    }
+
+    @AfterEach
+    public void clean(){
+        String currentDirectory = System.getProperty("user.dir");
+        Path currentPath = Paths.get(currentDirectory);
+        String fileName = mock_title + ".jpg";
+        Path file = currentPath.resolve(fileName);
+        if(fileExists(mock_title)){
+            try {
+                Files.delete(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Test
@@ -64,7 +73,7 @@ class AppTest {
         assertEquals(1 + 1, 2);
     }
 
-    // US1: View list of saved recipes
+    // US 1: View list of saved recipes
     @Test
     public void testViewEmptyList() throws Exception {
         ArrayList<String> list = REChandler.getRecList();
@@ -80,17 +89,17 @@ class AppTest {
         assertEquals(other_title + "yL8z42" + "Lea", list.get(1));
     }
 
-    // US2: View Details of Recipe
+    // US 2: View Details of Recipe
     @Test
     public void testViewDetail() throws Exception {
         String expectedResponse_detail = "Get potatoes. Mash. Done.";
         REChandler.doPost(mock_title, mock_details, username, "Breakfast");
         String detail = REChandler.getRecDetail(mock_title).get(0);
-         String detail_1 = detail.split("%")[0];
+        String detail_1 = detail.split("%")[0];
         assertEquals(expectedResponse_detail, detail_1);
     }
 
-    // US3: Edit Recipe
+    // US 3: Edit Recipe
     @Test
     public void testHandleEdit() throws Exception {
         editGiven();
@@ -112,7 +121,7 @@ class AppTest {
         assertEquals(editedDetails, actual_Details);
     }
 
-    // US4: Save Recipe
+    // US 4: Save Recipe
     @Test
     public void testSaveNew() throws Exception {
         REChandler.doPost("apple pie", "3 apples, cinnamon, 1 cup brown sugar", username, "Dinner");
@@ -137,7 +146,7 @@ class AppTest {
         assertNotEquals(detail_1, outdated_Detail);
     }
 
-    // US5: Delete Recipe
+    // US 5: Delete Recipe
     @Test
     public void testHandleDelete() throws Exception {
         deleteGiven(mock_title, mock_details);
@@ -157,19 +166,10 @@ class AppTest {
         assertEquals(response, REChandler.getRecDetail(title).get(0));
     }
 
-    /*
-     * US6: Return to main page
-     * Not tested here due to being a GUI component
-     */
+    // US 6: Return to main page - Not tested here due to being a GUI component
 
-    /*
-     * US7: Generate Recipe Based on Voice Input
-     * Given voice input.
-     * When the user use the start and stop button to record the voice input,
-     * Then a general recipe will be generated based on the input voice.
-     */
-
-    @Test
+    // US 7 + US 8
+     @Test
     public void testGen() throws Exception {
         genI gen = givenGen();
         String result = whenGen(gen);
@@ -182,47 +182,42 @@ class AppTest {
     }
 
     public String whenGen(genI gen) throws IOException, URISyntaxException, Exception {
-        String newGen = gen.chatgen("dinner, potato");
+        String whisper = gen.audioGen(new ByteArrayInputStream("MOCK Audio Bytes".getBytes()));
+        String newGen = gen.chatgen(whisper);
         return newGen;
     }
 
     public void thenGen(String newGen) {
-        assertEquals("Mashed potats?\n Take potatoe. Mash. Done. :)", newGen);
+        assertEquals("Mashed potat\n Take potatoe. Mash. Done. :)", newGen);
     }
 
-    /*
-     * US8: Prompt users to list ingredients and specify the meal type,
-     * offering options like "Breakfast," "Lunch," or "Dinner."
-     * 
-     * Not tested here due to implementation being combined with the previous story
-     */ 
-      // End to End Scnario Test MS1
-      
-      @Test
-      public void testEndToEnd() throws IOException, URISyntaxException, Exception
-      {
-      genI gen = new genMock();
-      String newGen = gen.chatgen("dinner potato");
-      String title = newGen.split("\n")[0];
-      String details = newGen.substring(title.length());
-      REChandler.doPost(title, details, details, "Dinner");
-      String detail1 = REChandler.getRecDetail(title).get(0);
-      String detail_1= detail1.split("%")[0];
-      assertEquals(details, detail_1);
-      REChandler.doPost(title, other_details,username, "Dinner");
-      String detail2 = REChandler.getRecDetail(title).get(0);
-      String detail_2 = detail2.split("%")[0];
-      assertEquals(other_details, detail_2);
-      REChandler.doDelete(title);
-      assertEquals("Does not exist", REChandler.getRecDetail(mock_title).get(0));
-      }
-     
+    // End to End Scnario Test MS1
+    @Test
+    public void testEndToEnd() throws IOException, URISyntaxException, Exception {
+        genI gen = new genMock();
+        String newGen = gen.chatgen("dinner potato");
+        String title = newGen.split("\n")[0];
+        String details = newGen.substring(title.length());
+        
+        REChandler.doPost(title, details, details, "Dinner");
+        
+        String detail1 = REChandler.getRecDetail(title).get(0);
+        String detail_1 = detail1.split("%")[0];
+        assertEquals(details, detail_1);
+        
+        REChandler.doPost(title, other_details, username, "Dinner");
+        
+        String detail2 = REChandler.getRecDetail(title).get(0);
+        String detail_2 = detail2.split("%")[0];
+        assertEquals(other_details, detail_2);
+        
+        REChandler.doDelete(title);
+        
+        assertEquals("Does not exist", REChandler.getRecDetail(mock_title).get(0));
+    }
 
-    /*
-     * US 9: Create an account
-     */
-
-    // US9: Create an account
+    // US 9
+    // Scenario 1
     @Test
     public void testCreateAccount() {
         GivenNoACC();
@@ -231,7 +226,7 @@ class AppTest {
     }
 
     private void GivenNoACC() {
-        // list of account is already empty
+        // list of accounts is already empty
     }
 
     private void WhenCreateACC() {
@@ -242,7 +237,7 @@ class AppTest {
         assertEquals(ACChandler.getRecDetail(username), password);
     }
 
-    // US9: Create an account fails: account name taken
+    // Scenario 2
     @Test
     public void testCreateAccountUsernameTaken() {
         GivenNoACC();
@@ -254,85 +249,7 @@ class AppTest {
         assertEquals("Username taken", ACChandler.doPost(username, password));
     }
 
-    /*
-     * @Test
-     * public void testExistingAccount() throws Exception{
-     * ListView listView = new ListView();
-     * DetailView detView = new DetailView();
-     * GenerateView genView = new GenerateView();
-     * LoginView loginView = new LoginView();
-     * Model model = new Model();
-     * 
-     * Controller controller = new Controller(listView, detView, genView,loginView,
-     * model, new Stage());
-     * 
-     * // Account doesn't yet exist
-     * assertEquals(ACChandler.getRecDetail("Jack"), "Does not exist");
-     * 
-     * loginView.setUsername("Jack");
-     * loginView.setPassword("pineapples101");
-     * controller.handleCreateButton(new ActionEvent());
-     * 
-     * // New username and password should be in daatabase
-     * assertEquals(ACChandler.getRecDetail("Jack"), "pineapples101");
-     * 
-     * loginView.setUsername("Jack");
-     * loginView.setPassword("pineapples102");
-     * controller.handleCreateButton(new ActionEvent());
-     * 
-     * // Password should not have changed, this account already exists
-     * assertEquals(ACChandler.getRecDetail("Jack"), "pineapples101");
-     * // Correct error message should be displayed
-     * assertEquals(loginView.getMessageText(),
-     * "This account already exists. Please log in!");
-     * }
-     */
-
-    /*
-     * US 10: Login and logout
-     */
-
-    /*
-     * 10. User Story: Login and logout [High, 8 hrs, Iteration 1]
-     * Narrative:
-     * As a user of the app,
-     * I want to be able to log in and out of the app,
-     * So that I can access my account details on multiple devices.
-     * BDD Scenario 1: Login to an existing account.
-     * Given the user has an existing account and did not select automatic login,
-     * When the application starts,
-     * Then the create account/login page appears;
-     * When the user fills in correct username and password information,
-     * And clicks the “Login” button,
-     * Then the user is logged into their account, and the recipe list page is
-     * shown.
-     * BDD Scenario 2: Fail to login to an existing account: incorrect name or
-     * password.
-     * Given the user is on the create account/login page,
-     * When the user enters a username and password combination that does not exist
-     * in
-     * the database,
-     * And clicks the “Login” button,
-     * Then the user sees an error message and stays on the create account/login
-     * page.
-     * 
-     * BDD Scenario 3: User signs up for automatic login.
-     * Given the user has an existing account,
-     * When the user selects the “Auto Login” checkbox on the create account/login
-     * page,
-     * Then the user’s login information is saved locally;
-     * When the user opens the app the next time on the same device,
-     * Then the user goes directly to the recipe list page in their account.
-     * BDD Scenario 4: Logout by clicking the “Logout” button.
-     * Given the user is on the recipe list page and is logged into their account,
-     * When the “Logout” button is clicked,
-     * Then the user is logged out, and the create account/login page is shown.
-     * 
-     * BDD Scenario 5: Logout by closing the app.
-     * Given the user is logged in on the app,
-     * When the application is closed,
-     * Then the user is logged out of their account.
-     */
+    // US 10
     // BDD Scenario 1
     @Test
     public void testLogin() {
@@ -368,49 +285,61 @@ class AppTest {
         assertEquals("Wrong info", respones);
     }
 
-    /*
-     * US 11: Display images for generated recipes
-     */
-    // test generating a picture and using it
+    // US 11
+    
+    // BDD Scenario 2
     @Test
-    public void testFindImage() throws IOException, URISyntaxException, Exception {
-        // Assert that the printed message matches the expected output
-        String currentDirectory = System.getProperty("user.dir");
-        // Specify the file name to search for
-        String fileName = "dalleTest.jpg";
-        // Assert that the file exists
-        boolean fileFound = searchFile(new File(currentDirectory), fileName);
-        assertTrue(fileFound);
+    public void testDalle() throws IOException, URISyntaxException, Exception {
+        String genResponse = givenDallePrompt();
+        String urlImage = whenDalle(genResponse);
+        thenImage(genResponse, urlImage);
+        
     }
 
-    private boolean searchFile(File directory, String fileName) {
-        if (directory.exists() && directory.isDirectory()) {
-            File[] files = directory.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isFile() && file.getName().equals(fileName)) {
-                        return true; // File found
-                    }
-                    if (file.isDirectory()) {
-                        if (searchFile(file, fileName)) {
-                            return true; // File found in a subdirectory
-                        }
-                    }
-                }
-            }
-        }
-        return false;
+    // BDD Scenario 1
+    @Test
+    public void testDalle2() throws IOException, URISyntaxException, Exception {
+        String savedRecipe = givenRecipe();
+        String urlImage = whenDalle(savedRecipe);
+        thenImage(savedRecipe, urlImage);
+        
     }
+
+    private String givenRecipe() {
+        return mock_title;
+    }
+
+    private void thenImage(String genResponse, String urlImage) {
+        //test to be sure url is returned
+        String expectedResponse = "https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Trollface_non-free.png/220px-Trollface_non-free.png";
+        assertEquals(expectedResponse, urlImage);
+        assertEquals(fileExists(genResponse), true);
+
+    }
+
+    private String whenDalle(String genResponse) {
+        DalleMock dalle = new DalleMock();
+        String dalleResponse = dalle.generateDalle(genResponse);
+        dalle.downloadImage(dalleResponse, genResponse);
+        return dalleResponse;
+    }
+
+    private String givenDallePrompt() throws IOException, URISyntaxException, Exception {
+        return whenGen(new genMock()).split("\n")[0];
+    }
+
+    private boolean fileExists(String title){
+        String currentDirectory = System.getProperty("user.dir");
+        Path currentPath = Paths.get(currentDirectory);
+        String fileName = title + ".jpg";
+        Path fileInParent = currentPath.resolve(fileName);
+        return Files.exists(fileInParent);
+    }
+
 
     /*
      * US12:
-     * BDD Scenario 1: The user clicks “Refresh” on an unsaved recipe.
-     * Given the user has generated a new recipe that has not yet been saved,
-     * And the user is on the recipe details page,
-     * When the user clicks the “Refresh” button,
-     * Then a new recipe is generated based on the same voice input as the previous;
-     * When the new recipe is done generating,
-     * Then the new recipe details are shown on the recipe details page.
+     * BDD Scenario 1
      */
 
     @Test
@@ -422,17 +351,7 @@ class AppTest {
         thenGen(result);
     }
 
-    /*
-     * US13:
-     * BDD Scenario 1: Server is down.
-     * Given the server is not running,
-     * When the app is launched,
-     * Then the create account/login page is shown,
-     * And an error message saying “Sorry, the server is down!” is displayed;
-     * When the user enters their information and clicks the “Login” or “Create
-     * Account” button,
-     * Then nothing changes.
-     */
+    // US 13
     @Test
     public void testServerNotRunning() {
         Model model = givenNoServer();
@@ -453,28 +372,121 @@ class AppTest {
         assertNotEquals("Login", response);
     }
 
-    /*
-     * US17: 
-     * BDD Scenario 1: An existing recipe was shared.
-     * Given a saved recipe that exists in the database,
-     * When the user clicks the “Share” button on the recipe details page,
-     * Then a web URL linking to the recipe’s details will be generated;
-     * When the URL is pasted in a web browser,
-     * Then the recipe details will be displayed in a web browser.
-     * BDD Scenario 2: A deleted recipe was shared.
-     * Given the share URL of a recipe has already been generated,
-     * When the recipe is deleted,
-     * And the share URL is clicked,
-     * Then a web page displaying a “Recipe not found, sorry!” error is opened.
-     */
-    //Scenario 1
+    // US 14
+    // Scenario 1:
+    @Test
+    public void testTag(){
+        String expected_mealtype = "Breakfast";
+        REChandler.doPost(mock_title, mock_details, username, "Breakfast");
+        String detail = REChandler.getRecDetail(mock_title).get(1);
+        String mealtype = detail.split("%")[0];
+        assertEquals(expected_mealtype, mealtype);
+    }
+
+    // US 15
+    public void testSortedAtoZ() {
+        RecipeList mock = new RecipeList();
+        givenRecipeList(mock);
+        whenSortedAtoZ(mock);
+        thenSortedAtoZ(mock);
+    }
+
+    private void testSortedZtoA() {
+        RecipeList mock = new RecipeList();
+        givenRecipeList(mock);
+        whenSortedZtoA(mock);
+        thenSortedZtoA(mock);
+    }
+
+    private void testSortedOtoF() {
+        RecipeList mock = new RecipeList();
+        givenRecipeList(mock);
+        whenSortedOtoF(mock);
+        thenSortedOtoF(mock);
+    }
+
+    private void givenRecipeList(RecipeList mock) {
+        mock.addRecipe(0, "B", "breakfast");
+        mock.addRecipe(1, "C", "lunch");
+        mock.addRecipe(2, "A", "dinner");
+    }
+
+    private void whenSortedAtoZ(RecipeList mock) {
+        SortingStrategy sorter = new SortButtonsAZ();
+        sorter.sort(mock);
+    }
+
+    private void whenSortedZtoA(RecipeList mock) {
+        SortingStrategy sorter = new SortButtonsZA();
+        sorter.sort(mock);
+    }
+
+    private void whenSortedOtoF(RecipeList mock) {
+        SortingStrategy sorter = new SortButtonsOF();
+        sorter.sort(mock);
+    }
+
+    private void thenSortedAtoZ(RecipeList mock) {
+        List<String> expected = new ArrayList<>();
+        expected.add(0,"A");
+        expected.add(1,"B");
+        expected.add(2,"C");
+        assertEquals(expected, mock.getTitles());
+    }
+
+    private void thenSortedZtoA(RecipeList mock) {
+        List<String> expected = new ArrayList<>();
+        expected.add(0,"C");
+        expected.add(1,"B");
+        expected.add(2,"A");
+        assertEquals(expected, mock.getTitles());
+    }
+
+    private void thenSortedOtoF(RecipeList mock) {
+        List<String> expected = new ArrayList<>();
+        expected.add(0,"A");
+        expected.add(1,"C");
+        expected.add(2,"B");
+        assertEquals(expected, mock.getTitles());
+    }
+
+    // US 16
+    //BDD Scenerio 1
+
+    public void testfilterbreakfast(){
+        RecipeList mock = new RecipeList();
+        givenRecipeList(mock);
+        whenFilter("breakfast", mock);
+        thenBreakfast(mock);
+    }
+    
+
+    private void thenBreakfast(RecipeList mock) {
+        List<String> expected = new ArrayList<>();
+        expected.add(1,"B");
+        assertEquals(expected, mock.getTitles());
+    }
+
+    private void thenLunch() {
+    }
+
+    private void thenDinner() {
+    }
+
+    private void whenFilter(String mealType, RecipeList mock) {
+        Filter.filterSelection(mealType, mock);
+    }
+
+    // US 17
+    // Scenario 1
     @Test
     public void testSharedRecipe() {
         shareHandler share = givenSharedRecipe();
         whenSharedRecipe(share);
         thenSharedRecipe(share);
     }
-    //Scenario 2
+
+    // Scenario 2
     @Test
     public void testSharedRecipeDeleted() throws UnsupportedEncodingException {
         shareHandler share = givenSharedRecipe();
@@ -504,8 +516,66 @@ class AppTest {
     }
 
     private shareHandler givenSharedRecipe() {
-        shareHandler share = new shareHandler(new MockDalle());
+        shareHandler share = new shareHandler(new DalleMock());
         return share;
     }
 
+    // Miscellaneous Unit Tests
+    @Test
+    public void testValidMealtypeColors() {
+        ColorPicker picker = new ColorPicker();
+        String breakfastColor = picker.tag("Breakfast");
+        String lunchColor = picker.tag("Lunch"); 
+        String dinnerColor = picker.tag("Dinner");
+        assertEquals(breakfastColor, "#58B56B");
+        assertEquals(lunchColor, "#FF99C8");
+        assertEquals(dinnerColor, "#009FFD");
+    }
+
+    @Test
+    public void testInvalidMealtypeColor() {
+        ColorPicker picker = new ColorPicker();
+        String invalidForColor = picker.tag("not a mealtype");
+        assertEquals(invalidForColor, "#009FFD");
+    }
+
+    @Test
+    public void testExtractValidMTs() {
+        String breakfastType = Controller
+                .extractMealType("breakfast recipe with mango, yogurt, and granola");
+        String lunchType = Controller
+                .extractMealType("cheese, bell peppers, and black beans for lunch");
+        String dinnerType = Controller
+                .extractMealType("dinner with pork, green chile, and sour cream");
+        assertEquals(breakfastType, "Breakfast");
+        assertEquals(lunchType, "Lunch");
+        assertEquals(dinnerType, "Dinner");
+    }
+
+    @Test
+    public void testExtractValidMTsWeirdCapitalization() {
+        String breakfastType = Controller
+                .extractMealType("BrEakFasT recipe with cherries, apples, and goat cheese");
+        assertEquals(breakfastType, "Breakfast");
+    }
+
+    @Test
+    public void testExtractNoMTs() {
+        String noType = Controller
+                .extractMealType("dessert with peaches, granola, and chocolate");
+        assertEquals(noType, "N/A");
+    }
+
+    @Test
+    public void testExtractMTsMultipleListed() {
+        String multiType1 = Controller
+                .extractMealType("dinner. breakfast. lunch");
+        // breakfast should be prioritized
+        assertEquals(multiType1, "Breakfast");
+
+        String multiType2 = Controller
+                .extractMealType("lunch and dinner recipe");
+        // lunch should be prioritized over dinner
+        assertEquals(multiType2, "Lunch");
+    }
 }

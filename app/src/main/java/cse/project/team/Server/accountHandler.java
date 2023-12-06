@@ -1,4 +1,4 @@
-package cse.project.team.server;
+package cse.project.team.Server;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -99,8 +99,8 @@ public class accountHandler implements HttpHandler {
     }
 
     public String getRecDetail(String title) {
-        Document target = accountCollection.find(eq("title", title)).first();
-        return (target == null) ? "Does not exist" : target.getString("description");
+        Document target = accountCollection.find(eq("username", title)).first();
+        return (target == null) ? "Does not exist" : target.getString("password");
     }
 
     public String doPost(String title, String details) {
@@ -110,8 +110,8 @@ public class accountHandler implements HttpHandler {
         if (!getRecDetail(title).equals("Does not exist"))
             return "Username taken";
 
-        Bson filter = eq("title", title);
-        Bson updateOperation = com.mongodb.client.model.Updates.set("description", details);
+        Bson filter = eq("username", title);
+        Bson updateOperation = com.mongodb.client.model.Updates.set("password", details);
         UpdateOptions options = new UpdateOptions().upsert(true);
         accountCollection.updateOne(filter, updateOperation, options);
         return "Added";
@@ -130,7 +130,7 @@ public class accountHandler implements HttpHandler {
     }
 
     public void doDelete(String title) {
-        Bson filter = eq("title", title);
+        Bson filter = eq("username", title);
         accountCollection.deleteOne(filter);
     }
 

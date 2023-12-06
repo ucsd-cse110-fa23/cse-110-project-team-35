@@ -1,16 +1,18 @@
-package cse.project.team.server;
+package cse.project.team.Server;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import com.sun.net.httpserver.*;
 
+import cse.project.team.Model.Components.DalleI;
+
 public class shareHandler implements HttpHandler {
 
     private final Map<String, String> data;
-    IDalle dalle;
+    DalleI dalle;
 
-    public shareHandler(IDalle dalle) {
+    public shareHandler(DalleI dalle) {
         this.data = new HashMap<>();
         this.dalle = dalle;
     }

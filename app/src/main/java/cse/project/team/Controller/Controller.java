@@ -19,12 +19,12 @@ import cse.project.team.Controller.Components.SortButtonsOF;
 import cse.project.team.Controller.Components.SortButtonsZA;
 import cse.project.team.Controller.Components.SortingStrategy;
 import cse.project.team.Model.Model;
-import cse.project.team.views.DetailView;
-import cse.project.team.views.GenerateView;
-import cse.project.team.views.ListView;
-import cse.project.team.views.LoginView;
-import cse.project.team.views.Components.RecipeList;
-import cse.project.team.views.Components.RecipeTitle;
+import cse.project.team.Views.DetailView;
+import cse.project.team.Views.GenerateView;
+import cse.project.team.Views.ListView;
+import cse.project.team.Views.LoginView;
+import cse.project.team.Views.Components.RecipeList;
+import cse.project.team.Views.Components.RecipeTitle;
 
 public class Controller {
     private ListView listView;

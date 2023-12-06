@@ -1,4 +1,4 @@
-package cse.project.team.server;
+package cse.project.team.Server;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;

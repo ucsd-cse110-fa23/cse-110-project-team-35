@@ -1,11 +1,11 @@
 package cse.project.team.Controller.Components;
 
-import cse.project.team.views.Components.RecipeList;
-import cse.project.team.views.Components.RecipeTitle;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import cse.project.team.Views.Components.RecipeList;
+import cse.project.team.Views.Components.RecipeTitle;
 
 public class SortButtonsAZ implements SortingStrategy {
     public void sort(RecipeList recipeList) {

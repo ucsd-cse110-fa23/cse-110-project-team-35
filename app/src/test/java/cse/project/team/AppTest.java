@@ -2,15 +2,15 @@ package cse.project.team;
 
 import cse.project.team.Model.Model;
 import cse.project.team.Model.Components.DalleMock;
-import cse.project.team.server.DBHandler;
-import cse.project.team.server.accountHandler;
-import cse.project.team.server.genMock;
-import cse.project.team.server.shareHandler;
+import cse.project.team.Server.DBHandler;
+import cse.project.team.Server.accountHandler;
+import cse.project.team.Server.genI;
+import cse.project.team.Server.genMock;
+import cse.project.team.Server.shareHandler;
 import cse.project.team.Model.Components.ColorPicker;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import cse.project.team.server.genI;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -256,44 +256,6 @@ class AppTest {
     }
 
     /*
-     * @Test
-     * public void testExistingAccount() throws Exception{
-     * ListView listView = new ListView();
-     * DetailView detView = new DetailView();
-     * GenerateView genView = new GenerateView();
-     * LoginView loginView = new LoginView();
-     * Model model = new Model();
-     * 
-     * Controller controller = new Controller(listView, detView, genView,loginView,
-     * model, new Stage());
-     * 
-     * // Account doesn't yet exist
-     * assertEquals(ACChandler.getRecDetail("Jack"), "Does not exist");
-     * 
-     * loginView.setUsername("Jack");
-     * loginView.setPassword("pineapples101");
-     * controller.handleCreateButton(new ActionEvent());
-     * 
-     * // New username and password should be in daatabase
-     * assertEquals(ACChandler.getRecDetail("Jack"), "pineapples101");
-     * 
-     * loginView.setUsername("Jack");
-     * loginView.setPassword("pineapples102");
-     * controller.handleCreateButton(new ActionEvent());
-     * 
-     * // Password should not have changed, this account already exists
-     * assertEquals(ACChandler.getRecDetail("Jack"), "pineapples101");
-     * // Correct error message should be displayed
-     * assertEquals(loginView.getMessageText(),
-     * "This account already exists. Please log in!");
-     * }
-     */
-
-    /*
-     * US 10: Login and logout
-     */
-
-    /*
      * 10. User Story: Login and logout [High, 8 hrs, Iteration 1]
      * Narrative:
      * As a user of the app,
@@ -373,10 +335,24 @@ class AppTest {
      * US 11: Display images for generated recipes
      */
     // test generating a picture and using it
+
+    // BDD Scenario 2: A new recipe is generated.
+	// Given the user has clicked the “Generate Recipe” or “Refresh” button,
+	// And a valid voice input has been provided,
+	// When the new recipe is done generating,
+	// Then an image of the potential dish is shown on the recipe detail page.
+
     @Test
     public void testDalle() throws IOException, URISyntaxException, Exception {
-        ;
+        
+        
     }
+
+    private String givenDallePrompt() {
+        return mock_title;
+    }
+
+
 
 
     /*
@@ -389,6 +365,8 @@ class AppTest {
      * When the new recipe is done generating,
      * Then the new recipe details are shown on the recipe details page.
      */
+
+    
 
     @Test
     public void testRefresh() throws IOException, URISyntaxException, Exception {

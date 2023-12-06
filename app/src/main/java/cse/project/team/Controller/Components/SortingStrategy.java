@@ -1,6 +1,6 @@
 package cse.project.team.Controller.Components;
 
-import cse.project.team.views.Components.RecipeList;
+import cse.project.team.Views.Components.RecipeList;
 
 
 public interface SortingStrategy {

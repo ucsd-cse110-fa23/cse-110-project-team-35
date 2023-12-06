@@ -1,4 +1,4 @@
-package cse.project.team.views.Components;
+package cse.project.team.Views.Components;
 
 import javafx.scene.layout.VBox;
 

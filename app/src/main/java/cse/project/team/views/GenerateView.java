@@ -1,4 +1,4 @@
-package cse.project.team.views;
+package cse.project.team.Views;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

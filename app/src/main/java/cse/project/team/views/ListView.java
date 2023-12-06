@@ -1,8 +1,8 @@
-package cse.project.team.views;
+package cse.project.team.Views;
 
 import cse.project.team.Model.Components.ColorPicker;
-import cse.project.team.views.Components.RecipeList;
-import cse.project.team.views.Components.RecipeTitle;
+import cse.project.team.Views.Components.RecipeList;
+import cse.project.team.Views.Components.RecipeTitle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

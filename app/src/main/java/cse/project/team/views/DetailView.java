@@ -1,4 +1,4 @@
-package cse.project.team.views;
+package cse.project.team.Views;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -12,7 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.*;
 
-import cse.project.team.views.Components.RecipeTitle;
+import cse.project.team.Views.Components.RecipeTitle;
 
 public class DetailView extends BorderPane {
     private detailHeader header;

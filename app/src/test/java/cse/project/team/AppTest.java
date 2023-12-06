@@ -13,35 +13,19 @@ import cse.project.team.Server.genMock;
 import cse.project.team.Server.shareHandler;
 import cse.project.team.Views.Components.RecipeList;
 import cse.project.team.Model.Components.ColorPicker;
-import cse.US1Test;
 import cse.project.team.Controller.Controller;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.*;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
-import javafx.scene.text.*;
-import javafx.application.Application;
-import javafx.application.Platform;
 
 import java.util.*;
 

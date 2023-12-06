@@ -9,8 +9,10 @@ import cse.project.team.Model.Model;
 import cse.project.team.Model.Components.DalleMock;
 import cse.project.team.Server.DBHandler;
 import cse.project.team.Server.accountHandler;
-import cse.project.team.Server.genI;
-import cse.project.team.Server.genMock;
+import cse.project.team.Server.GPTI;
+import cse.project.team.Server.GPTMock;
+import cse.project.team.Server.WhisperI;
+import cse.project.team.Server.WhisperMock;
 import cse.project.team.Server.shareHandler;
 import cse.project.team.Views.Components.RecipeList;
 import cse.project.team.Model.Components.ColorPicker;
@@ -170,18 +172,25 @@ class AppTest {
     // US 7 + US 8
      @Test
     public void testGen() throws Exception {
-        genI gen = givenGen();
-        String result = whenGen(gen);
+        GPTI gen = givenGen();
+        WhisperI whisper = givenAudio();
+        String result = whenGen(gen, whisper);
         thenGen(result);
     }
 
-    public genI givenGen() {
-        genI gen = new genMock();
+    public GPTI givenGen() {
+        GPTI gen = new GPTMock();
+        WhisperI whisper = new WhisperMock();
         return gen;
     }
 
-    public String whenGen(genI gen) throws IOException, URISyntaxException, Exception {
-        String whisper = gen.audioGen(new ByteArrayInputStream("MOCK Audio Bytes".getBytes()));
+    public WhisperI givenAudio() {
+        WhisperI whisper = new WhisperMock();
+        return whisper;
+    }
+
+    public String whenGen(GPTI gen, WhisperI audio) throws IOException, URISyntaxException, Exception {
+        String whisper = audio.audioGen(new ByteArrayInputStream("MOCK Audio Bytes".getBytes()));
         String newGen = gen.chatgen(whisper);
         return newGen;
     }
@@ -193,7 +202,7 @@ class AppTest {
     // End to End Scnario Test MS1
     @Test
     public void testEndToEnd() throws IOException, URISyntaxException, Exception {
-        genI gen = new genMock();
+        GPTI gen = new GPTMock();
         String newGen = gen.chatgen("dinner potato");
         String title = newGen.split("\n")[0];
         String details = newGen.substring(title.length());
@@ -231,7 +240,7 @@ class AppTest {
 
         // User should be able to generate new recipes for this account
         String audioText = "dinner potato";
-        genI gen = new genMock();
+        GPTI gen = new GPTMock();
         String newGen = gen.chatgen(audioText); 
 
         String title1 = newGen.split("\n")[0]; // mashed potat
@@ -388,7 +397,7 @@ class AppTest {
     }
 
     private String givenDallePrompt() throws IOException, URISyntaxException, Exception {
-        return whenGen(new genMock()).split("\n")[0];
+        return whenGen(new GPTMock(), new WhisperMock()).split("\n")[0];
     }
 
     private boolean fileExists(String title){
@@ -407,10 +416,11 @@ class AppTest {
 
     @Test
     public void testRefresh() throws IOException, URISyntaxException, Exception {
-        genI gen = givenGen();
-        String result = whenGen(gen);
+        GPTI gen = givenGen();
+        WhisperI audio = givenAudio();
+        String result = whenGen(gen, audio);
         thenGen(result);
-        result = whenGen(gen);
+        result = whenGen(gen, audio);
         thenGen(result);
     }
 

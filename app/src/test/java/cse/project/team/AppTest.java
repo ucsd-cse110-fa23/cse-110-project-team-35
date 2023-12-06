@@ -431,6 +431,25 @@ class AppTest {
     }
 
     /*
+     * US 14:
+     * BDD Scenario 1: User views recipe list
+     * Given the meal type of each recipe has been correctly saved in the database,
+     * When the user views the recipe list page,
+     * Then the meal type of each recipe is displayed next to the recipe’s name.
+     */
+    // Scenario 1:
+    @Test
+    public void testTag(){
+        String expected_mealtype = "Breakfast";
+        REChandler.doPost(mock_title, mock_details, username, "Breakfast");
+        String detail = REChandler.getRecDetail(mock_title).get(1);
+        String mealtype = detail.split("%")[0];
+        assertEquals(expected_mealtype, mealtype);
+    }
+
+    
+
+    /*
      * US17: 
      * BDD Scenario 1: An existing recipe was shared.
      * Given a saved recipe that exists in the database,

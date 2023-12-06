@@ -15,10 +15,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -178,12 +183,13 @@ class AppTest {
     }
 
     public String whenGen(genI gen) throws IOException, URISyntaxException, Exception {
-        String newGen = gen.chatgen("dinner, potato");
+        String whisper = gen.audioGen(new ByteArrayInputStream("MOCK Audio Bytes".getBytes()));
+        String newGen = gen.chatgen(whisper);
         return newGen;
     }
 
     public void thenGen(String newGen) {
-        assertEquals("Mashed potats?\n Take potatoe. Mash. Done. :)", newGen);
+        assertEquals("Mashed potats\n Take potatoe. Mash. Done. :)", newGen);
     }
 
     /*
@@ -346,15 +352,38 @@ class AppTest {
 
     @Test
     public void testDalle() throws IOException, URISyntaxException, Exception {
-        
+        String genResponse = givenDallePrompt();
+        String urlImage = whenDalle(genResponse);
+        thenImage(genResponse, urlImage);
         
     }
 
-    private String givenDallePrompt() {
-        return mock_title;
+    private void thenImage(String genResponse, String urlImage) {
+        //test to be sure url is returned
+        String expectedResponse = "https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Trollface_non-free.png/220px-Trollface_non-free.png";
+        assertEquals(expectedResponse, urlImage);
+        assertEquals(fileExists(genResponse), true);
+
     }
 
+    private String whenDalle(String genResponse) {
+        DalleMock dalle = new DalleMock();
+        String dalleResponse = dalle.generateDalle(genResponse);
+        dalle.downloadImage(dalleResponse, genResponse);
+        return dalleResponse;
+    }
 
+    private String givenDallePrompt() throws IOException, URISyntaxException, Exception {
+        return whenGen(new genMock()).split("\n")[0];
+    }
+
+    private boolean fileExists(String title){
+        String currentDirectory = System.getProperty("user.dir");
+        Path currentPath = Paths.get(currentDirectory);
+        String fileName = title + ".jpg";
+        Path fileInParent = currentPath.resolve(fileName);
+        return Files.exists(fileInParent);
+    }
 
 
     /*

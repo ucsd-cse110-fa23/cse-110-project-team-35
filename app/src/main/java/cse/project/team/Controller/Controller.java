@@ -8,6 +8,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,11 +40,10 @@ public class Controller {
 
     final File STYLE = new File("style.css");
     final String STYLESHEET = "file:" + STYLE.getPath();
-
-    File autoLogInfile = new File("autoLogIn.txt");
-
     final int HEIGHT = 750;
     final int WIDTH = 380;
+
+    File autoLogInfile = new File("autoLogIn.txt");
 
     public Controller(ListView listView,
             DetailView detView,
@@ -86,27 +86,6 @@ public class Controller {
         this.detView.setShareButton(this::handleShareButton);
     }
 
-    private void loadRecipeList() {
-        listView.getRecipeList().getChildren().clear();
-        String[] rlist = model.dBRequest("GET", null, null, null, null, null).split("xF9j");
-
-        for (String i : rlist) {
-            if (i.length() == 0)
-                continue;
-            String[] info = i.split("yL8z42");
-
-            if (info.length == 1)
-                break;
-
-            if (info[1].equals(loginView.getUsername())) {
-                String[] recDets = model.dBRequest("GET", null, null, null, null, info[0]).split("xF9j");
-                RecipeTitle recipe = new RecipeTitle(info[0], recDets[1]);
-                listView.getRecipeList().getChildren().add(0, recipe);
-            }
-        }
-        listView.setRecipeButtons(this::handleRecipeButtons);
-    }
-
     private void createListScene() {
         loadRecipeList();
         listScene = new Scene(listView, WIDTH, HEIGHT);
@@ -145,33 +124,54 @@ public class Controller {
         stage.setScene(detailScene);
     }
 
+    private void loadRecipeList() {
+        listView.getRecipeList().getChildren().clear();
+
+        // Get recipe titles for the given user
+        String[] rlist = model.dBRequest("GET", null, null, null, null, null).split("xF9j");
+
+        // Parsing the list of recipe titles, for each recipe,
+        // find the mealtype (second GET request) and add to recipeList
+        for (String i : rlist) {
+            String[] info = i.split("yL8z42");
+            if (info[1].equals(loginView.getUsername())) {
+                String[] recDets = model.dBRequest("GET", null, null, null, null, info[0]).split("xF9j");
+                listView.getRecipeList().addRecipe(0, info[0], recDets[1]);
+            }
+        }
+        listView.setRecipeButtons(this::handleRecipeButtons);
+    }
+
     private void beginLogin() {
         try {
-            if (autoLogInfile.length() > 1) { // If auto-login saved, log in.
+             // If auto-login saved, log in.
+            if (autoLogInfile.length() > 1) {
                 FileReader fileReader = new FileReader(autoLogInfile);
                 BufferedReader bufferedReader = new BufferedReader(fileReader);
                 String line = bufferedReader.readLine();
+                String[] userInfo = line.split(",");
                 bufferedReader.close();
 
-                String[] parts = line.split(",");
-                String username = parts[0];
-                String password = parts[1];
+                login(userInfo[0], userInfo[1]);
 
-                loginView.setUsername(username);
-                loginView.setPassword(password);
-
-                String response = model.accountRequest("PUT", username, password, null);
-
-                if (response.equals("Login")) {
-                    setListScene();
-                } else {
-                    setLoginScene();
-                    showError();
-                }
-            } else { // If not, show login page.
+             // If not, show login page.
+            } else {
                 setLoginScene();
             }
         } catch (IOException e) {
+            setLoginScene();
+            showError();
+        }
+    }
+
+    private void login(String username, String password) {
+        loginView.setUsername(username);
+        loginView.setPassword(password);
+
+        String response = model.accountRequest("PUT", username, password, null);
+        if (response.equals("Login")) {
+            setListScene();
+        } else {
             setLoginScene();
             showError();
         }
@@ -212,7 +212,6 @@ public class Controller {
                 });
 
         t.start();
-
     }
 
     private void handleBackButton(ActionEvent event) {
@@ -244,9 +243,9 @@ public class Controller {
 
                             // Prompt user to specify meal type if missing
                             if (audioTxt.equals("Error")) {
-                                missingMealType();
+                                missingItem("mealtype");
                             } else if (wordCount == 1) {
-                                missingingredient();
+                                missingItem("ingredient");
                             } else {
                                 createRecipeAndImage(audioTxt);
                             }
@@ -278,12 +277,17 @@ public class Controller {
         genView.setRecordingLabel("Generating your new recipe! Please wait...");
     }
 
-    private void missingMealType() {
+    private void missingItem(String item) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                genView.setRecordingLabel("Make sure you say breakfast, lunch, or dinner!");
-                genView.showRecLabel();
+                if (item.equalsIgnoreCase("mealtype"))
+                    genView.setRecordingLabel("Make sure you say breakfast, lunch, or dinner!");
+                
+                if (item.equalsIgnoreCase("ingredient"))
+                    genView.setRecordingLabel("Make sure you list ingredients!");
+                
+                    genView.showRecLabel();
                 genView.enableBackButton();
                 genView.enableStartButton();
             }
@@ -291,20 +295,7 @@ public class Controller {
 
     }
 
-    private void missingingredient() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                genView.setRecordingLabel("Make sure you list ingredients!");
-                genView.showRecLabel();
-                genView.enableBackButton();
-                genView.enableStartButton();
-            }
-        });
-
-    }
-
-    // if more than one mealtype mentioned, returns in order of Brk, Lun, Din
+    // If more than one mealtype mentioned, returns in order of Brk, Lun, Din
     public static String extractMealType(String audioText) {
         audioText = audioText.toLowerCase();
         if (audioText.contains("breakfast")) {
@@ -395,7 +386,6 @@ public class Controller {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 

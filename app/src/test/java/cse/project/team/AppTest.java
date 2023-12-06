@@ -256,6 +256,11 @@ class AppTest {
         REChandler.doPost("Xmas Ham", "Preheat oven to 350 degrees...", 
                 "yiming105", "Dinner");
         
+        shareHandler share = givenSharedRecipe();
+        share.doPost(title1 + "\n" + description1);
+        assertNotEquals("Not found", share.doGet(title1));
+        share.doDelete(title1);
+        assertEquals("Not found", share.doGet(title1));
         /*
         RecipeList recList = new RecipeList();
 

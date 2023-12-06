@@ -6,6 +6,7 @@ import cse.project.team.server.DBHandler;
 import cse.project.team.server.accountHandler;
 import cse.project.team.server.genMock;
 import cse.project.team.server.shareHandler;
+import cse.project.team.Model.Components.ColorPicker;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +47,6 @@ class AppTest {
 
     final String username = "test";
     final String password = "test";
-
     /*
      * @BeforeAll
      * static void initJfxRuntime() {
@@ -538,6 +538,26 @@ class AppTest {
     private shareHandler givenSharedRecipe() {
         shareHandler share = new shareHandler(new DalleMock());
         return share;
+    }
+
+
+    // Miscellaneous Unit Tests
+    @Test
+    public void testValidMealtypeColors() {
+        ColorPicker picker = new ColorPicker();
+        String breakfastColor = picker.tag("Breakfast");
+        String lunchColor = picker.tag("Lunch"); 
+        String dinnerColor = picker.tag("Dinner");
+        assertEquals(breakfastColor, "#58B56B");
+        assertEquals(lunchColor, "#FF99C8");
+        assertEquals(dinnerColor, "#009FFD");
+    }
+
+    @Test
+    public void testInvalidMealtypeColor() {
+        ColorPicker picker = new ColorPicker();
+        String invalidForColor = picker.tag("not a mealtype");
+        assertEquals(invalidForColor, "#009FFD");
     }
 
 }

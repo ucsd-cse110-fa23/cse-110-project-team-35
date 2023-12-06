@@ -471,7 +471,9 @@ public class Controller {
                 sortingStrat.sort(recList);
                 break;
             default:
+                loadRecipeList();
                 Filter.filterSelection(listView.getFilterValue(), recList);
+
         }
     }
 

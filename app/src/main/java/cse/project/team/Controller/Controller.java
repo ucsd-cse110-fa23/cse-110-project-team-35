@@ -305,7 +305,7 @@ public class Controller {
     }
 
     // if more than one mealtype mentioned, returns in order of Brk, Lun, Din
-    private String extractMealType(String audioText) {
+    public static String extractMealType(String audioText) {
         audioText = audioText.toLowerCase();
         if (audioText.contains("breakfast")) {
             return "Breakfast";

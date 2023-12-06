@@ -7,6 +7,7 @@ import cse.project.team.server.accountHandler;
 import cse.project.team.server.genMock;
 import cse.project.team.server.shareHandler;
 import cse.project.team.Model.Components.ColorPicker;
+import cse.project.team.Controller.Controller;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,12 +48,6 @@ class AppTest {
 
     final String username = "test";
     final String password = "test";
-    /*
-     * @BeforeAll
-     * static void initJfxRuntime() {
-     * Platform.startup(() -> {});
-     * }
-     */
 
     @BeforeEach
     public void clearDatabase() {
@@ -206,15 +201,22 @@ class AppTest {
       String newGen = gen.chatgen("dinner potato");
       String title = newGen.split("\n")[0];
       String details = newGen.substring(title.length());
-      REChandler.doPost(title, details, details, "Dinner");
+
+      REChandler.doPost(title, details, username, "Dinner");
+
       String detail1 = REChandler.getRecDetail(title).get(0);
       String detail_1= detail1.split("%")[0];
       assertEquals(details, detail_1);
-      REChandler.doPost(title, other_details,username, "Dinner");
+
+      REChandler.doPost(title, other_details, username, "Dinner");
+
       String detail2 = REChandler.getRecDetail(title).get(0);
       String detail_2 = detail2.split("%")[0];
       assertEquals(other_details, detail_2);
+
       REChandler.doDelete(title);
+
+      // Deleted recipes should not be findable
       assertEquals("Does not exist", REChandler.getRecDetail(mock_title).get(0));
       }
      
@@ -232,7 +234,7 @@ class AppTest {
     }
 
     private void GivenNoACC() {
-        // list of account is already empty
+        // list of accounts is already empty
     }
 
     private void WhenCreateACC() {
@@ -254,40 +256,6 @@ class AppTest {
     private void ThenNoNewACC() {
         assertEquals("Username taken", ACChandler.doPost(username, password));
     }
-
-    /*
-     * @Test
-     * public void testExistingAccount() throws Exception{
-     * ListView listView = new ListView();
-     * DetailView detView = new DetailView();
-     * GenerateView genView = new GenerateView();
-     * LoginView loginView = new LoginView();
-     * Model model = new Model();
-     * 
-     * Controller controller = new Controller(listView, detView, genView,loginView,
-     * model, new Stage());
-     * 
-     * // Account doesn't yet exist
-     * assertEquals(ACChandler.getRecDetail("Jack"), "Does not exist");
-     * 
-     * loginView.setUsername("Jack");
-     * loginView.setPassword("pineapples101");
-     * controller.handleCreateButton(new ActionEvent());
-     * 
-     * // New username and password should be in daatabase
-     * assertEquals(ACChandler.getRecDetail("Jack"), "pineapples101");
-     * 
-     * loginView.setUsername("Jack");
-     * loginView.setPassword("pineapples102");
-     * controller.handleCreateButton(new ActionEvent());
-     * 
-     * // Password should not have changed, this account already exists
-     * assertEquals(ACChandler.getRecDetail("Jack"), "pineapples101");
-     * // Correct error message should be displayed
-     * assertEquals(loginView.getMessageText(),
-     * "This account already exists. Please log in!");
-     * }
-     */
 
     /*
      * US 10: Login and logout
@@ -524,4 +492,43 @@ class AppTest {
         assertEquals(invalidForColor, "#009FFD");
     }
 
+    @Test
+    public void testExtractValidMTs() {
+        String breakfastType = Controller
+                .extractMealType("breakfast recipe with mango, yogurt, and granola");
+        String lunchType = Controller
+                .extractMealType("cheese, bell peppers, and black beans for lunch");
+        String dinnerType = Controller
+                .extractMealType("dinner with pork, green chile, and sour cream");
+        assertEquals(breakfastType, "Breakfast");
+        assertEquals(lunchType, "Lunch");
+        assertEquals(dinnerType, "Dinner");
+    }
+
+    @Test
+    public void testExtractValidMTsWeirdCapitalization() {
+        String breakfastType = Controller
+                .extractMealType("BrEakFasT recipe with cherries, apples, and goat cheese");
+        assertEquals(breakfastType, "Breakfast");
+    }
+
+    @Test
+    public void testExtractNoMTs() {
+        String noType = Controller
+                .extractMealType("dessert with peaches, granola, and chocolate");
+        assertEquals(noType, "N/A");
+    }
+
+    @Test
+    public void testExtractMTsMultipleListed() {
+        String multiType1 = Controller
+                .extractMealType("dinner. breakfast. lunch");
+        // breakfast should be prioritized
+        assertEquals(multiType1, "Breakfast");
+
+        String multiType2 = Controller
+                .extractMealType("lunch and dinner recipe");
+        // lunch should be prioritized over dinner
+        assertEquals(multiType2, "Lunch");
+    }
 }
